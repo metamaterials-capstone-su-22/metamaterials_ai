@@ -22,7 +22,8 @@ poerty install
 
 ```bash
 poetry add <package_name>
+
 # example
-poerty add numpy
+poetry add numpy
 ```
 
