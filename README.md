@@ -1,6 +1,12 @@
 # metamaterials_ai
 This repo contains the metamaterials AI Model and training processes.
 
+# How to use Conda
+Create a virtual environment using Conda
+
+```bash
+$ conda create -n meta python=3.10
+```
 
 # How to use Poetry
 Poetry can be used to simplify dependency management.
@@ -16,6 +22,12 @@ Note: to this work you need to have an environment with the correct version of p
 
 ```bash
 poerty install
+```
+## Run using poetry
+Assume you are in the `root` folder of the project
+
+```bash
+$ poetry run python src/main.py
 ```
 
 ## Add dependency using Poetry
