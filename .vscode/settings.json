@@ -2,7 +2,9 @@
     "cSpell.words": [
         "argparser",
         "einops",
+        "gdown",
         "GELU",
+        "inconel",
         "rmse",
         "TQDM",
         "Wandb"
