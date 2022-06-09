@@ -351,3 +351,4 @@ MigrationBackup/
 
 local_work/
 local_data/
+.DS_Store
