@@ -1,15 +1,17 @@
 from config import Config
-from utils import FileUtils
+from utils import FileUtils, DataUtils
 
 
 def main(config):
-    # 1. read pt files from google drive
-    #   1.1 download file
+    # Get pt files (Downloading them if they are missing)
+    FileUtils.get_pt_files(config)
+    
+    # Load pt file data
+    data = DataUtils.read_pt_data(config)
+
     # 2. forward training_step
     # 3. backward training
     # 4. visualization
-    file_utils= FileUtils(config)
-    file_utils.get_pt_files()
 
     return True
 

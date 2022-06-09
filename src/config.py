@@ -12,7 +12,7 @@ class Config(BaseModel):
     load_forward_checkpoint: bool = True
     load_backward_checkpoint: bool = True
     num_gpu:int = 1 # number of GPU
-    num_wavelens: int = 800
+    num_wavelens: int | None # This will be set @ load time. ex. 800
     substrate: str = 'stainless_steel' # options "stainless_steel" , "inconel"
     use_cache: bool = True
     use_forward: bool = True
