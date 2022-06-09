@@ -17,15 +17,18 @@ from config import Config
 
 
 class ForwardDataModule(pl.LightningDataModule):
-    def __init__(self, config: Config, data: Data) -> None:
+    def __init__(self, config: Config, data: Data, direction:str) -> None:
         super().__init__()
         self.config = config
         self.batch_size = self.config.forward_batch_size
         self.data = data
+        self.direction = direction
 
+    # TODO remove stage if it is not being used!!
     def setup(self, stage: Optional[str]) -> None:
         data_path= self.config.data_path
         data = self.data
+        direction = self.direction
         laser_params, emiss, uids = data.norm_laser_params, \
                 data.interp_emissivities, data.uids
 
@@ -39,9 +42,9 @@ class ForwardDataModule(pl.LightningDataModule):
             )
             for s in ("train", "val", "test")
         ]
-        torch.save(self.train, f"{data_path}/forward_train_true.pt")
-        torch.save(self.val, f"{data_path}/forward_val_true.pt")
-        torch.save(self.test, f"{data_path}/forward_test_true.pt")
+        torch.save(self.train, f"{data_path}/{direction}_train_true.pt")
+        torch.save(self.val, f"{data_path}/{direction}_val_true.pt")
+        torch.save(self.test, f"{data_path}/{direction}_test_true.pt")
 
     def train_dataloader(self) -> DataLoader:
         return DataLoader(
