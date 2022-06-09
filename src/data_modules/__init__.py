@@ -1,1 +1,1 @@
-from .data import Data
+from .forward_data_module import ForwardDataModule

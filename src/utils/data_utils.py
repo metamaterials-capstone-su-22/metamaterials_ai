@@ -3,7 +3,7 @@ from math import floor
 from config import Config
 from pathlib import Path
 import torch
-from data_modules import Data
+from dto import Data
 
 
 class DataUtils():

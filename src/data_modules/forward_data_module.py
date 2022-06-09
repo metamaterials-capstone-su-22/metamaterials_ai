@@ -10,22 +10,25 @@ import pytorch_lightning as pl
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 from tqdm import tqdm
+from dto.data import Data
 
 from utils import DataUtils
 from config import Config
 
 
 class ForwardDataModule(pl.LightningDataModule):
-    def __init__(self, config: Config) -> None:
+    def __init__(self, config: Config, data: Data) -> None:
         super().__init__()
         self.config = config
         self.batch_size = self.config.forward_batch_size
+        self.data = data
 
     def setup(self, stage: Optional[str]) -> None:
         data_path= self.config.data_path
-        laser_params, emiss, uids = DataUtils.get_data(
-            use_cache=self.config.use_cache, num_wavelens=self.config.num_wavelens
-        )
+        data = self.data
+        laser_params, emiss, uids = data.norm_laser_params, \
+                data.interp_emissivities, data.uids
+
         splits = DataUtils.split(len(laser_params))
 
         self.train, self.val, self.test = [

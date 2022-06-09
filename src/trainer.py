@@ -31,11 +31,11 @@ class Trainer():
 
     def get_check_val_interval(self):
         num_epochs = self.get_num_of_epochs()
-        return min(3, num_epochs - 1),
+        return min(3, num_epochs - 1)
 
     def get_log_interval(self):
         ''' The same as check_val interval'''
-        return self.get_check_val_interval(),
+        return self.get_check_val_interval()
 
     def get_loggers(self):
         direction = self.direction

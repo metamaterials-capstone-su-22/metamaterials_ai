@@ -1,11 +1,13 @@
 from torch import  nn
-from mixer_module import MLPMixer
+from .mixer_module import MLPMixer
 from einops.layers.torch import Rearrange
 import torch
 import torch.nn.functional as F
 from config import Config
 import pytorch_lightning as pl
-from utils import rmse
+from utils import TrainingUtils
+
+rmse = TrainingUtils.rmse
 
 class ForwardModel(pl.LightningModule):
     def __init__(self, config: Config):
@@ -22,7 +24,7 @@ class ForwardModel(pl.LightningModule):
                 in_channels=14,
                 image_size=1,
                 patch_size=1,
-                num_classes=self.config["num_wavelens"],
+                num_classes=self.config.num_wavelens,
                 dim=512,
                 depth=8,
                 token_dim=256,
@@ -61,7 +63,7 @@ class ForwardModel(pl.LightningModule):
         return loss
 
     def configure_optimizers(self):
-        return torch.optim.AdamW(self.parameters(), lr=self.config["forward_lr"])
+        return torch.optim.AdamW(self.parameters(), lr=self.config.forward_lr)
 
     def log_and_graph(self, y_pred, y, loss, stage):
         self.log(f"forward/{stage}/loss", loss, prog_bar=True)
