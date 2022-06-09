@@ -1,12 +1,13 @@
-from torch import nn
-from einops.layers.torch import Rearrange
+import pytorch_lightning as pl
 import torch
 import torch.nn.functional as F
+from torch import nn
+
 from config import Config
-import pytorch_lightning as pl
 from utils import TrainingUtils
-from .model_factory import ModelFactory
+
 from .model_config import ModelConfig
+from .model_factory import ModelFactory
 
 rmse = TrainingUtils.rmse
 
@@ -19,13 +20,15 @@ class Model(pl.LightningModule):
         self.config = config
         self.model_config = model_config
         self.initialize()
-        self.step_func = self.forward_step \
-            if self.model_config.direction == "forward" \
+        self.step_func = (
+            self.forward_step
+            if self.model_config.direction == "forward"
             else self.backward_step
+        )
 
     def initialize(self):
         _dummy_input = None
-        if self.model_config.direction == 'forward':
+        if self.model_config.direction == "forward":
             _dummy_input = torch.rand(2, 14)
         else:
             self.continuous_head = nn.LazyLinear(2)
@@ -35,12 +38,15 @@ class Model(pl.LightningModule):
         self.forward(_dummy_input)
 
     def forward(self, x):
-        return self.model(x) if self.model_config.direction == 'forward' \
+        return (
+            self.model(x)
+            if self.model_config.direction == "forward"
             else self.forward_of_backward_model(x)
+        )
 
     def predict_step(self, batch, _batch_nb):
-        if self.model_config.direction == 'forward':
-            raise Exception('forward direction predict is not implemented!')
+        if self.model_config.direction == "forward":
+            raise Exception("forward direction predict is not implemented!")
         out = {"params": None, "pred_emiss": None, "pred_loss": None}
         # If step data, there's no corresponding laser params
         try:
@@ -88,7 +94,6 @@ class Model(pl.LightningModule):
         self.log_and_graph(y_pred, y, loss, stage)
         return loss
 
-
     def forward_step(self, batch, batch_nb, stage: str):
         x, y, uids = batch
         y_pred = self(x)
@@ -106,8 +111,11 @@ class Model(pl.LightningModule):
         return self.step_func(batch, batch_nb, "test")
 
     def configure_optimizers(self):
-        lr = self.config.forward_lr if self.model_config.direction == "forward" \
+        lr = (
+            self.config.forward_lr
+            if self.model_config.direction == "forward"
             else self.config.backward_lr
+        )
         return torch.optim.AdamW(self.parameters(), lr=lr)
 
     def log_and_graph(self, y_pred, y, loss, stage):

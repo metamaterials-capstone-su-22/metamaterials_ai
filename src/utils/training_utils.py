@@ -2,7 +2,7 @@ from torch import Tensor
 from torch.nn.functional import mse_loss
 
 
-class TrainingUtils():
+class TrainingUtils:
     @staticmethod
     def rmse(pred: Tensor, target: Tensor, epsilon=1e-8):
         """Root mean squared error.

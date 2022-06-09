@@ -1,9 +1,10 @@
 import argparse
 
-class ArgParser():
+
+class ArgParser:
     def __init__(self):
-       self.args = ArgParser.initialize_parser()
-       
+        self.args = ArgParser.initialize_parser()
+
     @staticmethod
     def initialize_parser():
         parser = argparse.ArgumentParser()
@@ -63,10 +64,10 @@ class ArgParser():
         parser.add_argument(
             "--use-forward",
             type=eval,
-                choices=[True, False],
-                default=True,
-                help="Whether to use a forward model at all",
-            )
+            choices=[True, False],
+            default=True,
+            help="Whether to use a forward model at all",
+        )
         parser.add_argument(
             "--load-forward-checkpoint",
             type=eval,

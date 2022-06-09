@@ -3,11 +3,11 @@ from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.loggers import TensorBoardLogger, WandbLogger
 
 
-class Trainer():
+class Trainer:
     def __init__(self, config, direction):
-        '''
-            direction could be backward or forward
-        '''
+        """
+        direction could be backward or forward
+        """
         self.direction = direction
         self.config = config
 
@@ -25,16 +25,18 @@ class Trainer():
         )
 
     def get_num_of_epochs(self):
-        return self.config.forward_num_epochs \
-            if self.direction == 'forward' \
+        return (
+            self.config.forward_num_epochs
+            if self.direction == "forward"
             else self.config.backward_num_epochs
+        )
 
     def get_check_val_interval(self):
         num_epochs = self.get_num_of_epochs()
         return min(3, num_epochs - 1)
 
     def get_log_interval(self):
-        ''' The same as check_val interval'''
+        """The same as check_val interval"""
         return self.get_check_val_interval()
 
     def get_loggers(self):

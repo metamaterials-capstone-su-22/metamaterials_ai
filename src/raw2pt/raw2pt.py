@@ -21,9 +21,10 @@ from tqdm.contrib import tenumerate
 
 LaserParams, Emiss = torch.FloatTensor, torch.FloatTensor
 
+
 def parse_entry(filename: Path, db: list) -> None:
     pattern = re.compile(
-        pattern = re.compile(r"Power_(\d)_(\d)_W_Speed_(\d+)_mm_s_Spacing_(\d+)_um.txt")
+        pattern=re.compile(r"Power_(\d)_(\d)_W_Speed_(\d+)_mm_s_Spacing_(\d+)_um.txt")
         # r"Power_(\d)_(\d)_W_Speed_(.+)_mm_s_Spacing_(.+)_um\s*(\d+)\s*\.txt"
     )
     m = pattern.match(filename.name)
@@ -34,36 +35,40 @@ def parse_entry(filename: Path, db: list) -> None:
         int(m[1]) + int(m[2]) * 10**-1,
         float(m[3]),
         float(m[4]),
-        )
-    
+    )
+
     raw_data = pd.read_csv(
-            filename, header=None, names=["wavelens", "emisses"], delim_whitespace=True
+        filename, header=None, names=["wavelens", "emisses"], delim_whitespace=True
     )
 
     wavelens = raw_data.wavelens
     emisses = raw_data.emisses
 
     entry = {
-            "laser_repetition_rate_kHz": 100,
-            "laser_wavelength_nm": 1030,
-            "laser_polarization": "p-pol",
-            "laser_steering_equipment": "Galvano scanner",
-            "laser_hardware_model": "s-Pulse (Amplitude)",
-            "substrate_details": "SS foil with 0.5 mm thickness (GF90624180-20EA)",
-            "laser_power_W": power,
-            "laser_scanning_speed_x_dir_mm_per_s": x_speed,
-            "laser_scanning_line_spacing_y_dir_micron": y_spacing,
-            "substrate_material": "stainless_steel",
-            "emissivity_spectrum": [
-                {"wavelength_micron": w, "normal_emissivity": e}
-                for w, e in zip(wavelens, emisses)
-            ],
-            "emissivity_averaged_over_frequency": sum(emisses) / len(emisses),
+        "laser_repetition_rate_kHz": 100,
+        "laser_wavelength_nm": 1030,
+        "laser_polarization": "p-pol",
+        "laser_steering_equipment": "Galvano scanner",
+        "laser_hardware_model": "s-Pulse (Amplitude)",
+        "substrate_details": "SS foil with 0.5 mm thickness (GF90624180-20EA)",
+        "laser_power_W": power,
+        "laser_scanning_speed_x_dir_mm_per_s": x_speed,
+        "laser_scanning_line_spacing_y_dir_micron": y_spacing,
+        "substrate_material": "stainless_steel",
+        "emissivity_spectrum": [
+            {"wavelength_micron": w, "normal_emissivity": e}
+            for w, e in zip(wavelens, emisses)
+        ],
+        "emissivity_averaged_over_frequency": sum(emisses) / len(emisses),
     }
     db.append(entry)
 
+
 def raw_to_pt(
-    use_cache: bool = True, num_wavelens: int = 800, db: list = [], output_path="data/pt/data.pt"
+    use_cache: bool = True,
+    num_wavelens: int = 800,
+    db: list = [],
+    output_path="data/pt/data.pt",
 ) -> Tuple[LaserParams, Emiss, torch.LongTensor]:
     """Data is sorted in ascending order of wavelength."""
     if all(
@@ -183,7 +188,7 @@ def raw_to_pt(
             "interpolated_wavelength": interp_wavelengths,
             "normalized_laser_params": norm_laser_params,
         },
-       Path(output_path),
+        Path(output_path),
     )
 
     return norm_laser_params, interp_emissivities, uids
@@ -197,10 +202,10 @@ for p in Path(input_path).rglob("*.txt"):
     # print(p)
     parse_entry(p, data_emiss)
 
-print (len(data_emiss))
+print(len(data_emiss))
 
 laser_params, emiss, uids = raw_to_pt(
-            use_cache=False, num_wavelens=800, db=data_emiss, output_path = output_pt
-        )
+    use_cache=False, num_wavelens=800, db=data_emiss, output_path=output_pt
+)
 
-print ("Done!")
+print("Done!")

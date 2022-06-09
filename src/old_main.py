@@ -3,33 +3,31 @@
 from __future__ import annotations
 
 import argparse
-from cProfile import label
 import os
+import random
 import sys
+from cProfile import label
 from pathlib import Path
 from typing import List, Optional, TypedDict
 
 import matplotlib.pyplot as plt
+import numpy as np
 import pytorch_lightning as pl
 import torch
-from einops import rearrange, reduce, repeat
-from pytorch_lightning.callbacks import ModelCheckpoint
-from pytorch_lightning.loggers import TensorBoardLogger, WandbLogger
-from ray import tune
-from torch import Tensor
-
 import wandb
 from backwards import BackwardModel
 from data import BackwardDataModule, ForwardDataModule, StepTestDataModule
+from einops import rearrange, reduce, repeat
 from forwards import ForwardModel
 from nngraph import graph
-from utils import Config
+from pytorch_lightning.callbacks import ModelCheckpoint
+from pytorch_lightning.loggers import TensorBoardLogger, WandbLogger
+from ray import tune
+from sklearn.metrics import mean_squared_error
+from torch import Tensor
 
 import utils
-
-import random
-import numpy as np
-from sklearn.metrics import mean_squared_error
+from utils import Config
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -119,14 +117,14 @@ config: Config = {
     "forward_batch_size": args.forward_batch_size or tune.choice([2**9]),
     "backward_batch_size": args.backward_batch_size or tune.choice([2**9]),
     "use_cache": True,
-    #"use_cache": args.use_cache,
+    # "use_cache": args.use_cache,
     "use_forward": args.use_forward,
     "load_forward_checkpoint": True,
     "load_backward_checkpoint": True,
     "num_wavelens": args.num_wavelens,
     # Path to the working folder, checkpoint, graphs, ..
-    "work_path": 'local_work/',
-    "data_path": 'local_data/',  # Path to the data folder
+    "work_path": "local_work/",
+    "data_path": "local_data/",  # Path to the data folder
 }
 
 concrete_config: Config = Config(
@@ -182,7 +180,8 @@ def main(config: Config) -> None:
                 log_model=True,
             ),
             TensorBoardLogger(
-                save_dir="/data-new/spencersong/test_tube_logs/backward", name="Backward"
+                save_dir="/data-new/spencersong/test_tube_logs/backward",
+                name="Backward",
             ),
         ],
         callbacks=[
@@ -210,8 +209,7 @@ def main(config: Config) -> None:
     if config["use_forward"]:
         forward_model = ForwardModel(config)
         if not config["load_forward_checkpoint"]:
-            forward_trainer.fit(model=forward_model,
-                                datamodule=forward_data_module)
+            forward_trainer.fit(model=forward_model, datamodule=forward_data_module)
 
         forward_trainer.test(
             model=forward_model,
@@ -223,14 +221,12 @@ def main(config: Config) -> None:
             ),
             datamodule=forward_data_module,
         )
-        backward_model = BackwardModel(
-            config=config, forward_model=forward_model)
+        backward_model = BackwardModel(config=config, forward_model=forward_model)
     else:
         backward_model = BackwardModel(config=config, forward_model=None)
 
     if not config["load_backward_checkpoint"]:
-        backward_trainer.fit(model=backward_model,
-                             datamodule=backward_data_module)
+        backward_trainer.fit(model=backward_model, datamodule=backward_data_module)
 
     backward_trainer.test(
         model=backward_model,
@@ -261,15 +257,14 @@ def main(config: Config) -> None:
     wandb.finish()
 
     # graph(residualsflag = True, predsvstrueflag = True, index_str = params_str, target_str = save_str)
-    train_emiss = torch.load(
-        "/data-new/spencersong/data.pt")["interpolated_emissivity"]
+    train_emiss = torch.load("/data-new/spencersong/data.pt")["interpolated_emissivity"]
 
     true_emiss = preds[0]["true_emiss"]
     pred_array = []
 
-    #Variant num is the number of random curves to generate with jitter
+    # Variant num is the number of random curves to generate with jitter
     variant_num = 1
-    #Arbitrary list is the indices you want to look at in a tensor of emissivity curves. In the FoMM case, 0 = cutoff at 2.5 wl, 800 = cutoff at 12.5 wl.
+    # Arbitrary list is the indices you want to look at in a tensor of emissivity curves. In the FoMM case, 0 = cutoff at 2.5 wl, 800 = cutoff at 12.5 wl.
     arbitrary_list = [220]
     watt_list = [[] for i in range(variant_num)]
     speed_list = [[] for i in range(variant_num)]
@@ -278,20 +273,32 @@ def main(config: Config) -> None:
     param_std_total = 0
     print("start")
     for i in range(variant_num):
-        #new_true = [torch.tensor(emiss+random.uniform(-0.05, 0.05)) for emiss in true_emiss]
-        #jitter isn't doing anything XXX
+        # new_true = [torch.tensor(emiss+random.uniform(-0.05, 0.05)) for emiss in true_emiss]
+        # jitter isn't doing anything XXX
         random_mult = random.uniform(-0.3, 0.3)
-        new_true = torch.clamp(torch.tensor([[(random_mult*(1/emiss)*(e_index/3+100)/600)*emiss +
-                               emiss for e_index, emiss in enumerate(sub_emiss)] for sub_emiss in true_emiss]), 0, 1)
+        new_true = torch.clamp(
+            torch.tensor(
+                [
+                    [
+                        (random_mult * (1 / emiss) * (e_index / 3 + 100) / 600) * emiss
+                        + emiss
+                        for e_index, emiss in enumerate(sub_emiss)
+                    ]
+                    for sub_emiss in true_emiss
+                ]
+            ),
+            0,
+            1,
+        )
 
         if i == 0:
             new_true = true_emiss
         back = backward_model(new_true)
-        #add spacing
+        # add spacing
 
-        #minspeed = 10, maxspeed = 700
+        # minspeed = 10, maxspeed = 700
 
-        #min 1 max 42
+        # min 1 max 42
 
         new_pred = forward_model(back)
 
@@ -309,8 +316,7 @@ def main(config: Config) -> None:
 
 
 def plot_val(pred_emiss, true_emiss, index):
-    wavelen = torch.load(
-        "/data-new/spencersong/data.pt")["interpolated_wavelength"][0]
+    wavelen = torch.load("/data-new/spencersong/data.pt")["interpolated_wavelength"][0]
     pred_emiss = pred_emiss[0]
     extended_max = 2.5
     extended_min = 0.1
@@ -318,22 +324,28 @@ def plot_val(pred_emiss, true_emiss, index):
     granularity = 192
 
     extension = torch.tensor(
-        [extended_min+(i)/granularity*(extended_max-extended_min) for i in range(granularity)])
+        [
+            extended_min + (i) / granularity * (extended_max - extended_min)
+            for i in range(granularity)
+        ]
+    )
 
     extended_wave = torch.cat((extension, wavelen))
 
-    #extend the pred emiss
+    # extend the pred emiss
     old_emiss = pred_emiss
     first_emiss = np.float(old_emiss[0])
     new_emiss = torch.cat(
-        (torch.tensor([first_emiss for i in range(granularity)]), old_emiss))
+        (torch.tensor([first_emiss for i in range(granularity)]), old_emiss)
+    )
     pred_emiss = new_emiss
 
-    #extend the true emiss
+    # extend the true emiss
     old_emiss = true_emiss
     first_emiss = np.float(old_emiss[0])
     new_emiss = torch.cat(
-        (torch.tensor([first_emiss for i in range(granularity)]), old_emiss))
+        (torch.tensor([first_emiss for i in range(granularity)]), old_emiss)
+    )
     true_emiss = new_emiss
 
     wavelen = extended_wave
@@ -341,22 +353,28 @@ def plot_val(pred_emiss, true_emiss, index):
     fig, ax = plt.subplots()
     temp = 1400
     plot_index = 0
-    planck = [float(utils.planck_norm(wavelength, temp))
-              for wavelength in wavelen]
+    planck = [float(utils.planck_norm(wavelength, temp)) for wavelength in wavelen]
 
     planck_max = max(planck)
-    planck = [wave/planck_max for wave in planck]
+    planck = [wave / planck_max for wave in planck]
 
     new_score = 0
 
-    wavelen_cutoff = float(wavelen[index+granularity])
+    wavelen_cutoff = float(wavelen[index + granularity])
     # format the predicted params
     FoMM = utils.planck_emiss_prod(wavelen, pred_emiss, wavelen_cutoff, 1400)
 
-    ax.plot(wavelen, pred_emiss, c='blue', alpha=0.2, linewidth=1.0,
-            label=f'Predicted Emissivity, FoMM = {FoMM}')
-    ax.plot(wavelen, true_emiss, c='black',
-            label=f'Ideal target emissivity', linewidth=2.0)
+    ax.plot(
+        wavelen,
+        pred_emiss,
+        c="blue",
+        alpha=0.2,
+        linewidth=1.0,
+        label=f"Predicted Emissivity, FoMM = {FoMM}",
+    )
+    ax.plot(
+        wavelen, true_emiss, c="black", label=f"Ideal target emissivity", linewidth=2.0
+    )
     ax.legend()
     return fig
 

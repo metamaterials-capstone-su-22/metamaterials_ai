@@ -1,21 +1,24 @@
-from torch import nn
-from .mixer_module import MLPMixer
-from einops.layers.torch import Rearrange
+import pytorch_lightning as pl
 import torch
 import torch.nn.functional as F
-from config import Config
-import pytorch_lightning as pl
-from utils import TrainingUtils
+from einops.layers.torch import Rearrange
+from torch import nn
+
 from config import Config
 from models.model_config import ModelConfig
+from utils import TrainingUtils
 
-class MLPMixerArc():
+from .mixer_module import MLPMixer
+
+
+class MLPMixerArc:
     @staticmethod
     def create_model(model_config: ModelConfig):
-        return MLPMixerArc.create_forward_model(model_config) \
-            if model_config.direction == 'forward' \
+        return (
+            MLPMixerArc.create_forward_model(model_config)
+            if model_config.direction == "forward"
             else MLPMixerArc.create_backward_model(model_config)
-
+        )
 
     @staticmethod
     def create_forward_model(model_config: ModelConfig):

@@ -67,8 +67,7 @@ class MLPMixer(nn.Module):
 
         self.mixer_blocks = nn.ModuleList(
             [
-                MixerBlock(dim, self.num_patch, token_dim,
-                           channel_dim, dropout=dropout)
+                MixerBlock(dim, self.num_patch, token_dim, channel_dim, dropout=dropout)
                 for _ in range(depth)
             ]
         )

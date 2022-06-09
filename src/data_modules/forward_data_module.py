@@ -1,4 +1,3 @@
-
 import os
 import re
 from pathlib import Path
@@ -10,14 +9,14 @@ import pytorch_lightning as pl
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 from tqdm import tqdm
-from dto.data import Data
 
-from utils import DataUtils
 from config import Config
+from dto.data import Data
+from utils import DataUtils
 
 
 class ForwardDataModule(pl.LightningDataModule):
-    def __init__(self, config: Config, data: Data, direction:str) -> None:
+    def __init__(self, config: Config, data: Data, direction: str) -> None:
         super().__init__()
         self.config = config
         self.batch_size = self.config.forward_batch_size
@@ -26,19 +25,22 @@ class ForwardDataModule(pl.LightningDataModule):
 
     # TODO remove stage if it is not being used!!
     def setup(self, stage: Optional[str]) -> None:
-        data_path= self.config.data_path
+        data_path = self.config.data_path
         data = self.data
         direction = self.direction
-        laser_params, emiss, uids = data.norm_laser_params, \
-                data.interp_emissivities, data.uids
+        laser_params, emiss, uids = (
+            data.norm_laser_params,
+            data.interp_emissivities,
+            data.uids,
+        )
 
         splits = DataUtils.split(len(laser_params))
 
         self.train, self.val, self.test = [
             TensorDataset(
-                laser_params[splits[s].start: splits[s].stop],
-                emiss[splits[s].start: splits[s].stop],
-                uids[splits[s].start: splits[s].stop],
+                laser_params[splits[s].start : splits[s].stop],
+                emiss[splits[s].start : splits[s].stop],
+                uids[splits[s].start : splits[s].stop],
             )
             for s in ("train", "val", "test")
         ]

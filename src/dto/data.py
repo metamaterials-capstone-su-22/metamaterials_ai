@@ -1,5 +1,6 @@
 from pydantic import BaseModel
-from torch import LongTensor, FloatTensor
+from torch import FloatTensor, LongTensor
+
 
 class Data(BaseModel):
     norm_laser_params: FloatTensor

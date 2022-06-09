@@ -1,8 +1,8 @@
 from config import Config
-from utils import FileUtils, DataUtils
-from trainer import Trainer
 from data_modules import ForwardDataModule
 from models import Model, ModelConfig
+from trainer import Trainer
+from utils import DataUtils, FileUtils
 
 
 def main(config: Config):
@@ -18,9 +18,10 @@ def main(config: Config):
     # 2.1 Model Architecture
     # Note different arch can be loaded
     forward_model_config = ModelConfig(
-        arch=config.model_arch, direction='forward', num_classes=config.num_wavelens)
-    forward_trainer = Trainer(config, 'forward').get_trainer()
-    forward_data_module = ForwardDataModule(config, data, 'forward')
+        arch=config.model_arch, direction="forward", num_classes=config.num_wavelens
+    )
+    forward_trainer = Trainer(config, "forward").get_trainer()
+    forward_data_module = ForwardDataModule(config, data, "forward")
     forward_model = Model(config, forward_model_config)
     forward_trainer.fit(model=forward_model, datamodule=forward_data_module)
 
