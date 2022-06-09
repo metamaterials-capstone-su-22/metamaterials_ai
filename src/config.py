@@ -3,7 +3,7 @@ from argparser import ArgParser
 
 
 class Config(BaseModel):
-    backward_batch_size: int = 2**9
+    backward_batch_size: int = 200 #2**9
     backward_lr: float = 1e-6  # tune.loguniform(1e-6, 1e-5),
     backward_num_epochs: int = 5  # 2500
     data_path: str = 'local_data'  # Path to the data folder

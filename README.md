@@ -8,6 +8,19 @@ Create a virtual environment using Conda
 $ conda create -n meta python=3.10
 ```
 
+# Pre-run 
+
+You need to modify configuration file `config.py`
+
+**TODO**: Will add .env file to overload the config instead of manual config file changes.
+
+## Data path
+The data files will be read/stored in the location defined by `data_path` in the `config`. The default is `local_data` which is in the project folder. **Note** `local_data` folder is ignored and should not be pushed into the repo.
+
+## Work path
+The work folder is where the logs and checkpoints will be stored. the location is defined by `work_folder` in the `config`. The default is `local_work`. Make sure the folder pointed exists. **Note** `local_work` folder is ignored and should not be pushed into the repo.
+
+
 # How to use Poetry
 Poetry can be used to simplify dependency management.
 
