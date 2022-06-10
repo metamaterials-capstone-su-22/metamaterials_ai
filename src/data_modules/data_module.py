@@ -15,7 +15,7 @@ from dto.data import Data
 from utils import DataUtils
 
 
-class ForwardDataModule(pl.LightningDataModule):
+class DataModule(pl.LightningDataModule):
     def __init__(self, config: Config, data: Data, direction: str) -> None:
         super().__init__()
         self.config = config
@@ -38,9 +38,9 @@ class ForwardDataModule(pl.LightningDataModule):
 
         self.train, self.val, self.test = [
             TensorDataset(
-                laser_params[splits[s].start : splits[s].stop],
-                emiss[splits[s].start : splits[s].stop],
-                uids[splits[s].start : splits[s].stop],
+                laser_params[splits[s].start: splits[s].stop],
+                emiss[splits[s].start: splits[s].stop],
+                uids[splits[s].start: splits[s].stop],
             )
             for s in ("train", "val", "test")
         ]

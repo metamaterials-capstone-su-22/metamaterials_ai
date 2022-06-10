@@ -1,12 +1,7 @@
-import pytorch_lightning as pl
-import torch
-import torch.nn.functional as F
 from einops.layers.torch import Rearrange
 from torch import nn
 
-from config import Config
 from models.model_config import ModelConfig
-from utils import TrainingUtils
 
 from .mixer_module import MLPMixer
 

@@ -2,14 +2,41 @@ import pytorch_lightning as pl
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.loggers import TensorBoardLogger, WandbLogger
 
+from data_modules import DataModule
+from models import Model, ModelConfig
 
-class Trainer:
-    def __init__(self, config, direction):
+
+class TrainerFactory:
+    def __init__(self, config, data, direction):
         """
         direction could be backward or forward
         """
         self.direction = direction
         self.config = config
+        self.trainer = self.get_trainer()
+        self.data_module = DataModule(config, data, direction)
+        self.model_config = self.create_model_config(config)
+        self.model = self.create_model()
+
+    def fit(self):
+        trainer = self.get_trainer()
+        trainer.fit(model=self.model, datamodule=self.data_module)
+
+    def create_model(self):
+        return Model(self.config, self.model_config)
+
+    def create_model_config(self, config):
+        # Note different arch can be loaded
+        model_config = ModelConfig(
+            arch=config.model_arch,
+            direction=self.direction,
+            num_classes=config.num_wavelens
+        )
+        if self.direction == 'forward':
+            model_config.num_classes = config.num_wavelens
+        else:
+            model_config.in_channels = config.num_wavelens
+        return model_config
 
     def get_trainer(self):
         return pl.Trainer(

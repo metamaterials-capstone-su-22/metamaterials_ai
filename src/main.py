@@ -1,7 +1,5 @@
 from config import Config
-from data_modules import ForwardDataModule
-from models import Model, ModelConfig
-from trainer import Trainer
+from trainer_factory import TrainerFactory
 from utils import DataUtils, FileUtils
 
 
@@ -14,24 +12,12 @@ def main(config: Config):
     data = DataUtils.read_pt_data(config)
 
     # 2. forward training_step
-
-    # 2.1 Model Architecture
-    # Note different arch can be loaded
-    forward_model_config = ModelConfig(
-        arch=config.model_arch, direction="forward", num_classes=config.num_wavelens
-    )
-    forward_trainer = Trainer(config, "forward").get_trainer()
-    forward_data_module = ForwardDataModule(config, data, "forward")
-    forward_model = Model(config, forward_model_config)
-    forward_trainer.fit(model=forward_model, datamodule=forward_data_module)
+    # forward_trainer = TrainerFactory(config, data, "forward")
+    # forward_trainer.fit()
 
     # 3. backward training
-    # backward_model_config = ModelConfig(
-    #     arch=config.arch
-    #     , direction='backward'
-    #     , in_channels=config.num_wavelens)
-    # backward_trainer = Trainer(config, 'backward').get_trainer()
-    # backward_data_module = ForwardDataModule(config, data, 'backward')
+    backward_trainer = TrainerFactory(config, data, 'backward')
+    backward_trainer.fit()
 
     # 4. visualization
 
