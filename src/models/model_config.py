@@ -1,7 +1,5 @@
 from pydantic import BaseModel
 
-from config import Config
-
 
 class ModelConfig(BaseModel):
     arch: str

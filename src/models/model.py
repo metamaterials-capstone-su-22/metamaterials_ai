@@ -13,18 +13,19 @@ rmse = TrainingUtils.rmse
 
 
 class Model(pl.LightningModule):
-    def __init__(self, config: Config, model_config: ModelConfig):
+    def __init__(self, config: Config, model_config: ModelConfig, forward_model = None):
         super().__init__()
         self.save_hyperparameters()
         self.model = ModelFactory.get_model(model_config)
         self.config = config
         self.model_config = model_config
-        self.initialize()
+        self.forward_model = forward_model
         self.step_func = (
             self.forward_step
             if self.model_config.direction == "forward"
             else self.backward_step
         )
+        self.initialize()
 
     def initialize(self):
         _dummy_input = None
@@ -76,21 +77,23 @@ class Model(pl.LightningModule):
     def backward_step(self, batch, batch_nb, stage: str):
         y, x, uids = batch
 
-        x_pred = self(y)
+        y_pred = self(x)
         with torch.no_grad():
-            x_loss = rmse(x_pred, x)
+            loss = x_loss = rmse(y_pred, y)
             self.log(f"backward/{stage}/x/loss", x_loss, prog_bar=True)
         if self.forward_model is not None:
-            y_pred = self.forward_model(x_pred)
-            y_loss = rmse(y_pred, y)
+            x_pred = self.forward_model(y_pred)
+            x_loss = rmse(x_pred, x)
 
             self.log(
-                f"backward/{stage}/y/loss",
-                y_loss,
+                f"backward/{stage}/x/loss",
+                x_loss,
                 prog_bar=True,
             )
-
-            loss = y_loss
+            # use the forward loss 
+            loss = x_loss
+            y_pred = x_pred
+            y = x
         self.log_and_graph(y_pred, y, loss, stage)
         return loss
 

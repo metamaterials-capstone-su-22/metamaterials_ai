@@ -7,7 +7,7 @@ from models import Model, ModelConfig
 
 
 class TrainerFactory:
-    def __init__(self, config, data, direction):
+    def __init__(self, config, data, direction, forward_model : Model = None):
         """
         direction could be backward or forward
         """
@@ -17,10 +17,14 @@ class TrainerFactory:
         self.data_module = DataModule(config, data, direction)
         self.model_config = self.create_model_config(config)
         self.model = self.create_model()
+        self.forward_model = forward_model
+        self.trainer = self.get_trainer()
 
+    def test(self, checkpoint_path):
+        self.trainer.test(model=self.model, datamodule=self.data_module
+                          , ckpt_path= checkpoint_path)
     def fit(self):
-        trainer = self.get_trainer()
-        trainer.fit(model=self.model, datamodule=self.data_module)
+        self.trainer.fit(model=self.model, datamodule=self.data_module)
 
     def create_model(self):
         return Model(self.config, self.model_config)
