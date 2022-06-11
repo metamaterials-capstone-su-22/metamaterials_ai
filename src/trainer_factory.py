@@ -2,96 +2,54 @@ import pytorch_lightning as pl
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.loggers import TensorBoardLogger, WandbLogger
 
-from data_modules import DataModule
-from models import Model, ModelConfig
+from config import Config
 
 
 class TrainerFactory:
-    def __init__(self, config, data, direction, forward_model : Model = None):
-        """
-        direction could be backward or forward
-        """
-        self.direction = direction
+    def __init__(self, config: Config, data=None):
         self.config = config
-        self.trainer = self.get_trainer()
-        self.data_module = DataModule(config, data, direction)
-        self.model_config = self.create_model_config(config)
-        self.model = self.create_model()
-        self.forward_model = forward_model
-        self.trainer = self.get_trainer()
+        self.data = data
 
-    def test(self, checkpoint_path):
-        self.trainer.test(model=self.model, datamodule=self.data_module
-                          , ckpt_path= checkpoint_path)
-    def fit(self):
-        self.trainer.fit(model=self.model, datamodule=self.data_module)
+    def create_trainer(self, direction):
+        config = self.config
+        num_epochs = config.forward_num_epochs
+        refresh_rate = 2
+        if direction == "backward":
+            num_epochs = config.backward_num_epochs
+            refresh_rate = 10
+        return self.create_pl_trainer(direction, refresh_rate, num_epochs)
 
-    def create_model(self):
-        return Model(self.config, self.model_config)
-
-    def create_model_config(self, config):
-        # Note different arch can be loaded
-        model_config = ModelConfig(
-            arch=config.model_arch,
-            direction=self.direction,
-            num_classes=config.num_wavelens
-        )
-        if self.direction == 'forward':
-            model_config.num_classes = config.num_wavelens
-        else:
-            model_config.in_channels = config.num_wavelens
-        return model_config
-
-    def get_trainer(self):
+    def create_pl_trainer(self, direction, refresh_rate, epochs):
         return pl.Trainer(
-            max_epochs=self.get_num_of_epochs(),
-            logger=self.get_loggers(),
-            callbacks=self.get_callbacks(),
+            max_epochs=epochs,
+            logger=self.create_loggers(direction),
+            callbacks=self.create_callbacks(direction, refresh_rate),
             gpus=1,
             precision=32,
             weights_summary="full",
-            check_val_every_n_epoch=self.get_check_val_interval(),
+            check_val_every_n_epoch=min(3, epochs - 1),
             gradient_clip_val=0.5,
-            log_every_n_steps=self.get_log_interval(),
+            log_every_n_steps=min(3, epochs - 1),
         )
 
-    def get_num_of_epochs(self):
-        return (
-            self.config.forward_num_epochs
-            if self.direction == "forward"
-            else self.config.backward_num_epochs
-        )
-
-    def get_check_val_interval(self):
-        num_epochs = self.get_num_of_epochs()
-        return min(3, num_epochs - 1)
-
-    def get_log_interval(self):
-        """The same as check_val interval"""
-        return self.get_check_val_interval()
-
-    def get_loggers(self):
-        direction = self.direction
+    def create_loggers(self, direction):
         work_path = self.config.work_path
-        title = direction.title()
         return [
             WandbLogger(
-                name=f"{title} laser params",
+                name=f"{direction.title()} laser params",
                 save_dir=f"{work_path}/wandb_logs/{direction}",
                 offline=False,
-                project=f"Laser {title}",
+                project=f"Laser {direction.title()}",
                 log_model=True,
             ),
             TensorBoardLogger(
                 save_dir=f"{work_path}/test_tube_logs/{direction}",
-                name=f"{title}",
+                name=f"{direction.title()}",
             ),
         ]
 
-    def get_callbacks(self):
-        direction = self.direction
+    def create_callbacks(self, direction, refresh_rate):
         work_path = self.config.work_path
-
         return [
             ModelCheckpoint(
                 monitor=f"{direction}/val/loss",
@@ -100,5 +58,5 @@ class TrainerFactory:
                 mode="min",
                 save_last=True,
             ),
-            pl.callbacks.progress.TQDMProgressBar(refresh_rate=2),
+            pl.callbacks.progress.TQDMProgressBar(refresh_rate=refresh_rate),
         ]

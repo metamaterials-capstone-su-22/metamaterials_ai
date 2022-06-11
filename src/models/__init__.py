@@ -1,2 +1,3 @@
-from .model import Model
-from .model_config import ModelConfig
+from .backwards import BackwardModel
+from .forwards import ForwardModel
+from .model_factory import ModelFactory

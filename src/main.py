@@ -1,40 +1,54 @@
-from config import Config
-from trainer_factory import TrainerFactory
-from utils import DataUtils, FileUtils
+#!/usr/bin/env python3
+
+from __future__ import annotations
+
 from pathlib import Path
-import os
 
-def main(config: Config):
-    # TODO: add step to get raw file and create pt file from them (raw2pt)
-    # Get pt files (Downloading them if they are missing)
-    FileUtils.get_pt_files(config)
+import torch
+import wandb
 
-    # Load pt file data
-    data = DataUtils.read_pt_data(config)
+from config import Config
+from meta_trainer_facotry import MetaTrainerFactory
+from models import ForwardModel
+from plotter import Plotter
+
+
+def save_and_plot(backward_trainer, forward_model: ForwardModel):
+    preds: dict = backward_trainer.predict()
+
+    torch.save(
+        preds,
+        Path(f"{config.work_path}/preds.pt"),
+    )
+    wandb.finish()
+    # plotter needs the forward model to plot the result.
+    if forward_model:
+        plotter = Plotter()
+        plotter.plot_results(preds, forward_model, backward_trainer.model)
+
+
+def train_backward(meta_trainer, forward_model):
+    print("=" * 80)
+    print("Backward Model Step")
+    print("=" * 80)
+    backward_trainer = meta_trainer.create_meta_trainer("backward", forward_model)
+    if not config.load_backward_checkpoint:
+        backward_trainer.fit()
+
+    backward_trainer.test()
+    save_and_plot(backward_trainer, forward_model)
+
+def main(config: Config) -> None:
+    meta_trainer = MetaTrainerFactory(config)
     forward_model = None
-    # 2. forward training_step
     if config.use_forward:
-        forward_trainer = TrainerFactory(config, data, "forward")
-        if config.load_forward_checkpoint:
-            forward_trainer.test(
-                checkpoint_path=str(
-                    max(
-                        Path(f"{config.work_path}/weights/forward").glob("*.ckpt"),
-                        key=os.path.getctime,
-                    )
-                )
-            )
-        else:
+        forward_trainer = meta_trainer.create_meta_trainer("forward")
+        if not config.load_forward_checkpoint:
             forward_trainer.fit()
+        forward_trainer.test()
         forward_model = forward_trainer.model
 
-    # 3. backward training
-    backward_trainer = TrainerFactory(config, data, 'backward', forward_model)
-    backward_trainer.fit()
-
-    # 4. visualization
-
-    return True
+    train_backward(meta_trainer, forward_model)
 
 
 if __name__ == "__main__":

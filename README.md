@@ -2,6 +2,9 @@
 This repo contains the metamaterials AI Model and training processes.
 
 # How to use Conda
+Conda is an open-source package management system and environment management system that runs on Windows, macOS, and Linux. 
+One time installation is required. Follow the [instruction](https://docs.conda.io/projects/conda/en/latest/user-guide/install/linux.html) according your operating system.
+
 Create a virtual environment using Conda
 
 ```bash
@@ -10,7 +13,7 @@ $ conda create -n meta python=3.10
 
 # Pre-run 
 
-You need to modify configuration file `config.py`
+You need to modify configuration file `config.py`. Make sure that the `work_path` and `data_path` folders are created before start.
 
 **TODO**: Will add .env file to overload the config instead of manual config file changes.
 
@@ -25,7 +28,7 @@ The work folder is where the logs and checkpoints will be stored. the location i
 Poetry can be used to simplify dependency management.
 
 ## Poetry installation 
-One time installation is required. Follow the [instrunction](https://python-poetry.org/docs/#installation) according your operating system.
+One time installation is required. Follow the [instruction](https://python-poetry.org/docs/master/) according your operating system.
 
 ## Install packages using poetry
 

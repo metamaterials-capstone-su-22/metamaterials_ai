@@ -88,3 +88,26 @@ class MLPMixer(nn.Module):
         x = x.mean(dim=1)
 
         return self.mlp_head(x)
+
+
+if __name__ == "__main__":
+    img = torch.ones([1, 14, 1, 1])
+
+    model = MLPMixer(
+        in_channels=14,
+        image_size=1,
+        patch_size=1,
+        num_classes=1500,
+        dim=512,
+        depth=8,
+        token_dim=256,
+        channel_dim=2048,
+    )
+
+    parameters = filter(lambda p: p.requires_grad, model.parameters())
+    parameters = sum([np.prod(p.size()) for p in parameters]) / 1_000_000
+    print("Trainable Parameters: %.3fM" % parameters)
+
+    out_img = model(img)
+
+    print("Shape of out :", out_img.shape)  # [B, in_channels, image_size, image_size]

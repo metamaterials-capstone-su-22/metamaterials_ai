@@ -1,9 +1,18 @@
-from .mlp_mixer import MLPMixerArc
-from .model_config import ModelConfig
+from config import Config
+
+from .backwards import BackwardModel
+from .forwards import ForwardModel
 
 
 class ModelFactory:
-    @staticmethod
-    def get_model(model_config: ModelConfig):
-        if model_config.arch == "MLPMixer":
-            return MLPMixerArc.create_model(model_config)
+    def __init__(self, config: Config):
+        self.config = config
+
+    def create_model(self, direction, forward_model: ForwardModel = None):
+        model = None
+        config = self.config
+        if direction == "backward":
+            model = BackwardModel(config, forward_model)
+        else:
+            model = ForwardModel(config)
+        return model
