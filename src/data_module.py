@@ -7,12 +7,10 @@ from typing import Optional
 import pytorch_lightning as pl
 import torch
 from torch.utils.data import DataLoader, TensorDataset
-from tqdm import tqdm
-from tqdm.contrib import tenumerate
 
 import utils
 from config import Config
-from utils import rmse, split, FileUtils
+from utils import FileUtils, split
 
 LaserParams, Emiss = torch.FloatTensor, torch.FloatTensor
 
@@ -27,10 +25,8 @@ class ForwardDataModule(pl.LightningDataModule):
         self.batch_size = self.config.forward_batch_size
 
     def setup(self, stage: Optional[str]) -> None:
-
-        data = FileUtils.read_pt_data(
-            self.config.data_folder, self.config.data_file
-        )
+        work_folder = self.config.work_folder
+        data = FileUtils.read_pt_data(self.config.data_folder, self.config.data_file)
 
         laser_params, emiss, uids = (
             data.norm_laser_params,
@@ -41,23 +37,23 @@ class ForwardDataModule(pl.LightningDataModule):
 
         self.train, self.val, self.test = [
             TensorDataset(
-                laser_params[splits[s].start: splits[s].stop],
-                emiss[splits[s].start: splits[s].stop],
-                uids[splits[s].start: splits[s].stop],
+                laser_params[splits[s].start : splits[s].stop],
+                emiss[splits[s].start : splits[s].stop],
+                uids[splits[s].start : splits[s].stop],
             )
             for s in ("train", "val", "test")
         ]
-        torch.save(self.train, "local_work/forward_train_true.pt")
-        torch.save(self.val, "local_work/forward_val_true.pt")
-        torch.save(self.test, "local_work/forward_test_true.pt")
+        torch.save(self.train, f"{work_folder}/forward_train_true.pt")
+        torch.save(self.val, f"{work_folder}/forward_val_true.pt")
+        torch.save(self.test, f"{work_folder}/forward_test_true.pt")
 
     def train_dataloader(self) -> DataLoader:
         return DataLoader(
             dataset=self.train,
             batch_size=self.batch_size,
             shuffle=True,
-            num_workers=16,
             pin_memory=True,
+            num_workers=16,
         )
 
     def val_dataloader(self) -> DataLoader:
@@ -86,10 +82,9 @@ class BackwardDataModule(pl.LightningDataModule):
         self.batch_size = self.config.backward_batch_size
 
     def setup(self, stage: Optional[str]) -> None:
+        work_folder = self.config.work_folder
 
-        data = FileUtils.read_pt_data(
-            self.config.data_folder, self.config.data_file
-        )
+        data = FileUtils.read_pt_data(self.config.data_folder, self.config.data_file)
 
         laser_params, emiss, uids = (
             data.norm_laser_params,
@@ -101,23 +96,23 @@ class BackwardDataModule(pl.LightningDataModule):
 
         self.train, self.val, self.test = [
             TensorDataset(
-                emiss[splits[s].start: splits[s].stop],
-                laser_params[splits[s].start: splits[s].stop],
-                uids[splits[s].start: splits[s].stop],
+                emiss[splits[s].start : splits[s].stop],
+                laser_params[splits[s].start : splits[s].stop],
+                uids[splits[s].start : splits[s].stop],
             )
             for s in ("train", "val", "test")
         ]
-        torch.save(self.train, "local_work/backward_train_true.pt")
-        torch.save(self.val, "local_work/backward_val_true.pt")
-        torch.save(self.test, "local_work/backward_test_true.pt")
+        torch.save(self.train, f"{work_folder}/backward_train_true.pt")
+        torch.save(self.val, f"{work_folder}/backward_val_true.pt")
+        torch.save(self.test, f"{work_folder}/backward_test_true.pt")
 
     def train_dataloader(self) -> DataLoader:
         return DataLoader(
             dataset=self.train,
             batch_size=self.batch_size,
             shuffle=True,
-            num_workers=16,
             pin_memory=True,
+            num_workers=16,
         )
 
     def val_dataloader(self) -> DataLoader:

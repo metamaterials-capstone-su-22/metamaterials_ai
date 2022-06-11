@@ -2,10 +2,9 @@ from getpass import getpass
 from pathlib import Path
 
 import gdown
+import torch
 
 from dto import Data
-
-import torch
 
 
 class FileUtils:
@@ -22,8 +21,7 @@ class FileUtils:
                 )
                 print("Downloading process completed")
             except Exception as e:
-                print(
-                    f"Error: Something went wrong downloading data fiels. Error {e}.")
+                print(f"Error: Something went wrong downloading data fiels. Error {e}.")
                 raise
 
         else:
@@ -53,19 +51,17 @@ class FileUtils:
             except FileExistsError:
                 print(f"Info: '{path}' exist.")
             except Exception as e:
-                print(
-                    f"Error: something wrong creating '{path}'. message: {e}.")
+                print(f"Error: something wrong creating '{path}'. message: {e}.")
                 raise
 
     @staticmethod
-    def read_pt_data(data_folder: str,  data_file: str) -> Data:
+    def read_pt_data(data_folder: str, data_file: str) -> Data:
         """Read data from pt file (saved as pytorch tensor)"""
         data_file = Path(f"{data_folder}/{data_file}")
         try:
             data = torch.load(data_file)
         except Exception as e:
-            print(
-                f"Trouble in loading data file: {data_file}. Error: {e.message}")
+            print(f"Trouble in loading data file: {data_file}. Error: {e.message}")
 
         # Set the number of wavelengths
         # config.num_wavelens = data["interpolated_emissivity"].shape[-1]

@@ -8,37 +8,39 @@ import torch
 import wandb
 
 from config import Config
-from utils import FileUtils
 from meta_trainer_facotry import MetaTrainerFactory
 from models import ForwardModel
 from plotter import Plotter
+from utils import FileUtils
 
 
-def save_and_plot(backward_trainer, forward_model: ForwardModel):
+def save_and_plot(
+    backward_trainer, forward_model: ForwardModel, work_folder: str, data_folder: str
+):
     preds: dict = backward_trainer.predict()
 
     torch.save(
         preds,
-        Path(f"{config.work_folder}/preds.pt"),
+        Path(f"{work_folder}/preds.pt"),
     )
     wandb.finish()
     # plotter needs the forward model to plot the result.
     if forward_model:
-        plotter = Plotter()
-        plotter.plot_results(preds, forward_model, backward_trainer.model)
+        Plotter.plot_results(
+            preds, forward_model, backward_trainer.model, work_folder, data_folder
+        )
 
 
 def train_backward(meta_trainer, forward_model):
     print("=" * 80)
     print("Backward Model Step")
     print("=" * 80)
-    backward_trainer = meta_trainer.create_meta_trainer(
-        "backward", forward_model)
+    backward_trainer = meta_trainer.create_meta_trainer("backward", forward_model)
     if not config.load_backward_checkpoint:
         backward_trainer.fit()
 
     backward_trainer.test()
-    save_and_plot(backward_trainer, forward_model)
+    save_and_plot(backward_trainer, forward_model, config.work_folder, config.data_folder)
 
 
 def setup():

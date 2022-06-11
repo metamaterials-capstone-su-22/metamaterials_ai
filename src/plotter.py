@@ -8,7 +8,10 @@ import utils
 
 
 class Plotter:
-    def plot_results(self, preds, forward_model, backward_model):
+    @staticmethod
+    def plot_results(
+        preds, forward_model, backward_model, work_folder: str, data_folder: str
+    ):
         # graph(residualsflag = True, predsvstrueflag = True, index_str = params_str, target_str = save_str)
         true_emiss = preds[0]["true_emiss"]
         pred_array = []
@@ -18,7 +21,7 @@ class Plotter:
         # Arbitrary list is the indices you want to look at in a tensor of emissivity curves. In the FoMM case, 0 = cutoff at 2.5 wl, 800 = cutoff at 12.5 wl.
         arbitrary_list = [220]
 
-        print("start")
+        print("start plotting ...")
         for i in range(variant_num):
             # new_true = [torch.tensor(emiss+random.uniform(-0.05, 0.05)) for emiss in true_emiss]
             # jitter isn't doing anything XXX
@@ -57,12 +60,13 @@ class Plotter:
             for j in range(variant_num):
                 pred_emiss.append(pred_array[j][i])
             pred_emiss = torch.stack(pred_emiss)
-            fig = self.plot_val(pred_emiss, true_emiss[i], i)
-            fig.savefig(f"local_work/figs/{i}_predicted.png", dpi=300)
+            fig = Plotter.plot_val(pred_emiss, true_emiss[i], i, data_folder)
+            fig.savefig(f"{work_folder}/figs/{i}_predicted.png", dpi=300)
             plt.close(fig)
 
-    def plot_val(self, pred_emiss, true_emiss, index):
-        wavelen = torch.load("local_data/stainless_steel.pt")[
+    @staticmethod
+    def plot_val(pred_emiss, true_emiss, index, data_folder):
+        wavelen = torch.load(f"{data_folder}/stainless_steel.pt")[
             "interpolated_wavelength"
         ][0]
         pred_emiss = pred_emiss[0]

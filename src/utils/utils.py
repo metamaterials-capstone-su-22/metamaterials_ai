@@ -110,7 +110,7 @@ def step_at_n(n: float = 3.5, max: float = 12):
 
 
 def get_latest_chk_point_path(work_folder, direction):
-    path =  Path(f"{work_folder}/weights/{direction}")
+    path = Path(f"{work_folder}/weights/{direction}")
     try:
         return str(
             max(
@@ -119,9 +119,10 @@ def get_latest_chk_point_path(work_folder, direction):
             )
         )
     except Exception as e:
-        print(f'Error: Could not load the latest check point for *.ckpt files! Check path {path}. Error. {e}')
-        print(f'Note: To start from scratch set the config flag to not load chekcpoint.')
+        print(
+            f"Error: Could not load the latest check point for *.ckpt files! Check path {path}. Error. {e}"
+        )
+        print(
+            f"Note: To start from scratch set the config flag to not load chekcpoint."
+        )
         raise
-
-
-    
