@@ -26,15 +26,13 @@ class MetaTrainer(BaseModel):
         self.trainer.fit(model=self.model, datamodule=self.data_module)
 
     def test(self):
-        ckpt_path = get_latest_chk_point_path(
-            self.config.work_folder, self.direction)
+        ckpt_path = get_latest_chk_point_path(self.config.work_folder, self.direction)
         self.trainer.test(
             model=self.model, ckpt_path=ckpt_path, datamodule=self.data_module
         )
 
     def predict(self):
-        ckpt_path = get_latest_chk_point_path(
-            self.config.work_folder, self.direction)
+        ckpt_path = get_latest_chk_point_path(self.config.work_folder, self.direction)
         return self.trainer.predict(
             model=self.model,
             ckpt_path=ckpt_path,

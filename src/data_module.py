@@ -79,9 +79,9 @@ class DataModule(pl.LightningDataModule):
     def backward_split(self, data: Data, splits: dict[Stage, range]):
         self.train, self.val, self.test = [
             TensorDataset(
-                data.emiss[splits[s].start: splits[s].stop],
-                data.laser_params[splits[s].start: splits[s].stop],
-                data.uids[splits[s].start: splits[s].stop],
+                data.emiss[splits[s].start : splits[s].stop],
+                data.laser_params[splits[s].start : splits[s].stop],
+                data.uids[splits[s].start : splits[s].stop],
             )
             for s in ("train", "val", "test")
         ]
@@ -89,9 +89,9 @@ class DataModule(pl.LightningDataModule):
     def forward_split(self, data: Data, splits: dict[Stage, range]):
         self.train, self.val, self.test = [
             TensorDataset(
-                data.laser_params[splits[s].start: splits[s].stop],
-                data.emiss[splits[s].start: splits[s].stop],
-                data.uids[splits[s].start: splits[s].stop],
+                data.laser_params[splits[s].start : splits[s].stop],
+                data.emiss[splits[s].start : splits[s].stop],
+                data.uids[splits[s].start : splits[s].stop],
             )
             for s in ("train", "val", "test")
         ]

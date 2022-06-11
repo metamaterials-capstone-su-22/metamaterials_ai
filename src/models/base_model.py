@@ -10,7 +10,6 @@ from torch import nn
 
 import nngraph
 from config import Config
-from mixer import MLPMixer
 from utils import Stage, rmse, split
 
 
@@ -23,10 +22,10 @@ class BaseModel(pl.LightningModule):
         super().__init__()
         # self.save_hyperparameters()
         self.config = config
+        self.direction = direction
+        self.work_folder = config.work_folder
         self.model = self.create_model_arc()
         self.initialize_model()
-        self.work_folder = config.work_folder
-        self.direction = direction
 
     def should_create_graph(self, stage):
         should_create_graph: bool = False

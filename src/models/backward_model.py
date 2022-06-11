@@ -5,15 +5,15 @@ from typing import Optional
 
 import torch
 import torch.nn.functional as F
-from einops.layers.torch import Rearrange
 from torch import nn
 
 from config import Config
-from mixer import MLPMixer
 from utils import rmse
 
 from .base_model import BaseModel
-from .forwards import ForwardModel
+from .forward_model import ForwardModel
+from .model_arch_factory import ModelArchFactory
+from .model_config import ModelConfig
 
 
 class BackwardModel(BaseModel):
@@ -23,6 +23,11 @@ class BackwardModel(BaseModel):
         forward_model: Optional[ForwardModel] = None,
     ) -> None:
         # self.save_hyperparameters()
+        self.model_config = ModelConfig(
+            arch=config.model_arch,
+            direction="backward",
+            in_channels=config.num_wavelens,
+        )
         super().__init__(config, direction="backward")
         if forward_model is None:
             self.forward_model = None
@@ -31,21 +36,7 @@ class BackwardModel(BaseModel):
             self.forward_model.freeze()
 
     def create_model_arc(self):
-        return nn.Sequential(
-            Rearrange("b c -> b c 1 1"),
-            MLPMixer(
-                in_channels=self.config.num_wavelens,
-                image_size=1,
-                patch_size=1,
-                num_classes=1_000,
-                dim=512,
-                depth=8,
-                token_dim=256,
-                channel_dim=2048,
-                dropout=0.5,
-            ),
-            nn.Flatten(),
-        )
+        return ModelArchFactory.create_model_arch(self.model_config)
 
     def initialize_model(self):
         self.continuous_head = nn.LazyLinear(2)

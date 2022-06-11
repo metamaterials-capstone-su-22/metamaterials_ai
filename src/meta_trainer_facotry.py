@@ -1,7 +1,7 @@
 from data_module import DataModule
 from meta_trainer import MetaTrainer
 from models import ModelFactory
-from src.models.forwards import ForwardModel
+from models.forward_model import ForwardModel
 from trainer_factory import TrainerFactory
 
 

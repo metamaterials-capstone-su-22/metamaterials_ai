@@ -1,7 +1,7 @@
 from config import Config
 
-from .backwards import BackwardModel
-from .forwards import ForwardModel
+from .backward_model import BackwardModel
+from .forward_model import ForwardModel
 
 
 class ModelFactory:

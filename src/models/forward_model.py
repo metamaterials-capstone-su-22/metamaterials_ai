@@ -2,37 +2,25 @@
 from __future__ import annotations
 
 import torch
-from einops.layers.torch import Rearrange
-from torch import nn
 
 from config import Config
-from mixer import MLPMixer
 from utils import rmse
 
 from .base_model import BaseModel
+from .model_arch_factory import ModelArchFactory
+from .model_config import ModelConfig
 
 
 class ForwardModel(BaseModel):
     def __init__(self, config: Config):
         self.save_hyperparameters()
+        self.model_config = ModelConfig(
+            arch=config.model_arch, direction="forward", num_classes=config.num_wavelens
+        )
         super().__init__(config, direction="forward")
 
     def create_model_arc(self):
-        return nn.Sequential(
-            Rearrange("b c -> b c 1 1"),
-            MLPMixer(
-                in_channels=14,
-                image_size=1,
-                patch_size=1,
-                num_classes=self.config.num_wavelens,
-                dim=512,
-                depth=8,
-                token_dim=256,
-                channel_dim=2048,
-                dropout=0.5,
-            ),
-            nn.Sigmoid(),
-        )
+        return ModelArchFactory.create_model_arch(self.model_config)
 
     def initialize_model(self):
         # TODO how to reverse the *data* in the Linear layers easily? transpose?
