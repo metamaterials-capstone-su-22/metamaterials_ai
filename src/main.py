@@ -11,6 +11,7 @@ from config import Config
 from meta_trainer_facotry import MetaTrainerFactory
 from models import ForwardModel
 from plotter import Plotter
+from file_utils import FileUtils
 
 
 def save_and_plot(backward_trainer, forward_model: ForwardModel):
@@ -38,7 +39,12 @@ def train_backward(meta_trainer, forward_model):
     backward_trainer.test()
     save_and_plot(backward_trainer, forward_model)
 
+def setup():    
+    FileUtils.setup_folder_structure(config.work_path, config.data_path)
+    FileUtils.get_pt_files(config.data_path, config.data_file)
+
 def main(config: Config) -> None:
+    setup()
     meta_trainer = MetaTrainerFactory(config)
     forward_model = None
     if config.use_forward:
