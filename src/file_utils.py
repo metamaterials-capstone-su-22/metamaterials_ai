@@ -8,16 +8,20 @@ from config import Config
 
 class FileUtils:
     @staticmethod
-    def get_pt_files(data_path:str, data_file:str):
+    def get_pt_files(data_path: str, data_file: str):
         """This will fetch all the files in a data folder if
         the specific file does not exit"""
         if not FileUtils.data_exist(data_path, data_file):
-            file_id = getpass("Enter data folder id:")
-            print("Downloading data files ...")
-            gdown.download_folder(
-                id=file_id, quiet=True, use_cookies=False, output="local_data"
-            )
-            print("Downloading process completed")
+            try:
+                file_id = getpass("Enter data folder id:")
+                print("Downloading data files ...")
+                gdown.download_folder(
+                    id=file_id, quiet=True, use_cookies=False, output="local_data"
+                )
+                print("Downloading process completed")
+            except Exception as e:
+                print(f"Error: Something went wrong downloading data fiels. Error {e}.")
+                raise
 
         else:
             print(
@@ -31,15 +35,14 @@ class FileUtils:
 
     @staticmethod
     def setup_folder_structure(work_path: str, data_path: str):
-        paths : list[Path] = []
-        paths.append( Path(f"{work_path}/figs"))
-        paths.append( Path(f"{data_path}"))
-        for d in ['forward', 'backward']:
-            paths.append( Path(f"{work_path}/wandb_logs/{d}/wandb"))
+        paths: list[Path] = []
+        paths.append(Path(f"{work_path}/figs"))
+        paths.append(Path(f"{data_path}"))
+        for d in ["forward", "backward"]:
+            paths.append(Path(f"{work_path}/wandb_logs/{d}/wandb"))
         FileUtils.create_folders(paths)
 
-
-    @staticmethod    
+    @staticmethod
     def create_folders(paths: list[Path]):
         for path in paths:
             try:
@@ -49,8 +52,3 @@ class FileUtils:
             except Exception as e:
                 print(f"Error: something wrong creating '{path}'. message: {e}.")
                 raise
-
-
-
-
-
