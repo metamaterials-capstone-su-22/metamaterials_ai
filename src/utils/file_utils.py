@@ -10,10 +10,10 @@ import torch
 
 class FileUtils:
     @staticmethod
-    def fetch_pt_files(data_path: str, data_file: str):
+    def fetch_pt_files(data_folder: str, data_file: str):
         """This will fetch all the files in a data folder if
         the specific file does not exit"""
-        if not FileUtils.data_exist(data_path, data_file):
+        if not FileUtils.data_exist(data_folder, data_file):
             try:
                 file_id = getpass("Enter data folder id:")
                 print("Downloading data files ...")
@@ -28,21 +28,21 @@ class FileUtils:
 
         else:
             print(
-                f"Info: Data file exists @ {data_path}/{data_file}.pt, delete it if you want to fetch it again"
+                f"Info: Data file exists @ {data_folder}/{data_file}.pt, delete it if you want to fetch it again"
             )
 
     @staticmethod
-    def data_exist(data_path: str, data_file: str):
+    def data_exist(data_folder: str, data_file: str):
         """This checks only for 1 file based on substrate type"""
-        return Path(f"{data_path}/{data_file}").is_file()
+        return Path(f"{data_folder}/{data_file}").is_file()
 
     @staticmethod
-    def setup_folder_structure(work_path: str, data_path: str):
+    def setup_folder_structure(work_folder: str, data_folder: str):
         paths: list[Path] = []
-        paths.append(Path(f"{work_path}/figs"))
-        paths.append(Path(f"{data_path}"))
+        paths.append(Path(f"{work_folder}/figs"))
+        paths.append(Path(f"{data_folder}"))
         for d in ["forward", "backward"]:
-            paths.append(Path(f"{work_path}/wandb_logs/{d}/wandb"))
+            paths.append(Path(f"{work_folder}/wandb_logs/{d}/wandb"))
         FileUtils.create_folders(paths)
 
     @staticmethod
@@ -58,9 +58,9 @@ class FileUtils:
                 raise
 
     @staticmethod
-    def read_pt_data(data_path: str,  data_file: str) -> Data:
+    def read_pt_data(data_folder: str,  data_file: str) -> Data:
         """Read data from pt file (saved as pytorch tensor)"""
-        data_file = Path(f"{data_path}/{data_file}")
+        data_file = Path(f"{data_folder}/{data_file}")
         try:
             data = torch.load(data_file)
         except Exception as e:

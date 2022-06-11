@@ -33,27 +33,27 @@ class TrainerFactory:
         )
 
     def create_loggers(self, direction):
-        work_path = self.config.work_path
+        work_folder = self.config.work_folder
         return [
             WandbLogger(
                 name=f"{direction.title()} laser params",
-                save_dir=f"{work_path}/wandb_logs/{direction}",
+                save_dir=f"{work_folder}/wandb_logs/{direction}",
                 offline=False,
                 project=f"Laser {direction.title()}",
                 log_model=True,
             ),
             TensorBoardLogger(
-                save_dir=f"{work_path}/test_tube_logs/{direction}",
+                save_dir=f"{work_folder}/test_tube_logs/{direction}",
                 name=f"{direction.title()}",
             ),
         ]
 
     def create_callbacks(self, direction, refresh_rate):
-        work_path = self.config.work_path
+        work_folder = self.config.work_folder
         return [
             ModelCheckpoint(
                 monitor=f"{direction}/val/loss",
-                dirpath=f"{work_path}/weights/{direction}",
+                dirpath=f"{work_folder}/weights/{direction}",
                 save_top_k=1,
                 mode="min",
                 save_last=True,

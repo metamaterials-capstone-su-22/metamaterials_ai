@@ -19,7 +19,7 @@ def save_and_plot(backward_trainer, forward_model: ForwardModel):
 
     torch.save(
         preds,
-        Path(f"{config.work_path}/preds.pt"),
+        Path(f"{config.work_folder}/preds.pt"),
     )
     wandb.finish()
     # plotter needs the forward model to plot the result.
@@ -42,8 +42,8 @@ def train_backward(meta_trainer, forward_model):
 
 
 def setup():
-    FileUtils.setup_folder_structure(config.work_path, config.data_path)
-    FileUtils.fetch_pt_files(config.data_path, config.data_file)
+    FileUtils.setup_folder_structure(config.work_folder, config.data_folder)
+    FileUtils.fetch_pt_files(config.data_folder, config.data_file)
 
 
 def main(config: Config) -> None:

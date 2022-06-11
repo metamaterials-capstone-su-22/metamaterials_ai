@@ -29,7 +29,7 @@ class ForwardDataModule(pl.LightningDataModule):
     def setup(self, stage: Optional[str]) -> None:
 
         data = FileUtils.read_pt_data(
-            self.config.data_path, self.config.data_file
+            self.config.data_folder, self.config.data_file
         )
 
         laser_params, emiss, uids = (
@@ -41,9 +41,9 @@ class ForwardDataModule(pl.LightningDataModule):
 
         self.train, self.val, self.test = [
             TensorDataset(
-                laser_params[splits[s].start : splits[s].stop],
-                emiss[splits[s].start : splits[s].stop],
-                uids[splits[s].start : splits[s].stop],
+                laser_params[splits[s].start: splits[s].stop],
+                emiss[splits[s].start: splits[s].stop],
+                uids[splits[s].start: splits[s].stop],
             )
             for s in ("train", "val", "test")
         ]
@@ -88,7 +88,7 @@ class BackwardDataModule(pl.LightningDataModule):
     def setup(self, stage: Optional[str]) -> None:
 
         data = FileUtils.read_pt_data(
-            self.config.data_path, self.config.data_file
+            self.config.data_folder, self.config.data_file
         )
 
         laser_params, emiss, uids = (
@@ -101,9 +101,9 @@ class BackwardDataModule(pl.LightningDataModule):
 
         self.train, self.val, self.test = [
             TensorDataset(
-                emiss[splits[s].start : splits[s].stop],
-                laser_params[splits[s].start : splits[s].stop],
-                uids[splits[s].start : splits[s].stop],
+                emiss[splits[s].start: splits[s].stop],
+                laser_params[splits[s].start: splits[s].stop],
+                uids[splits[s].start: splits[s].stop],
             )
             for s in ("train", "val", "test")
         ]

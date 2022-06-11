@@ -1,4 +1,4 @@
-from data import BackwardDataModule, ForwardDataModule
+from data_module import BackwardDataModule, ForwardDataModule
 from meta_trainer import MetaTrainer
 from models import ModelFactory
 from src.models.forwards import ForwardModel

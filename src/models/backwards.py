@@ -116,10 +116,10 @@ class BackwardModel(BaseModel):
         return loss
 
     def save_test_restult(self, x, y, y_pred, x_pred):
-        torch.save(x, f"{self.work_path}/params_true_back.pt")
-        torch.save(y, f"{self.work_path}/emiss_true_back.pt")
-        torch.save(y_pred, f"{self.work_path}/emiss_pred.pt")
-        torch.save(x_pred, f"{self.work_path}/param_pred.pt")
+        torch.save(x, f"{self.work_folder}/params_true_back.pt")
+        torch.save(y, f"{self.work_folder}/emiss_true_back.pt")
+        torch.save(y_pred, f"{self.work_folder}/emiss_pred.pt")
+        torch.save(x_pred, f"{self.work_folder}/param_pred.pt")
 
     def configure_optimizers(self):
         return torch.optim.AdamW(self.parameters(), lr=self.config.backward_lr)

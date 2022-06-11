@@ -7,7 +7,7 @@ class Config(BaseModel):
     backward_num_epochs: int = 2  # 2500
     create_plots = False
     data_file = "stainless_steel.pt"  # name of the data file
-    data_path: str = "local_data"  # Path to the data folder
+    data_folder: str = "local_data"  # Path to the data folder
     forward_batch_size: int = 1000  # 2**9
     forward_lr: float = 1e-6  # tune.loguniform(1e-7, 1e-4),
     forward_num_epochs: int = 2  # 1600
@@ -22,7 +22,7 @@ class Config(BaseModel):
     use_cache: bool = True
     use_forward: bool = True
     # Path to the working folder, checkpoint, graphs, ..
-    work_path: str = "local_work"
+    work_folder: str = "local_work"
 
     def __init__(self, **data):
         super().__init__(**data)

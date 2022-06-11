@@ -25,7 +25,7 @@ class BaseModel(pl.LightningModule):
         self.config = config
         self.model = self.create_model_arc()
         self.initialize_model()
-        self.work_path = config.work_path
+        self.work_folder = config.work_folder
         self.direction = direction
 
     def should_create_graph(self, stage):
@@ -49,7 +49,7 @@ class BaseModel(pl.LightningModule):
                 nngraph.save_integral_emiss_point(
                     y_pred,
                     y,
-                    f"{self.work_path}/{self.direction}_{stage}_points.txt",
+                    f"{self.work_folder}/{self.direction}_{stage}_points.txt",
                     all_points=True,
                 )
             except Exception as e:

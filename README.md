@@ -14,12 +14,12 @@ In the above command `meta` is the name of the environemt.
 
 # Pre-run 
 
-You need to modify configuration file `config.py`. Make sure that the `work_path` and `data_path` folders are created before start.
+You need to modify configuration file `config.py`. Make sure that the `work_folder` and `data_folder` folders are created before start.
 
 **TODO**: Will add .env file to overload the config instead of manual config file changes.
 
 ## Data path
-The data files will be read/stored in the location defined by `data_path` in the `config`. 
+The data files will be read/stored in the location defined by `data_folder` in the `config`. 
 
 The default is `local_data` which is in the project folder. This folder is ignored by git and will not be pushed into the repo.
 
@@ -72,7 +72,7 @@ class Config(BaseModel):
     backward_num_epochs: int = 2  # 2500
     create_plots = False
     data_file = "stainless_steel.pt" # name of the data file 
-    data_path: str = "local_data"  # Path to the data folder
+    data_folder: str = "local_data"  # Path to the data folder
     forward_batch_size: int = 1000  # 2**9
     forward_lr: float = 1e-6  # tune.loguniform(1e-7, 1e-4),
     forward_num_epochs: int = 2  # 1600
@@ -87,7 +87,7 @@ class Config(BaseModel):
     use_cache: bool = True  
     use_forward: bool = True
     # Path to the working folder, checkpoint, graphs, ..
-    work_path: str = "local_work"
+    work_folder: str = "local_work"
 ```
 ## Data file
 Refer to the Pre-run section to read about where data will be stored.
