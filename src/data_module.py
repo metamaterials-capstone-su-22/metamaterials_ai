@@ -7,6 +7,7 @@ from typing import Optional
 import pytorch_lightning as pl
 import torch
 from torch.utils.data import DataLoader, TensorDataset
+from dto.data import Data
 
 import utils
 from config import Config
@@ -16,25 +17,30 @@ LaserParams, Emiss = torch.FloatTensor, torch.FloatTensor
 
 
 class BaseDataModule(pl.LightningDataModule):
-    def __init__(self, config: Config, batch_size: int) -> None:
+    def __init__(self, config: Config, direction: str) -> None:
         super().__init__()
         self.config = config
-        self.batch_size = batch_size
+        self.direction = direction
+        self.batch_size = (
+            config.forward_batch_size
+            if direction == "forward"
+            else config.backward_batch_size
+        )
 
     def train_dataloader(self) -> DataLoader:
-        return self.create_data_loader('train')
+        return self.create_data_loader("train")
 
     def val_dataloader(self) -> DataLoader:
-        return self.create_data_loader('val')
+        return self.create_data_loader("val")
 
     def test_dataloader(self) -> DataLoader:
-        return self.create_data_loader('test')
-    
+        return self.create_data_loader("test")
+
     def predict_dataloader(self) -> DataLoader:
-        return self.create_data_loader('predict')
+        return self.create_data_loader("predict")
 
     def create_data_loader(self, stage) -> DataLoader:
-        shuffle = True if stage in ['train', 'predict'] else False
+        shuffle = True if stage in ["train", "predict"] else False
         return DataLoader(
             dataset=self.get_data_set(stage),
             batch_size=self.batch_size,
@@ -45,15 +51,25 @@ class BaseDataModule(pl.LightningDataModule):
 
     def get_data_set(self, stage):
         dataset: TensorDataset = None
-        if stage == 'train':
+        if stage == "train":
             dataset = self.train
-        elif stage in ['val', 'predict']:
+        elif stage in ["val", "predict"]:
             dataset = self.val
-        elif stage == 'test':
+        elif stage == "test":
             dataset = self.test
         else:
-            raise Exception(f'Error: {stage} is not a valid stage.')
+            raise Exception(f"Error: {stage} is not a valid stage.")
         return dataset
+
+    def save_split_data(self):
+        work_folder = self.config.work_folder
+        direction = self.direction
+        torch.save(self.train, f"{work_folder}/{direction}_train_true.pt")
+        torch.save(self.val, f"{work_folder}/{direction}_val_true.pt")
+        torch.save(self.test, f"{work_folder}/{direction}_test_true.pt")
+
+    def load_and_split_data(self):
+        pass
 
 
 class ForwardDataModule(BaseDataModule):
@@ -61,62 +77,42 @@ class ForwardDataModule(BaseDataModule):
         self,
         config: Config,
     ) -> None:
-        super().__init__(config, config.forward_batch_size)
+        super().__init__(config, "forward")
 
     def setup(self, stage: Optional[str]) -> None:
-        work_folder = self.config.work_folder
-        data = FileUtils.read_pt_data(
-            self.config.data_folder, self.config.data_file)
-
-        laser_params, emiss, uids = (
-            data.norm_laser_params,
-            data.interp_emissivities,
-            data.uids,
+        data: Data = FileUtils.read_pt_data(
+            self.config.data_folder, self.config.data_file
         )
-        splits = split(len(laser_params))
+        splits = split(len(data.laser_params))
 
         self.train, self.val, self.test = [
             TensorDataset(
-                laser_params[splits[s].start: splits[s].stop],
-                emiss[splits[s].start: splits[s].stop],
-                uids[splits[s].start: splits[s].stop],
+                data.laser_params[splits[s].start : splits[s].stop],
+                data.emiss[splits[s].start : splits[s].stop],
+                data.uids[splits[s].start : splits[s].stop],
             )
             for s in ("train", "val", "test")
         ]
-        torch.save(self.train, f"{work_folder}/forward_train_true.pt")
-        torch.save(self.val, f"{work_folder}/forward_val_true.pt")
-        torch.save(self.test, f"{work_folder}/forward_test_true.pt")
+        self.save_split_data()
 
 
 class BackwardDataModule(BaseDataModule):
     def __init__(self, config: Config) -> None:
-        super().__init__(config, config.backward_batch_size)
+        super().__init__(config, "backward")
 
     def setup(self, stage: Optional[str]) -> None:
-        work_folder = self.config.work_folder
-
-        data = FileUtils.read_pt_data(
-            self.config.data_folder, self.config.data_file)
-
-        laser_params, emiss, uids = (
-            data.norm_laser_params,
-            data.interp_emissivities,
-            data.uids,
-        )
-
-        splits = split(len(laser_params))
+        data = FileUtils.read_pt_data(self.config.data_folder, self.config.data_file)
+        splits = split(len(data.laser_params))
 
         self.train, self.val, self.test = [
             TensorDataset(
-                emiss[splits[s].start: splits[s].stop],
-                laser_params[splits[s].start: splits[s].stop],
-                uids[splits[s].start: splits[s].stop],
+                data.emiss[splits[s].start : splits[s].stop],
+                data.laser_params[splits[s].start : splits[s].stop],
+                data.uids[splits[s].start : splits[s].stop],
             )
             for s in ("train", "val", "test")
         ]
-        torch.save(self.train, f"{work_folder}/backward_train_true.pt")
-        torch.save(self.val, f"{work_folder}/backward_val_true.pt")
-        torch.save(self.test, f"{work_folder}/backward_test_true.pt")
+        self.save_split_data()
 
 
 class StepTestDataModule(pl.LightningDataModule):

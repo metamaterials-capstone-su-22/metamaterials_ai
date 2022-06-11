@@ -66,8 +66,8 @@ class FileUtils:
         # Set the number of wavelengths
         # config.num_wavelens = data["interpolated_emissivity"].shape[-1]
         return Data(
-            norm_laser_params=data["normalized_laser_params"],
-            interp_emissivities=data["interpolated_emissivity"],
+            laser_params=data["normalized_laser_params"],
+            emiss=data["interpolated_emissivity"],
             uids=data["uids"],
             wavelength=data["wavelength"],
         )

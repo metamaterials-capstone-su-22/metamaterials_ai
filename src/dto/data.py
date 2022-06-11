@@ -3,8 +3,8 @@ from torch import FloatTensor, LongTensor
 
 
 class Data(BaseModel):
-    norm_laser_params: FloatTensor
-    interp_emissivities: FloatTensor
+    laser_params: FloatTensor
+    emiss: FloatTensor
     uids: LongTensor
     wavelength: FloatTensor
 

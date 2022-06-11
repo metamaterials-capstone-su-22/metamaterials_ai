@@ -40,7 +40,9 @@ def train_backward(meta_trainer, forward_model):
         backward_trainer.fit()
 
     backward_trainer.test()
-    save_and_plot(backward_trainer, forward_model, config.work_folder, config.data_folder)
+    save_and_plot(
+        backward_trainer, forward_model, config.work_folder, config.data_folder
+    )
 
 
 def setup():
