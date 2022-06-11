@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 from __future__ import annotations
 
 from typing import Optional
@@ -14,10 +12,8 @@ from dto.data import Data
 from utils import FileUtils, split
 from utils.utils import Stage
 
-LaserParams, Emiss = torch.FloatTensor, torch.FloatTensor
 
-
-class BaseDataModule(pl.LightningDataModule):
+class DataModule(pl.LightningDataModule):
     def __init__(self, config: Config, direction: str) -> None:
         super().__init__()
         self.config = config
@@ -83,9 +79,9 @@ class BaseDataModule(pl.LightningDataModule):
     def backward_split(self, data: Data, splits: dict[Stage, range]):
         self.train, self.val, self.test = [
             TensorDataset(
-                data.emiss[splits[s].start : splits[s].stop],
-                data.laser_params[splits[s].start : splits[s].stop],
-                data.uids[splits[s].start : splits[s].stop],
+                data.emiss[splits[s].start: splits[s].stop],
+                data.laser_params[splits[s].start: splits[s].stop],
+                data.uids[splits[s].start: splits[s].stop],
             )
             for s in ("train", "val", "test")
         ]
@@ -93,25 +89,12 @@ class BaseDataModule(pl.LightningDataModule):
     def forward_split(self, data: Data, splits: dict[Stage, range]):
         self.train, self.val, self.test = [
             TensorDataset(
-                data.laser_params[splits[s].start : splits[s].stop],
-                data.emiss[splits[s].start : splits[s].stop],
-                data.uids[splits[s].start : splits[s].stop],
+                data.laser_params[splits[s].start: splits[s].stop],
+                data.emiss[splits[s].start: splits[s].stop],
+                data.uids[splits[s].start: splits[s].stop],
             )
             for s in ("train", "val", "test")
         ]
-
-
-class ForwardDataModule(BaseDataModule):
-    def __init__(
-        self,
-        config: Config,
-    ) -> None:
-        super().__init__(config, "forward")
-
-
-class BackwardDataModule(BaseDataModule):
-    def __init__(self, config: Config) -> None:
-        super().__init__(config, "backward")
 
 
 class StepTestDataModule(pl.LightningDataModule):

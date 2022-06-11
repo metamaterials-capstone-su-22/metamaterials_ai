@@ -1,4 +1,4 @@
-from data_module import BackwardDataModule, ForwardDataModule
+from data_module import DataModule
 from meta_trainer import MetaTrainer
 from models import ModelFactory
 from src.models.forwards import ForwardModel
@@ -18,11 +18,7 @@ class MetaTrainerFactory:
         config = self.config
         trainer = self.trainer_factory.create_trainer(direction)
         model = self.model_factory.create_model(direction, forward_model)
-        data_module = None
-        if direction == "backward":
-            data_module = BackwardDataModule(config)
-        else:
-            data_module = ForwardDataModule(config)
+        data_module = DataModule(config, direction)
 
         return MetaTrainer(
             config=config,
