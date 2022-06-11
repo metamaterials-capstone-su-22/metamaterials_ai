@@ -8,7 +8,7 @@ import torch
 import wandb
 
 from config import Config
-from file_utils import FileUtils
+from utils import FileUtils
 from meta_trainer_facotry import MetaTrainerFactory
 from models import ForwardModel
 from plotter import Plotter
