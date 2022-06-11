@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Optional, Tuple
+from typing import Optional
 
 import pytorch_lightning as pl
 import torch
@@ -13,31 +12,9 @@ from tqdm.contrib import tenumerate
 
 import utils
 from config import Config
-from utils import rmse, split
+from utils import rmse, split, FileUtils
 
 LaserParams, Emiss = torch.FloatTensor, torch.FloatTensor
-
-
-def get_data(
-    use_cache: bool = True, num_wavelens: int = 800
-) -> Tuple[LaserParams, Emiss, torch.LongTensor]:
-    """Data is sorted in ascending order of wavelength."""
-    if all(
-        [
-            use_cache,
-            Path("local_data/stainless_steel.pt").exists(),
-        ]
-    ):
-        data = torch.load(Path("local_data/stainless_steel.pt"))
-        norm_laser_params, interp_emissivities, uids = (
-            data["normalized_laser_params"],
-            data["interpolated_emissivity"],
-            data["uids"],
-        )
-
-        # XXX check length to avoid bugs.
-        if interp_emissivities.shape[-1] == num_wavelens:
-            return norm_laser_params, interp_emissivities, uids
 
 
 class ForwardDataModule(pl.LightningDataModule):
@@ -51,8 +28,14 @@ class ForwardDataModule(pl.LightningDataModule):
 
     def setup(self, stage: Optional[str]) -> None:
 
-        laser_params, emiss, uids = get_data(
-            use_cache=self.config.use_cache, num_wavelens=self.config.num_wavelens
+        data = FileUtils.read_pt_data(
+            self.config.data_path, self.config.data_file
+        )
+
+        laser_params, emiss, uids = (
+            data.norm_laser_params,
+            data.interp_emissivities,
+            data.uids,
         )
         splits = split(len(laser_params))
 
@@ -104,9 +87,14 @@ class BackwardDataModule(pl.LightningDataModule):
 
     def setup(self, stage: Optional[str]) -> None:
 
-        # XXX we can safely use cache since ForwardDataModule is created first
-        laser_params, emiss, uids = get_data(
-            use_cache=True, num_wavelens=self.config.num_wavelens
+        data = FileUtils.read_pt_data(
+            self.config.data_path, self.config.data_file
+        )
+
+        laser_params, emiss, uids = (
+            data.norm_laser_params,
+            data.interp_emissivities,
+            data.uids,
         )
 
         splits = split(len(laser_params))

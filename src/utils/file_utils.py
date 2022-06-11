@@ -3,12 +3,14 @@ from pathlib import Path
 
 import gdown
 
-from config import Config
+from dto import Data
+
+import torch
 
 
 class FileUtils:
     @staticmethod
-    def get_pt_files(data_path: str, data_file: str):
+    def fetch_pt_files(data_path: str, data_file: str):
         """This will fetch all the files in a data folder if
         the specific file does not exit"""
         if not FileUtils.data_exist(data_path, data_file):
@@ -20,7 +22,8 @@ class FileUtils:
                 )
                 print("Downloading process completed")
             except Exception as e:
-                print(f"Error: Something went wrong downloading data fiels. Error {e}.")
+                print(
+                    f"Error: Something went wrong downloading data fiels. Error {e}.")
                 raise
 
         else:
@@ -50,5 +53,25 @@ class FileUtils:
             except FileExistsError:
                 print(f"Info: '{path}' exist.")
             except Exception as e:
-                print(f"Error: something wrong creating '{path}'. message: {e}.")
+                print(
+                    f"Error: something wrong creating '{path}'. message: {e}.")
                 raise
+
+    @staticmethod
+    def read_pt_data(data_path: str,  data_file: str) -> Data:
+        """Read data from pt file (saved as pytorch tensor)"""
+        data_file = Path(f"{data_path}/{data_file}")
+        try:
+            data = torch.load(data_file)
+        except Exception as e:
+            print(
+                f"Trouble in loading data file: {data_file}. Error: {e.message}")
+
+        # Set the number of wavelengths
+        # config.num_wavelens = data["interpolated_emissivity"].shape[-1]
+        return Data(
+            norm_laser_params=data["normalized_laser_params"],
+            interp_emissivities=data["interpolated_emissivity"],
+            uids=data["uids"],
+            wavelength=data["wavelength"],
+        )

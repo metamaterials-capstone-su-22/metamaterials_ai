@@ -32,7 +32,8 @@ def train_backward(meta_trainer, forward_model):
     print("=" * 80)
     print("Backward Model Step")
     print("=" * 80)
-    backward_trainer = meta_trainer.create_meta_trainer("backward", forward_model)
+    backward_trainer = meta_trainer.create_meta_trainer(
+        "backward", forward_model)
     if not config.load_backward_checkpoint:
         backward_trainer.fit()
 
@@ -42,7 +43,7 @@ def train_backward(meta_trainer, forward_model):
 
 def setup():
     FileUtils.setup_folder_structure(config.work_path, config.data_path)
-    FileUtils.get_pt_files(config.data_path, config.data_file)
+    FileUtils.fetch_pt_files(config.data_path, config.data_file)
 
 
 def main(config: Config) -> None:

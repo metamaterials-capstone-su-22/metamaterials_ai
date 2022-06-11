@@ -11,7 +11,7 @@ class Config(BaseModel):
     forward_batch_size: int = 1000  # 2**9
     forward_lr: float = 1e-6  # tune.loguniform(1e-7, 1e-4),
     forward_num_epochs: int = 2  # 1600
-    load_forward_checkpoint: bool = False
+    load_forward_checkpoint: bool = True
     load_backward_checkpoint: bool = False
     model_arch = "MLPMixer"  # options 'MLPMixer'
     num_gpu: int = 1  # number of GPU
