@@ -6,8 +6,6 @@ from trainer_factory import TrainerFactory
 
 
 class MetaTrainerFactory:
-    """This class wraps the model, trainer, and datamodule
-    for each direction (forward and backward)"""
 
     def __init__(self, config) -> None:
         self.config = config

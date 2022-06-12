@@ -9,3 +9,4 @@ class ModelArchFactory:
     def create_model_arch(model_config: ModelConfig):
         if model_config.arch == "MLPMixer":
             return ModelMaker.create_model(model_config)
+            
