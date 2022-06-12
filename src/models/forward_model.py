@@ -17,7 +17,6 @@ class ForwardModel(BaseModel):
             arch=config.model_arch, direction="forward", num_classes=config.num_wavelens
         )
         super().__init__(config, direction="forward")
-        # NOTE if training both directions then only save hyperparameters for Forward model because it is the same for both
         self.save_hyperparameters(config.__dict__)
 
 

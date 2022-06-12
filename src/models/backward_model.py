@@ -28,10 +28,9 @@ class BackwardModel(BaseModel):
             in_channels=config.num_wavelens,
         )
         super().__init__(config, direction="backward")
+        self.save_hyperparameters(config.__dict__)
         if forward_model is None:
             self.forward_model = None
-            # NOTE if training both directions then only save hyperparameters for Forward model because it is the same for both
-            self.save_hyperparameters(config.__dict__)
         else:
             self.forward_model = forward_model
             self.forward_model.freeze()
