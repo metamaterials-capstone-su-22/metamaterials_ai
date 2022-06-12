@@ -22,7 +22,6 @@ class BackwardModel(BaseModel):
         config: Config,
         forward_model: Optional[ForwardModel] = None,
     ) -> None:
-        # self.save_hyperparameters()
         self.model_config = ModelConfig(
             arch=config.model_arch,
             direction="backward",
@@ -31,6 +30,8 @@ class BackwardModel(BaseModel):
         super().__init__(config, direction="backward")
         if forward_model is None:
             self.forward_model = None
+            # NOTE if training both directions then only save hyperparameters for Forward model because it is the same for both
+            self.save_hyperparameters(config.__dict__)
         else:
             self.forward_model = forward_model
             self.forward_model.freeze()

@@ -20,7 +20,6 @@ class BaseModel(pl.LightningModule):
         direction: str,
     ) -> None:
         super().__init__()
-        # self.save_hyperparameters()
         self.config = config
         self.direction = direction
         self.work_folder = config.work_folder
