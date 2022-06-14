@@ -17,7 +17,7 @@ class Config(BaseModel):
     num_gpu: int = 1  # number of GPU
     # TODO: Fix num_wavelens be set at load time
     num_wavelens: int | None = 800  # This will be set @ load time. ex. 800
-    substrate: str = "stainless_steel"  # options "stainless_steel" , "inconel"
+    substrate: str = "inconel" #"stainless_steel"  # options "stainless_steel" , "inconel"
     # use_cache true means to use the .pt file instead of regeneratign this
     use_cache: bool = True
     use_forward: bool = True

@@ -102,11 +102,15 @@ class BackwardModel(BaseModel):
 
             loss = y_loss
             if stage == "test":
-                self.save_test_restult(x, y, y_pred, x_pred)
+                self.save_test_result(x, y, y_pred, x_pred)
+        #else: #TODO
+            #add logic to snag the current best forward model
+            #if the case that we are exclusively training the backwards model
+
         self.create_graph_and_log(stage, y_pred, y, loss)
         return loss
 
-    def save_test_restult(self, x, y, y_pred, x_pred):
+    def save_test_result(self, x, y, y_pred, x_pred):
         torch.save(x, f"{self.work_folder}/params_true_back.pt")
         torch.save(y, f"{self.work_folder}/emiss_true_back.pt")
         torch.save(y_pred, f"{self.work_folder}/emiss_pred.pt")
