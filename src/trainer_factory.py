@@ -40,7 +40,7 @@ class TrainerFactory:
                 name=f'{direction.title()[0]}-{self.config.model_arch}-{self.config.substrate}-{datetime.utcnow().strftime("%Y-%m-%d_%H-%M")}',
                 save_dir=f"{work_folder}/wandb_logs/{direction}",
                 offline=False,
-                project=f"Laser Both Directions",#{direction.title()}",
+                project=f"Metamaterial AI",  # {direction.title()}",
                 log_model=True,
             ),
             TensorBoardLogger(

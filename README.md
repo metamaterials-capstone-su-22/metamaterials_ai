@@ -45,7 +45,17 @@ Note: to this work you need to have an environment with the correct version of p
 poerty install
 ```
 ## Run using poetry
-Assume you are in the `root` folder of the project
+Note since it is long running process use one of the techniques to avoid interruption, ex. `tmux`
+
+```
+$ tmux new -s training-session
+
+# to reattached if needed:
+
+$ tmux attach-session -t training-session
+```
+
+Assume you are in the `root` folder of the project.
 
 ```bash
 $ poetry run python src/main.py
@@ -59,6 +69,8 @@ poetry add <package_name>
 # example
 poetry add numpy
 ```
+
+
 # Config file
 The settings are configurable through the config file.
 
@@ -101,3 +113,10 @@ Assuming that that you are in root folder of the project run these to commands.
 $ poetry run black .
 $ poetry run isort .
 ```
+
+# Configuration verifications
+Some configurations are dependent to each other, for example the substrate name and the data file should match. There is step in the Config class that can do some naive checks. It can be bypassed by setting `should_verify_configs` to `False` in `Config`.
+
+List of config checks
+- The name of the data_file should start with substrate name
+- ...
