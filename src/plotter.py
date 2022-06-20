@@ -19,7 +19,7 @@ class Plotter:
         # Variant num is the number of random curves to generate with jitter
         variant_num = 1
         # Arbitrary list is the indices you want to look at in a tensor of emissivity curves. In the FoMM case, 0 = cutoff at 2.5 wl, 800 = cutoff at 12.5 wl.
-        arbitrary_list = [220]
+        arbitrary_list = [50]
 
         print("start plotting ...")
         for i in range(variant_num):

@@ -60,7 +60,9 @@ def main(config: Config) -> None:
             forward_trainer.fit()
         forward_trainer.test()
         forward_model = forward_trainer.model
-
+    
+    # Close the Forward before backward if you want separate project
+    wandb.finish()
     train_backward(meta_trainer, forward_model)
 
 

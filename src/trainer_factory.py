@@ -3,6 +3,7 @@ from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.loggers import TensorBoardLogger, WandbLogger
 
 from config import Config
+from datetime import datetime
 
 
 class TrainerFactory:
@@ -36,10 +37,10 @@ class TrainerFactory:
         work_folder = self.config.work_folder
         return [
             WandbLogger(
-                name=f"{direction.title()} laser params",
+                name=f'{direction.title()[0]}-{self.config.model_arch}-{self.config.substrate}-{datetime.utcnow().strftime("%Y-%m-%d_%H-%M")}',
                 save_dir=f"{work_folder}/wandb_logs/{direction}",
                 offline=False,
-                project=f"Laser {direction.title()}",
+                project=f"Metamaterial AI",  # {direction.title()}",
                 log_model=True,
             ),
             TensorBoardLogger(

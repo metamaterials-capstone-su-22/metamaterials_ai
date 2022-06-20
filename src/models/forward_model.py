@@ -13,11 +13,12 @@ from .model_config import ModelConfig
 
 class ForwardModel(BaseModel):
     def __init__(self, config: Config):
-        self.save_hyperparameters()
         self.model_config = ModelConfig(
             arch=config.model_arch, direction="forward", num_classes=config.num_wavelens
         )
         super().__init__(config, direction="forward")
+        self.save_hyperparameters(config.__dict__)
+
 
     def create_model_arc(self):
         return ModelArchFactory.create_model_arch(self.model_config)
