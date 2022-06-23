@@ -1,3 +1,4 @@
+from fileinput import filename
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.loggers import TensorBoardLogger, WandbLogger
@@ -10,6 +11,7 @@ class TrainerFactory:
     def __init__(self, config: Config, data=None):
         self.config = config
         self.data = data
+        # self.callbacks =
 
     def create_trainer(self, direction):
         config = self.config
@@ -53,11 +55,13 @@ class TrainerFactory:
         work_folder = self.config.work_folder
         return [
             ModelCheckpoint(
+                filename='epoch={epoch:04d}-step={step}-val_loss={'+str(direction)+'/val/loss:.5f}',
                 monitor=f"{direction}/val/loss",
                 dirpath=f"{work_folder}/weights/{direction}",
                 save_top_k=1,
                 mode="min",
                 save_last=True,
+                auto_insert_metric_name=False
             ),
             pl.callbacks.progress.TQDMProgressBar(refresh_rate=refresh_rate),
         ]
