@@ -16,6 +16,7 @@ wandb = "^0.12.17"
 pytorch-lightning = "^1.6.3"
 einops = "^0.4.1"
 gdown = "^4.4.0"
+timm = "^0.5.4"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2"

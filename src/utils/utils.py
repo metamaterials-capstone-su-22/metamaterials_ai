@@ -126,3 +126,21 @@ def get_latest_chk_point_path(work_folder, direction):
             f"Note: To start from scratch set the config flag to not load chekcpoint."
         )
         raise
+
+def get_best_chk_point_path(work_folder, direction):
+    path = Path(f"{work_folder}/weights/{direction}")
+    try:
+        return str(
+            max(
+                path.glob("*.ckpt"),
+                key=os.path.getctime,
+            )
+        )
+    except Exception as e:
+        print(
+            f"Error: Could not load the latest check point for *.ckpt files! Check path {path}. Error. {e}"
+        )
+        print(
+            f"Note: To start from scratch set the config flag to not load chekcpoint."
+        )
+        raise
