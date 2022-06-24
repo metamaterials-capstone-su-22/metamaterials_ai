@@ -18,6 +18,7 @@ from torch.utils.data import DataLoader, TensorDataset
 from tqdm import tqdm
 from tqdm.contrib import tenumerate
 from sklearn.model_selection import train_test_split
+from sklearn.utils import shuffle
 
 LaserParams, Emiss = torch.FloatTensor, torch.FloatTensor
 
@@ -198,30 +199,44 @@ print("Process started")
 input_path = "../../data/raw/inconel-revised-raw"
 output_path = "../../data/pt/inconel-revised-raw.pt"
 output_path_train = "../../data/pt/inconel-revised-raw_train.pt"
+output_path_val = "../../data/pt/inconel-revised-raw_val.pt"
 output_path_test = "../../data/pt/inconel-revised-raw_test.pt"
+shuffled_output_path = "../../data/pt/inconel-revised-raw-shuffled.pt"
+
 
 data_emiss = []
 for p in Path(input_path).rglob("*.txt"):
     # print(p)
     parse_entry(p, data_emiss)
 
-print(len(data_emiss))
-
-train_emiss, test_emiss = train_test_split(data_emiss, train_size=0.75, test_size=0.25)
-
-print(len(train_emiss), len(test_emiss))
+shuffled_data_emiss = shuffle(data_emiss, random_state=2022)
 
 laser_params, emiss, uids = raw_to_pt(
-    use_cache=False, num_wavelens=800, db=data_emiss, output_path=output_path
+    use_cache=False, num_wavelens=800, db=shuffled_data_emiss, output_path=shuffled_output_path
 )
 
-laser_params_train, emiss_train, uids_train = raw_to_pt(
-    use_cache=False, num_wavelens=800, db=train_emiss, output_path=output_path_train
-)
+# print(len(data_emiss))
 
-laser_params, emiss, uids = raw_to_pt(
-    use_cache=False, num_wavelens=800, db=test_emiss, output_path=output_path_test
-)
+# train_emiss, val_test_emiss = train_test_split(data_emiss, train_size=0.75, test_size=0.25)
+# val_emiss, test_emiss = train_test_split(val_test_emiss, train_size=0.6, test_size=0.4)
+
+# print(len(train_emiss), len(test_emiss))
+
+# laser_params, emiss, uids = raw_to_pt(
+#     use_cache=False, num_wavelens=800, db=data_emiss, output_path=output_path
+# )
+
+# laser_params_train, emiss_train, uids_train = raw_to_pt(
+#     use_cache=False, num_wavelens=800, db=train_emiss, output_path=output_path_train
+# )
+
+# laser_params_val, emiss_val, uids_val = raw_to_pt(
+#     use_cache=False, num_wavelens=800, db=val_emiss, output_path=output_path_val
+# )
+
+# laser_params, emiss, uids = raw_to_pt(
+#     use_cache=False, num_wavelens=800, db=test_emiss, output_path=output_path_test
+# )
 
 print("Done!")
 
