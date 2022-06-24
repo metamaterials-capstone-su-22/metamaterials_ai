@@ -3,7 +3,7 @@ from torch import nn
 
 from models.model_config import ModelConfig
 
-from .net1d_module import RESNET1D
+from .net1d_module import ResNet1D
 
 
 class ModelMaker:
@@ -18,12 +18,13 @@ class ModelMaker:
     @staticmethod
     def create_forward_model(model_config: ModelConfig):
         return nn.Sequential(
-        RESNET1D(
-        in_channels=model_config.in_channels, 
-        base_filters=64, 
-        kernel_size=16, 
+        Rearrange("b c -> b c 1"),
+        ResNet1D(
+        in_channels=14, 
+        base_filters=1, 
+        kernel_size=1, 
         stride=2, 
-        groups=4, 
+        groups=1, 
         n_block=4, 
         n_classes=model_config.num_classes, 
         downsample_gap=2, 
@@ -37,14 +38,15 @@ class ModelMaker:
     @staticmethod
     def create_backward_model(model_config: ModelConfig):
         return nn.Sequential(
-        RESNET1D(
+        Rearrange("b c -> b c 1"),
+        ResNet1D(
         in_channels=model_config.in_channels, 
-        base_filters=64, 
-        kernel_size=16, 
+        base_filters=1, 
+        kernel_size=1, 
         stride=2, 
-        groups=4, 
-        n_block=4, 
-        n_classes=model_config.num_classes, 
+        groups=1, 
+        n_block=1, 
+        n_classes=1_000, 
         downsample_gap=2, 
         increasefilter_gap=4, 
         use_bn=True, 
