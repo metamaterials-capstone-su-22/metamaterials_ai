@@ -9,7 +9,6 @@ from typing import List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
-import pymongo
 import pytorch_lightning as pl
 import sklearn
 import torch
@@ -18,6 +17,7 @@ from scipy.interpolate import interp1d
 from torch.utils.data import DataLoader, TensorDataset
 from tqdm import tqdm
 from tqdm.contrib import tenumerate
+from sklearn.model_selection import train_test_split
 
 LaserParams, Emiss = torch.FloatTensor, torch.FloatTensor
 
@@ -195,8 +195,11 @@ def raw_to_pt(
 
 
 print("Process started")
-input_path = "data/raw/stainless-steel-revised"
-output_pt = "data/pt/stainless-steel-revised.pt"
+input_path = "../../data/raw/inconel-revised-raw"
+output_path = "../../data/pt/inconel-revised-raw.pt"
+output_path_train = "../../data/pt/inconel-revised-raw_train.pt"
+output_path_test = "../../data/pt/inconel-revised-raw_test.pt"
+
 data_emiss = []
 for p in Path(input_path).rglob("*.txt"):
     # print(p)
@@ -204,8 +207,21 @@ for p in Path(input_path).rglob("*.txt"):
 
 print(len(data_emiss))
 
+train_emiss, test_emiss = train_test_split(data_emiss, train_size=0.75, test_size=0.25)
+
+print(len(train_emiss), len(test_emiss))
+
 laser_params, emiss, uids = raw_to_pt(
-    use_cache=False, num_wavelens=800, db=data_emiss, output_path=output_pt
+    use_cache=False, num_wavelens=800, db=data_emiss, output_path=output_path
+)
+
+laser_params_train, emiss_train, uids_train = raw_to_pt(
+    use_cache=False, num_wavelens=800, db=train_emiss, output_path=output_path_train
+)
+
+laser_params, emiss, uids = raw_to_pt(
+    use_cache=False, num_wavelens=800, db=test_emiss, output_path=output_path_test
 )
 
 print("Done!")
+
