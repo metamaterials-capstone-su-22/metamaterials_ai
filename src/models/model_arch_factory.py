@@ -1,5 +1,5 @@
 from models.mlpmixer import ModelMaker as mlpmixermaker
-from src.models.resnet1d import ModelMaker as resnetmaker
+from models.resnet1d import ModelMaker as resnetmaker
 from .model_config import ModelConfig
 
 
@@ -11,4 +11,3 @@ class ModelArchFactory:
             return mlpmixermaker.create_model(model_config)
         if model_config.arch == "resnet1d":
             return resnetmaker.create_model(model_config)
-            
