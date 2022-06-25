@@ -4,16 +4,16 @@ from pydantic import BaseModel
 class Config(BaseModel):
     backward_batch_size: int = 2**9  # 2**9 512
     backward_lr: float = 1e-6  # tune.loguniform(1e-6, 1e-5),
-    backward_num_epochs: int = 4  # Default 2500
+    backward_num_epochs: int = 2500  # Default 2500
     create_plots = False
     data_file = "inconel.pt"  # name of the data file
     data_folder: str = "local_data"  # Path to the data folder
     forward_batch_size: int = 2**9  # 2**9 512
     forward_lr: float = 1e-6  # tune.loguniform(1e-7, 1e-4),
-    forward_num_epochs: int = 4  # default 1600
+    forward_num_epochs: int = 1600  # default 1600
     load_forward_checkpoint: bool = False
     load_backward_checkpoint: bool = False
-    model_arch = 'resnet1d' # options 'MLPMixer', 'resnet1d' TODO: 'ANN'
+    model_arch = 'resnet1d'  # options 'MLPMixer', 'resnet1d' TODO: 'ANN'
     num_gpu: int = 1  # number of GPU
     # TODO: Fix num_wavelens be set at load time
     num_wavelens: int | None = 800  # This will be set @ load time. ex. 800
