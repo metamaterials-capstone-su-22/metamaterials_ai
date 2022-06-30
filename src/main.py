@@ -35,7 +35,8 @@ def train_backward(meta_trainer, forward_model):
     print("=" * 80)
     print("Backward Model Step")
     print("=" * 80)
-    backward_trainer = meta_trainer.create_meta_trainer("backward", forward_model)
+    backward_trainer = meta_trainer.create_meta_trainer(
+        "backward", forward_model)
     if not config.load_backward_checkpoint:
         backward_trainer.fit()
 
@@ -54,16 +55,18 @@ def main(config: Config) -> None:
     setup()
     meta_trainer = MetaTrainerFactory(config)
     forward_model = None
-    if config.use_forward:
-        forward_trainer = meta_trainer.create_meta_trainer("forward")
-        if not config.load_forward_checkpoint:
-            forward_trainer.fit()
-        forward_trainer.test()
-        forward_model = forward_trainer.model
-    
+    if config.direction in ['direct', 'both']:
+        if config.use_forward:
+            forward_trainer = meta_trainer.create_meta_trainer("forward")
+            if not config.load_forward_checkpoint:
+                forward_trainer.fit()
+            forward_trainer.test()
+            forward_model = forward_trainer.model
+
     # Close the Forward before backward if you want separate project
     wandb.finish()
-    train_backward(meta_trainer, forward_model)
+    if config.direction in ['inverse', 'both']:
+        train_backward(meta_trainer, forward_model)
 
 
 if __name__ == "__main__":

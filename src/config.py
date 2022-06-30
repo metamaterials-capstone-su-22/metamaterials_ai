@@ -8,12 +8,13 @@ class Config(BaseModel):
     create_plots = False
     data_file = "inconel.pt"  # name of the data file
     data_folder: str = "local_data"  # Path to the data folder
+    direction: str = "direct"  # direct, inverse, both
     forward_batch_size: int = 2**9  # 2**9 512
     forward_lr: float = 1e-6  # tune.loguniform(1e-7, 1e-4),
-    forward_num_epochs: int = 1600  # default 1600
+    forward_num_epochs: int = 2  # default 1600
     load_forward_checkpoint: bool = False
     load_backward_checkpoint: bool = False
-    model_arch = 'resnet1d'  # options 'MLPMixer', 'resnet1d' TODO: 'ANN'
+    model_arch = 'ann'  # options 'MLPMixer', 'resnet1d' TODO: 'ann'
     num_gpu: int = 1  # number of GPU
     # TODO: Fix num_wavelens be set at load time
     num_wavelens: int | None = 800  # This will be set @ load time. ex. 800

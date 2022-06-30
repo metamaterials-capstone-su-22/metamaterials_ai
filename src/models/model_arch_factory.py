@@ -1,16 +1,20 @@
-from models.mlpmixer import ModelMaker as mlpmixermaker
-from models.resnet1d import ModelMaker as resnetmaker
-from models.resnet2d import ModelMaker as resnet2dmaker
+from models.mlpmixer import ModelMaker as mlp_mixer
+from models.resnet1d import ModelMaker as resnet_1d
+from models.resnet2d import ModelMaker as resnet_2d
+from models.ann import ModelMaker as ann
+
 from .model_config import ModelConfig
 
 
 class ModelArchFactory:
-    """This class generate models based on requested architecure"""
+    """This class generate models based on requested architecture"""
 
     def create_model_arch(model_config: ModelConfig):
         if model_config.arch == "MLPMixer":
-            return mlpmixermaker.create_model(model_config)
+            return mlp_mixer.create_model(model_config)
         if model_config.arch == "resnet1d":
-            return resnetmaker.create_model(model_config)
+            return resnet_1d.create_model(model_config)
         if model_config.arch == "resnet2d":
-            return resnet2dmaker.create_model(model_config)
+            return resnet_2d.create_model(model_config)
+        if model_config.arch == "ann":
+            return ann.create_model(model_config)
