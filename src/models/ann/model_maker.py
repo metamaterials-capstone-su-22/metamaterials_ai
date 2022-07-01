@@ -16,6 +16,11 @@ class ModelMaker:
     @staticmethod
     def create_forward_model(model_config: ModelConfig):
         return nn.Sequential(
-
+            nn.Linear(14, 32),
+            nn.Linear(32, 64),
+            nn.Linear(64, 128),
+            nn.Linear(128, 264),
+            nn.Linear(264, 512),
+            nn.Linear(512, 800),
             nn.Sigmoid(),
         )

@@ -28,7 +28,7 @@ class BaseModel(pl.LightningModule):
 
     def should_create_graph(self, stage):
         should_create_graph: bool = False
-        # Note logig is from legacy code! (PM)
+        # Note loging is from legacy code! (PM)
         if stage == "tarin":
             should_create_graph = (
                 self.current_epoch == self.config.forward_num_epochs - 5
