@@ -17,10 +17,15 @@ class ModelMaker:
     def create_forward_model(model_config: ModelConfig):
         return nn.Sequential(
             nn.Linear(14, 32),
+            nn.SELU(),
             nn.Linear(32, 64),
+            nn.SELU(),
             nn.Linear(64, 128),
+            nn.SELU(),
             nn.Linear(128, 264),
+            nn.SELU(),
             nn.Linear(264, 512),
+            nn.SELU(),
             nn.Linear(512, 800),
             nn.Sigmoid(),
         )
