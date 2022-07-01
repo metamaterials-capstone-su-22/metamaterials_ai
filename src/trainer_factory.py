@@ -55,7 +55,7 @@ class TrainerFactory:
     def create_callbacks(self, direction, refresh_rate):
         return [
             self.create_checkpoint_callback(direction),
-            # TrainerFactory.create_early_stopper_callback(),
+            TrainerFactory.create_early_stopper_callback(direction),
             pl.callbacks.progress.TQDMProgressBar(refresh_rate=refresh_rate),
         ]
 
@@ -73,7 +73,7 @@ class TrainerFactory:
         )
 
     @staticmethod
-    def create_early_stopper_callback():
-        return EarlyStopping(monitor="val_loss",
+    def create_early_stopper_callback(direction):
+        return EarlyStopping(monitor=f"{direction}/val/loss",
                              strict=True,
                              patience=5, verbose=False, mode="min")
