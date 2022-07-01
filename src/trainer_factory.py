@@ -2,6 +2,7 @@ from fileinput import filename
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.loggers import TensorBoardLogger, WandbLogger
+from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 
 from config import Config
 from datetime import datetime
@@ -42,7 +43,7 @@ class TrainerFactory:
                 name=f'{direction.title()[0]}-{self.config.model_arch}-{self.config.substrate}-{datetime.utcnow().strftime("%Y-%m-%d_%H-%M")}',
                 save_dir=f"{work_folder}/wandb_logs/{direction}",
                 offline=False,
-                project=f"Metamaterial AI",  # {direction.title()}",
+                project=f"Metamaterial AI",
                 log_model=True,
             ),
             TensorBoardLogger(
@@ -52,16 +53,27 @@ class TrainerFactory:
         ]
 
     def create_callbacks(self, direction, refresh_rate):
-        work_folder = self.config.work_folder
         return [
-            ModelCheckpoint(
-                filename='epoch={epoch:04d}-step={step}-val_loss={'+str(direction)+'/val/loss:.5f}',
-                monitor=f"{direction}/val/loss",
-                dirpath=f"{work_folder}/weights/{direction}",
-                save_top_k=1,
-                mode="min",
-                save_last=True,
-                auto_insert_metric_name=False
-            ),
+            self.create_checkpoint_callback(direction),
+            # TrainerFactory.create_early_stopper_callback(),
             pl.callbacks.progress.TQDMProgressBar(refresh_rate=refresh_rate),
         ]
+
+    def create_checkpoint_callback(self, direction):
+        work_folder = self.config.work_folder
+        return ModelCheckpoint(
+            filename='epoch={epoch:04d}-step={step}-val_loss={' +
+            str(direction)+'/val/loss:.5f}',
+            monitor=f"{direction}/val/loss",
+            dirpath=f"{work_folder}/weights/{direction}",
+            save_top_k=1,
+            mode="min",
+            save_last=True,
+            auto_insert_metric_name=False
+        )
+
+    @staticmethod
+    def create_early_stopper_callback():
+        return EarlyStopping(monitor="val_loss",
+                             strict=True,
+                             patience=5, verbose=False, mode="min")
