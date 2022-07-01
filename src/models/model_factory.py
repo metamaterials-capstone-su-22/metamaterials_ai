@@ -6,10 +6,10 @@ from .forward_model import ForwardModel
 
 
 class ModelFactory:
-    def __init__(self, config: Config):
+    def __init__(self, config: Config) -> None:
         self.config = config
 
-    def create_model(self, direction, forward_model: ForwardModel = None):
+    def create_model(self, direction: str, forward_model: ForwardModel = None):
         model = None
         config = self.config
         if direction == "backward":
