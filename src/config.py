@@ -9,7 +9,7 @@ class Config(BaseModel):
     data_file = "inconel-revised-raw-shuffled.pt"  # name of the data file
     data_folder: str = "local_data"  # Path to the data folder
     direction: str = "direct"  # direct, inverse, both
-    forward_batch_size: int = 2**10  # 2**9 512
+    forward_batch_size: int = 2**7  # 2**9 512
     forward_lr: float = 1e-6  # tune.loguniform(1e-7, 1e-4),
     forward_num_epochs: int = 1600  # default 1600
     load_forward_checkpoint: bool = False

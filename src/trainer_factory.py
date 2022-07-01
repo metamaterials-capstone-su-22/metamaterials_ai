@@ -76,4 +76,4 @@ class TrainerFactory:
     def create_early_stopper_callback(direction):
         return EarlyStopping(monitor=f"{direction}/val/loss",
                              strict=True,
-                             patience=5, verbose=False, mode="min")
+                             patience=15, verbose=False, mode="min")
