@@ -45,6 +45,7 @@ class BaseModel(pl.LightningModule):
         if self.config.create_plots and self.should_create_graph(stage):
             try:
                 nngraph.save_integral_emiss_point(
+                    self.config,
                     y_pred,
                     y,
                     f"{self.work_folder}/{self.direction}_{stage}_points.txt",

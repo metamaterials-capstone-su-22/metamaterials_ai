@@ -5,6 +5,8 @@ import gdown
 import torch
 
 from dto import Data
+import shutil
+from datetime import datetime
 
 
 class FileUtils:
@@ -21,7 +23,8 @@ class FileUtils:
                 )
                 print("Downloading process completed")
             except Exception as e:
-                print(f"Error: Something went wrong downloading data fiels. Error {e}.")
+                print(
+                    f"Error: Something went wrong downloading data files. Error {e}.")
                 raise
 
         else:
@@ -38,6 +41,7 @@ class FileUtils:
     def setup_folder_structure(work_folder: str, data_folder: str):
         paths: list[Path] = []
         paths.append(Path(f"{work_folder}/figs"))
+        paths.append(Path(f"{work_folder}/saved_best"))
         paths.append(Path(f"{data_folder}"))
         for d in ["forward", "backward"]:
             paths.append(Path(f"{work_folder}/wandb_logs/{d}/wandb"))
@@ -51,7 +55,8 @@ class FileUtils:
             except FileExistsError:
                 print(f"Info: '{path}' exist.")
             except Exception as e:
-                print(f"Error: something wrong creating '{path}'. message: {e}.")
+                print(
+                    f"Error: something wrong creating '{path}'. message: {e}.")
                 raise
 
     @staticmethod
@@ -61,7 +66,8 @@ class FileUtils:
         try:
             data = torch.load(data_file)
         except Exception as e:
-            print(f"Trouble in loading data file: {data_file}. Error: {e.message}")
+            print(
+                f"Trouble in loading data file: {data_file}. Error: {e.message}")
 
         # Set the number of wavelengths
         # config.num_wavelens = data["interpolated_emissivity"].shape[-1]
@@ -71,3 +77,15 @@ class FileUtils:
             uids=data["uids"],
             wavelength=data["wavelength"],
         )
+
+    @staticmethod
+    def save_best_model(work_folder: str, meta_trainer):
+        best_model_path = meta_trainer.model.trainer.checkpoint_callback.best_model_path
+        direction = meta_trainer.model.direction
+        arch = meta_trainer.model.model_config.arch
+        substrate = meta_trainer.config.substrate
+
+        dst = Path(
+            f'{work_folder}/saved_best/{direction.title()[0]}-{arch}-{substrate}-{datetime.utcnow().strftime("%Y-%m-%d_%H-%M")}')
+
+        shutil.copy(best_model_path, dst)
