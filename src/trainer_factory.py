@@ -12,7 +12,6 @@ class TrainerFactory:
     def __init__(self, config: Config, data=None):
         self.config = config
         self.data = data
-        # self.callbacks =
 
     def create_trainer(self, direction):
         config = self.config
@@ -76,4 +75,7 @@ class TrainerFactory:
     def create_early_stopper_callback(direction):
         return EarlyStopping(monitor=f"{direction}/val/loss",
                              strict=True,
-                             patience=15, verbose=False, mode="min")
+                             check_on_train_epoch_end=False,
+                             patience=20,
+                             verbose=True,
+                             mode="min")
