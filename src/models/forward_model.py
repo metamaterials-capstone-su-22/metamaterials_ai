@@ -20,7 +20,7 @@ class ForwardModel(BaseModel):
         )
         super().__init__(config, direction="forward")
         self.lr = config.forward_lr
-        self.milestones = [10, 50, 150, 300]
+        self.milestones = [50, 100, 300]
         self.save_hyperparameters(config.__dict__)
 
     def create_model_arc(self):

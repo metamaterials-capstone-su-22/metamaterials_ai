@@ -10,9 +10,10 @@ class Config(BaseModel):
     data_folder: str = "local_data"  # Path to the data folder
     direction: str = "both"  # direct, inverse, both
     forward_batch_size: int = 2**7  # 2**9 512
-    forward_lr: float = 1e-3  # tune.loguniform(1e-7, 1e-4),
+    # leave default to None tune.loguniform(1e-7, 1e-4),
+    forward_lr: float | None = None
     forward_num_epochs: int = 1600  # default 1600
-    load_forward_checkpoint: bool = True
+    load_forward_checkpoint: bool = False
     load_backward_checkpoint: bool = False
     model_arch = 'ann'  # options 'MLPMixer', 'resnet1d','ann'
     num_gpu: int = 1  # number of GPU
@@ -31,6 +32,9 @@ class Config(BaseModel):
         super().__init__(**data)
         if(self.should_verify_configs):
             self.verify_config()
+
+        if not self.forward_lr:
+            self.forward_lr = 1e-5 if self.substrate == 'inconel' else 1e-3
 
         # TODO add arg parser if needed
         # args = ArgParser().args
