@@ -76,7 +76,7 @@ class TrainerFactory:
         return EarlyStopping(monitor=f"{direction}/val/loss",
                              strict=True,
                              check_on_train_epoch_end=False,
-                             patience=20,
+                             patience=15,
                              min_delta=.000_1,
                              verbose=True,
                              mode="min")
