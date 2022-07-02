@@ -21,7 +21,7 @@ class Plotter:
         # Variant num is the number of random curves to generate with jitter
         variant_num = 1
         # Arbitrary list is the indices you want to look at in a tensor of emissivity curves. In the FoMM case, 0 = cutoff at 2.5 wl, 800 = cutoff at 12.5 wl.
-        arbitrary_list = [50]
+        arbitrary_list = [50, 51, 52]
 
         print("start plotting ...")
         for i in range(variant_num):
@@ -57,13 +57,13 @@ class Plotter:
             pred_array.append(new_pred.detach())
 
         for i in arbitrary_list:
-
             pred_emiss = []
             for j in range(variant_num):
                 pred_emiss.append(pred_array[j][i])
             pred_emiss = torch.stack(pred_emiss)
             fig = Plotter.plot_val(pred_emiss, true_emiss[i], i, config)
-            fig.savefig(f"{work_folder}/figs/{i}_predicted.png", dpi=300)
+            fig.savefig(
+                f"{work_folder}/figs/{i}_predicted_{utils.get_formatted_utc()}.png", dpi=300)
             plt.close(fig)
 
     @staticmethod

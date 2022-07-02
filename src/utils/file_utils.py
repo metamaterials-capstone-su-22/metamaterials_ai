@@ -6,7 +6,7 @@ import torch
 
 from dto import Data
 import shutil
-from datetime import datetime
+from .utils import get_dated_postfix
 
 
 class FileUtils:
@@ -81,11 +81,8 @@ class FileUtils:
     @staticmethod
     def save_best_model(work_folder: str, meta_trainer):
         best_model_path = meta_trainer.model.trainer.checkpoint_callback.best_model_path
-        direction = meta_trainer.model.direction
-        arch = meta_trainer.model.model_config.arch
-        substrate = meta_trainer.config.substrate
-
+        postfix: str = get_dated_postfix(meta_trainer)
         dst = Path(
-            f'{work_folder}/saved_best/{direction.title()[0]}-{arch}-{substrate}-{datetime.utcnow().strftime("%Y-%m-%d_%H-%M")}')
+            f'{work_folder}/saved_best/best_{postfix}.ckpt')
 
         shutil.copy(best_model_path, dst)
