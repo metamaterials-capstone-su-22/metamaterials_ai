@@ -5,13 +5,15 @@ import numpy as np
 import torch
 
 import utils
+from config import Config
 
 
 class Plotter:
     @staticmethod
     def plot_results(
-        preds, forward_model, backward_model, work_folder: str, data_folder: str
+        preds, forward_model, backward_model, config: Config
     ):
+        work_folder = config.work_folder
         # graph(residualsflag = True, predsvstrueflag = True, index_str = params_str, target_str = save_str)
         true_emiss = preds[0]["true_emiss"]
         pred_array = []
@@ -60,13 +62,14 @@ class Plotter:
             for j in range(variant_num):
                 pred_emiss.append(pred_array[j][i])
             pred_emiss = torch.stack(pred_emiss)
-            fig = Plotter.plot_val(pred_emiss, true_emiss[i], i, data_folder)
+            fig = Plotter.plot_val(pred_emiss, true_emiss[i], i, config)
             fig.savefig(f"{work_folder}/figs/{i}_predicted.png", dpi=300)
             plt.close(fig)
 
     @staticmethod
-    def plot_val(pred_emiss, true_emiss, index, data_folder):
-        wavelen = torch.load(f"{data_folder}/stainless_steel.pt")[
+    def plot_val(pred_emiss, true_emiss, index, config):
+        data_folder = config.data_folder
+        wavelen = torch.load(f"{data_folder}/{config.data_file}")[
             "interpolated_wavelength"
         ][0]
         pred_emiss = pred_emiss[0]
@@ -77,7 +80,8 @@ class Plotter:
 
         extension = torch.tensor(
             [
-                extended_min + (i) / granularity * (extended_max - extended_min)
+                extended_min + (i) / granularity *
+                (extended_max - extended_min)
                 for i in range(granularity)
             ]
         )
@@ -104,14 +108,16 @@ class Plotter:
 
         fig, ax = plt.subplots()
         temp = 1400
-        planck = [float(utils.planck_norm(wavelength, temp)) for wavelength in wavelen]
+        planck = [float(utils.planck_norm(wavelength, temp))
+                  for wavelength in wavelen]
 
         planck_max = max(planck)
         planck = [wave / planck_max for wave in planck]
 
         wavelen_cutoff = float(wavelen[index + granularity])
         # format the predicted params
-        FoMM = utils.planck_emiss_prod(wavelen, pred_emiss, wavelen_cutoff, 1400)
+        FoMM = utils.planck_emiss_prod(
+            wavelen, pred_emiss, wavelen_cutoff, 1400)
 
         ax.plot(
             wavelen,

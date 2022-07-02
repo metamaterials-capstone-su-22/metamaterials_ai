@@ -12,6 +12,7 @@ from meta_trainer_factory import MetaTrainerFactory
 from models import ForwardModel
 from plotter import Plotter
 from utils import FileUtils
+import random
 
 
 def save_and_plot(
@@ -27,7 +28,7 @@ def save_and_plot(
     # plotter needs the forward model to plot the result.
     if forward_model:
         Plotter.plot_results(
-            preds, forward_model, backward_trainer.model, work_folder, data_folder
+            preds, forward_model, backward_trainer.model, config
         )
 
 
@@ -39,6 +40,7 @@ def train_backward(meta_trainer, forward_model):
         "backward", forward_model)
     if not config.load_backward_checkpoint:
         backward_trainer.fit()
+        FileUtils.save_best_model(config.work_folder, backward_trainer)
 
     backward_trainer.test()
     save_and_plot(
@@ -47,6 +49,8 @@ def train_backward(meta_trainer, forward_model):
 
 
 def setup():
+    # Fix the seed
+    random.seed(100)
     FileUtils.setup_folder_structure(config.work_folder, config.data_folder)
     FileUtils.fetch_pt_files(config.data_folder, config.data_file)
 
@@ -60,6 +64,8 @@ def main(config: Config) -> None:
             forward_trainer = meta_trainer.create_meta_trainer("forward")
             if not config.load_forward_checkpoint:
                 forward_trainer.fit()
+                FileUtils.save_best_model(config.work_folder, forward_trainer)
+
             forward_trainer.test()
             forward_model = forward_trainer.model
 
