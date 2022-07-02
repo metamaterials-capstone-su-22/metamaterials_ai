@@ -1,4 +1,5 @@
 from __future__ import annotations
+from distutils.command.config import config
 
 from typing import Optional
 
@@ -6,7 +7,7 @@ import pytorch_lightning as pl
 import torch
 import torch.nn.functional as F
 from einops.layers.torch import Rearrange
-from torch import nn
+from torch import nn, optim
 
 import nngraph
 from config import Config
@@ -56,3 +57,13 @@ class BaseModel(pl.LightningModule):
                 raise
 
         self.log(f"{self.direction}/{stage}/loss", loss, prog_bar=True)
+
+    def configure_optimizers(self):
+        optimizer = optim.AdamW(self.parameters(), lr=self.lr,
+                                amsgrad=True,
+                                weight_decay=self.config.weight_decay)
+
+        lr_scheduler = optim.lr_scheduler.MultiStepLR(
+            optimizer, milestones=[10, 50, 150, 300], gamma=0.1)
+
+        return [optimizer], [lr_scheduler]

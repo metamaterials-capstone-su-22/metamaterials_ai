@@ -25,6 +25,7 @@ class BackwardModel(BaseModel):
         )
         super().__init__(config, direction="backward")
         self.save_hyperparameters(config.__dict__)
+        self.lr = config.backward_lr
 
         if forward_model is None:
             self.forward_model = None
@@ -112,6 +113,3 @@ class BackwardModel(BaseModel):
         torch.save(y, f"{self.work_folder}/emiss_true_back.pt")
         torch.save(y_pred, f"{self.work_folder}/emiss_pred.pt")
         torch.save(x_pred, f"{self.work_folder}/param_pred.pt")
-
-    def configure_optimizers(self):
-        return torch.optim.AdamW(self.parameters(), lr=self.config.backward_lr)

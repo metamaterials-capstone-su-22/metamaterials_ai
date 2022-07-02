@@ -2,15 +2,15 @@ from pydantic import BaseModel
 
 
 class Config(BaseModel):
-    backward_batch_size: int = 2**9  # 2**9 512
-    backward_lr: float = 1e-6  # tune.loguniform(1e-6, 1e-5),
+    backward_batch_size: int = 2**7  # 2**9 512
+    backward_lr: float = 1e-3  # tune.loguniform(1e-6, 1e-5),
     backward_num_epochs: int = 2500  # Default 2500
     create_plots = False
-    data_file = "inconel-revised-raw-shuffled.pt"  # name of the data file
+    data_file = "stainless-steel-revised-shuffled.pt"  # name of the data file
     data_folder: str = "local_data"  # Path to the data folder
-    direction: str = "direct"  # direct, inverse, both
+    direction: str = "both"  # direct, inverse, both
     forward_batch_size: int = 2**7  # 2**9 512
-    forward_lr: float = 1e-6  # tune.loguniform(1e-7, 1e-4),
+    forward_lr: float = 1e-3  # tune.loguniform(1e-7, 1e-4),
     forward_num_epochs: int = 1600  # default 1600
     load_forward_checkpoint: bool = False
     load_backward_checkpoint: bool = False
@@ -18,11 +18,12 @@ class Config(BaseModel):
     num_gpu: int = 1  # number of GPU
     # TODO: Fix num_wavelens be set at load time
     num_wavelens: int | None = 800  # This will be set @ load time. ex. 800
-    substrate: str = "inconel"  # options "stainless_steel" , "inconel"
+    substrate: str = "stainless"  # options "stainless" , "inconel"
     # use_cache true means to use the .pt file instead of regenerating this
     use_cache: bool = True
     use_forward: bool = True
     should_verify_configs = True  # when true it does some config check before starting
+    weight_decay = 1e-2  # default for AdamW 1e-2
     # Path to the working folder, checkpoint, graphs, ..
     work_folder: str = "local_work"
 

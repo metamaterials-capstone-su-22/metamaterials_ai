@@ -19,6 +19,7 @@ class ForwardModel(BaseModel):
             in_channels=14
         )
         super().__init__(config, direction="forward")
+        self.lr = config.forward_lr
         self.save_hyperparameters(config.__dict__)
 
     def create_model_arc(self):
@@ -47,6 +48,3 @@ class ForwardModel(BaseModel):
         loss = rmse(y_pred, y)
         self.create_graph_and_log(stage, y_pred, y, loss)
         return loss
-
-    def configure_optimizers(self):
-        return torch.optim.AdamW(self.parameters(), lr=self.config.forward_lr)
