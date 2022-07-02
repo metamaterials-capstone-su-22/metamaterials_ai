@@ -24,8 +24,10 @@ class BackwardModel(BaseModel):
             in_channels=config.num_wavelens
         )
         super().__init__(config, direction="backward")
-        self.save_hyperparameters(config.__dict__)
         self.lr = config.backward_lr
+        self.milestones = [50, 100, 150, 300]
+
+        self.save_hyperparameters(config.__dict__)
 
         if forward_model is None:
             self.forward_model = None

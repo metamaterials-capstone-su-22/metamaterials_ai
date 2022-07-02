@@ -64,6 +64,6 @@ class BaseModel(pl.LightningModule):
                                 weight_decay=self.config.weight_decay)
 
         lr_scheduler = optim.lr_scheduler.MultiStepLR(
-            optimizer, milestones=[10, 50, 150, 300], gamma=0.1)
+            optimizer, milestones=self.milestones, gamma=0.1)
 
         return [optimizer], [lr_scheduler]

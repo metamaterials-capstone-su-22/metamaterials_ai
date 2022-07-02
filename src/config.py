@@ -3,7 +3,7 @@ from pydantic import BaseModel
 
 class Config(BaseModel):
     backward_batch_size: int = 2**7  # 2**9 512
-    backward_lr: float = 1e-3  # tune.loguniform(1e-6, 1e-5),
+    backward_lr: float = 1e-6  # tune.loguniform(1e-6, 1e-5),
     backward_num_epochs: int = 2500  # Default 2500
     create_plots = False
     data_file = "stainless-steel-revised-shuffled.pt"  # name of the data file
@@ -12,7 +12,7 @@ class Config(BaseModel):
     forward_batch_size: int = 2**7  # 2**9 512
     forward_lr: float = 1e-3  # tune.loguniform(1e-7, 1e-4),
     forward_num_epochs: int = 1600  # default 1600
-    load_forward_checkpoint: bool = False
+    load_forward_checkpoint: bool = True
     load_backward_checkpoint: bool = False
     model_arch = 'ann'  # options 'MLPMixer', 'resnet1d' TODO: 'ann'
     num_gpu: int = 1  # number of GPU
