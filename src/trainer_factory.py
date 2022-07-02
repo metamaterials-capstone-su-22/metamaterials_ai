@@ -77,5 +77,6 @@ class TrainerFactory:
                              strict=True,
                              check_on_train_epoch_end=False,
                              patience=20,
+                             min_delta=.000_1,
                              verbose=True,
                              mode="min")
