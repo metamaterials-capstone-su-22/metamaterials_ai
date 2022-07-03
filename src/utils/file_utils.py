@@ -1,3 +1,4 @@
+import shutil
 from getpass import getpass
 from pathlib import Path
 
@@ -5,7 +6,7 @@ import gdown
 import torch
 
 from dto import Data
-import shutil
+
 from .utils import get_dated_postfix
 
 
@@ -23,8 +24,7 @@ class FileUtils:
                 )
                 print("Downloading process completed")
             except Exception as e:
-                print(
-                    f"Error: Something went wrong downloading data files. Error {e}.")
+                print(f"Error: Something went wrong downloading data files. Error {e}.")
                 raise
 
         else:
@@ -55,8 +55,7 @@ class FileUtils:
             except FileExistsError:
                 print(f"Info: '{path}' exist.")
             except Exception as e:
-                print(
-                    f"Error: something wrong creating '{path}'. message: {e}.")
+                print(f"Error: something wrong creating '{path}'. message: {e}.")
                 raise
 
     @staticmethod
@@ -66,8 +65,7 @@ class FileUtils:
         try:
             data = torch.load(data_file)
         except Exception as e:
-            print(
-                f"Trouble in loading data file: {data_file}. Error: {e.message}")
+            print(f"Trouble in loading data file: {data_file}. Error: {e.message}")
 
         # Set the number of wavelengths
         # config.num_wavelens = data["interpolated_emissivity"].shape[-1]
@@ -82,7 +80,6 @@ class FileUtils:
     def save_best_model(work_folder: str, meta_trainer):
         best_model_path = meta_trainer.model.trainer.checkpoint_callback.best_model_path
         postfix: str = get_dated_postfix(meta_trainer)
-        dst = Path(
-            f'{work_folder}/saved_best/best_{postfix}.ckpt')
+        dst = Path(f"{work_folder}/saved_best/best_{postfix}.ckpt")
 
         shutil.copy(best_model_path, dst)

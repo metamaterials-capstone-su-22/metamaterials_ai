@@ -39,12 +39,10 @@ def read_integral_emiss(filepath, index_str):
     plt.xlim([min(pred_array), max(pred_array)])
     plt.ylim([min(real_array), max(real_array)])
     r2 = r2_score(real_array, pred_array)
-    plt.title(
-        f"Laser Emissivity Points, Real vs Predicted, r^2 = {round(r2,4)}")
+    plt.title(f"Laser Emissivity Points, Real vs Predicted, r^2 = {round(r2,4)}")
     plt.xlabel("Predicted Emissivities")
     plt.ylabel("Real Emissivites")
-    real_array, pred_array = real_array.reshape(
-        -1, 1), pred_array.reshape(-1, 1)
+    real_array, pred_array = real_array.reshape(-1, 1), pred_array.reshape(-1, 1)
 
     plt.plot(
         real_array,
@@ -57,12 +55,18 @@ def read_integral_emiss(filepath, index_str):
     fig.clf()
 
 
-def save_integral_emiss_point(config: Config,
-                              predicted_emissivity, real_emissivity, filepath, wavelen_num=300, all_points=False
-                              ):
+def save_integral_emiss_point(
+    config: Config,
+    predicted_emissivity,
+    real_emissivity,
+    filepath,
+    wavelen_num=300,
+    all_points=False,
+):
 
-    wavelength = torch.load(
-        Path(f"{config.data_folder}/{config.data_file}"))["wavelength"]
+    wavelength = torch.load(Path(f"{config.data_folder}/{config.data_file}"))[
+        "wavelength"
+    ]
     wavelength = np.flip(np.array(wavelength.cpu())[0])
     eifile = open(filepath, "a")
     print("start file")
@@ -130,8 +134,7 @@ def emiss_error_graph(predicted_emissivity, real_emissivity, wavelen_num=300):
 
         MSE_E_P = 0
         for wavelen_i in range(wavelen_num):
-            MSE_E_P += (real_emiss_list[wavelen_i] -
-                        current_list[wavelen_i]) ** 2
+            MSE_E_P += (real_emiss_list[wavelen_i] - current_list[wavelen_i]) ** 2
         RMSE_E_P = float(MSE_E_P / wavelen_num) ** (0.5)
         RMSE_total += RMSE_E_P / 50
 
@@ -233,15 +236,13 @@ def val_set_RMSE(pred_target="local_work/preds.pt"):
                 real_emiss_list, predicted_emiss_list, squared=False
             )
             print(RMSE_total)
-            mean_total += mean_squared_error(real_emiss_list,
-                                             mean_pred, squared=False)
+            mean_total += mean_squared_error(real_emiss_list, mean_pred, squared=False)
             print(mean_total)
 
     RMSE_total = RMSE_total / 2000
     mean_total = mean_total / 2000
 
-    print(
-        f"Predicted RMSE total: {RMSE_total}, mean vs real RMSE total: {mean_total}")
+    print(f"Predicted RMSE total: {RMSE_total}, mean vs real RMSE total: {mean_total}")
 
 
 # y, stdevs = training_set_mean_vs_stdev()[0:300:15]
@@ -318,8 +319,7 @@ def graph(residualsflag, predsvstrueflag, target_str, wavelen_num=800, index_str
                 MSE_E_P = 0
                 for wavelen_i in range(wavelen_num):
                     MSE_E_P += (
-                        real_emiss_list[wavelen_i] -
-                        predicted_emiss_list[wavelen_i]
+                        real_emiss_list[wavelen_i] - predicted_emiss_list[wavelen_i]
                     ) ** 2
 
                 RMSE_E_P = (MSE_E_P / wavelen_num) ** (0.5)
@@ -405,8 +405,7 @@ def graph(residualsflag, predsvstrueflag, target_str, wavelen_num=800, index_str
                 a.set_xlabel("Wavelength")
                 a.set_ylabel("Emissivity")
 
-                plt.savefig(
-                    f"{index_str}_vs_training_best_{i_run_index}.png", dpi=300)
+                plt.savefig(f"{index_str}_vs_training_best_{i_run_index}.png", dpi=300)
                 plt.close(fig)
 
     x = np.array(Laser_E_P_list)

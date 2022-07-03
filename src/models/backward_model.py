@@ -16,12 +16,16 @@ from .model_config import ModelConfig
 
 
 class BackwardModel(BaseModel):
-    def __init__(self, config: Config,  forward_model: Optional[ForwardModel] = None,):
+    def __init__(
+        self,
+        config: Config,
+        forward_model: Optional[ForwardModel] = None,
+    ):
         self.model_config = ModelConfig(
             arch=config.model_arch,
             direction="backward",
             num_classes=14,
-            in_channels=config.num_wavelens
+            in_channels=config.num_wavelens,
         )
         super().__init__(config, direction="backward")
         self.lr = config.backward_lr
@@ -104,8 +108,8 @@ class BackwardModel(BaseModel):
             if stage == "test":
                 self.save_test_result(x, y, y_pred, x_pred)
         # else: #TODO
-            # add logic to snag the current best forward model
-            # if the case that we are exclusively training the backwards model
+        # add logic to snag the current best forward model
+        # if the case that we are exclusively training the backwards model
 
         self.create_graph_and_log(stage, y_pred, y, loss)
         return loss

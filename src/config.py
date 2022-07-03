@@ -9,13 +9,14 @@ class Config(BaseModel):
     data_file = "inconel-revised-raw-shuffled.pt"  # name of the data file
     data_folder: str = "local_data"  # Path to the data folder
     direction: str = "both"  # direct, inverse, both
+    enable_early_stopper: bool = False  # when 'True' enables early stopper
     forward_batch_size: int = 2**7  # 2**9 512
-    # leave default to None tune.loguniform(1e-7, 1e-4),
+    # leave default to None. tune.loguniform(1e-7, 1e-4),
     forward_lr: float | None = None
     forward_num_epochs: int = 1600  # default 1600
-    load_forward_checkpoint: bool = False
+    load_forward_checkpoint: bool = True
     load_backward_checkpoint: bool = False
-    model_arch = 'ann'  # options 'MLPMixer', 'resnet1d','ann'
+    model_arch = "cnn"  # options 'MLPMixer', 'resnet1d','ann', 'cnn,
     num_gpu: int = 1  # number of GPU
     # TODO: Fix num_wavelens be set at load time
     num_wavelens: int | None = 800  # This will be set @ load time. ex. 800
@@ -30,21 +31,21 @@ class Config(BaseModel):
 
     def __init__(self, **data):
         super().__init__(**data)
-        if(self.should_verify_configs):
+        if self.should_verify_configs:
             self.verify_config()
 
         if not self.forward_lr:
-            self.forward_lr = 1e-5 if self.substrate == 'inconel' else 1e-3
+            self.forward_lr = 1e-5 if self.substrate == "inconel" else 1e-3
 
         # TODO add arg parser if needed
         # args = ArgParser().args
 
     def verify_config(self):
-        '''Add constraints to configurations here to be checked'''
-        if(not self.data_file.lower().startswith(self.substrate.lower())):
+        """Add constraints to configurations here to be checked"""
+        if not self.data_file.lower().startswith(self.substrate.lower()):
             print(
-                f"Warning: Data file'{self.data_file}' does not match with substrate '{self.substrate}.")
-            t = input(
-                f"Do you want to continue?")
-            if(not t == 'y'):
-                raise Exception('Fix the mismatch and re-run!')
+                f"Warning: Data file'{self.data_file}' does not match with substrate '{self.substrate}."
+            )
+            t = input(f"Do you want to continue?")
+            if not t == "y":
+                raise Exception("Fix the mismatch and re-run!")

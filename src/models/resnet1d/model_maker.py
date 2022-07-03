@@ -18,38 +18,41 @@ class ModelMaker:
     @staticmethod
     def create_forward_model(model_config: ModelConfig):
         return nn.Sequential(
-        Rearrange("b c -> b c 1"),
-        ResNet1D(
-        in_channels=14, 
-        base_filters=1, 
-        kernel_size=1, 
-        stride=2, 
-        groups=1, 
-        n_block=4, 
-        n_classes=model_config.num_classes, 
-        downsample_gap=2, 
-        increasefilter_gap=4, 
-        use_bn=True, 
-        use_do=True, 
-        verbose=False),
-        nn.Sigmoid()
+            Rearrange("b c -> b c 1"),
+            ResNet1D(
+                in_channels=14,
+                base_filters=1,
+                kernel_size=1,
+                stride=2,
+                groups=1,
+                n_block=4,
+                n_classes=model_config.num_classes,
+                downsample_gap=2,
+                increasefilter_gap=4,
+                use_bn=True,
+                use_do=True,
+                verbose=False,
+            ),
+            nn.Sigmoid(),
         )
 
     @staticmethod
     def create_backward_model(model_config: ModelConfig):
         return nn.Sequential(
-        Rearrange("b c -> b c 1"),
-        ResNet1D(
-        in_channels=model_config.in_channels, 
-        base_filters=1, 
-        kernel_size=1, 
-        stride=2, 
-        groups=1, 
-        n_block=1, 
-        n_classes=1_000, 
-        downsample_gap=2, 
-        increasefilter_gap=4, 
-        use_bn=True, 
-        use_do=True, 
-        verbose=False),
-        nn.Flatten())
+            Rearrange("b c -> b c 1"),
+            ResNet1D(
+                in_channels=model_config.in_channels,
+                base_filters=1,
+                kernel_size=1,
+                stride=2,
+                groups=1,
+                n_block=1,
+                n_classes=1_000,
+                downsample_gap=2,
+                increasefilter_gap=4,
+                use_bn=True,
+                use_do=True,
+                verbose=False,
+            ),
+            nn.Flatten(),
+        )

@@ -1,4 +1,5 @@
 from distutils.file_util import copy_file
+
 from config import Config
 
 from .backward_model import BackwardModel

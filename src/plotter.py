@@ -10,9 +10,7 @@ from config import Config
 
 class Plotter:
     @staticmethod
-    def plot_results(
-        preds, forward_model, backward_model, config: Config
-    ):
+    def plot_results(preds, forward_model, backward_model, config: Config):
         work_folder = config.work_folder
         # graph(residualsflag = True, predsvstrueflag = True, index_str = params_str, target_str = save_str)
         true_emiss = preds[0]["true_emiss"]
@@ -63,7 +61,9 @@ class Plotter:
             pred_emiss = torch.stack(pred_emiss)
             fig = Plotter.plot_val(pred_emiss, true_emiss[i], i, config)
             fig.savefig(
-                f"{work_folder}/figs/{i}_predicted_{utils.get_formatted_utc()}.png", dpi=300)
+                f"{work_folder}/figs/{i}_predicted_{utils.get_formatted_utc()}.png",
+                dpi=300,
+            )
             plt.close(fig)
 
     @staticmethod
@@ -80,8 +80,7 @@ class Plotter:
 
         extension = torch.tensor(
             [
-                extended_min + (i) / granularity *
-                (extended_max - extended_min)
+                extended_min + (i) / granularity * (extended_max - extended_min)
                 for i in range(granularity)
             ]
         )
@@ -108,16 +107,14 @@ class Plotter:
 
         fig, ax = plt.subplots()
         temp = 1400
-        planck = [float(utils.planck_norm(wavelength, temp))
-                  for wavelength in wavelen]
+        planck = [float(utils.planck_norm(wavelength, temp)) for wavelength in wavelen]
 
         planck_max = max(planck)
         planck = [wave / planck_max for wave in planck]
 
         wavelen_cutoff = float(wavelen[index + granularity])
         # format the predicted params
-        FoMM = utils.planck_emiss_prod(
-            wavelen, pred_emiss, wavelen_cutoff, 1400)
+        FoMM = utils.planck_emiss_prod(wavelen, pred_emiss, wavelen_cutoff, 1400)
 
         ax.plot(
             wavelen,

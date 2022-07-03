@@ -1,8 +1,7 @@
-
-from models.forward_model import ForwardModel
+from config import Config
 from models.backward_model import BackwardModel
 from models.base_model import BaseModel
-from config import Config
+from models.forward_model import ForwardModel
 from models.model_factory import ModelFactory
 
 CKPT_PATH = "../data/models/model.ckpt"
@@ -10,7 +9,7 @@ MODEL_PATH = "data/mymodels"
 
 config = Config()
 
-model = ModelFactory(config).create_model('forward')
+model = ModelFactory(config).create_model("forward")
 
 model = model.load_from_checkpoint(CKPT_PATH)
 
@@ -28,7 +27,6 @@ if config.use_forward:
 # Close the Forward before backward if you want separate project
 wandb.finish()
 train_backward(meta_trainer, forward_model)
-
 
 
 prediction = model.trainer.predict(

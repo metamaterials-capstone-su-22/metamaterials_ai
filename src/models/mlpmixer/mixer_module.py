@@ -110,4 +110,5 @@ if __name__ == "__main__":
 
     out_img = model(img)
 
-    print("Shape of out :", out_img.shape)  # [B, in_channels, image_size, image_size]
+    # [B, in_channels, image_size, image_size]
+    print("Shape of out :", out_img.shape)

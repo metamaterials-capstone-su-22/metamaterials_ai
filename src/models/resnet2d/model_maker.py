@@ -3,7 +3,7 @@ from torch import nn
 
 from models.model_config import ModelConfig
 
-from .net2d_module import ResNet, BasicConvBlock
+from .net2d_module import BasicConvBlock, ResNet
 
 
 class ModelMaker:
@@ -18,9 +18,14 @@ class ModelMaker:
     @staticmethod
     def create_forward_model(model_config: ModelConfig):
         return nn.Sequential(
-        Rearrange("b c -> b c 1 1"),
-        ResNet(block_type=BasicConvBlock, num_blocks=[9,9,9], in_channels=14, out_channels=512),
-        nn.Sigmoid()
+            Rearrange("b c -> b c 1 1"),
+            ResNet(
+                block_type=BasicConvBlock,
+                num_blocks=[9, 9, 9],
+                in_channels=14,
+                out_channels=512,
+            ),
+            nn.Sigmoid(),
         )
 
         # in_channels=14,
@@ -36,6 +41,11 @@ class ModelMaker:
     @staticmethod
     def create_backward_model(model_config: ModelConfig):
         return nn.Sequential(
-        Rearrange("b c -> b c 1 2"),
-        ResNet(block_type=BasicConvBlock, num_blocks=[9,9,9], in_channels=model_config.in_channels),
-        nn.Flatten())
+            Rearrange("b c -> b c 1 2"),
+            ResNet(
+                block_type=BasicConvBlock,
+                num_blocks=[9, 9, 9],
+                in_channels=model_config.in_channels,
+            ),
+            nn.Flatten(),
+        )

@@ -1,6 +1,6 @@
 from __future__ import annotations
-from distutils.command.config import config
 
+from distutils.command.config import config
 from typing import Optional
 
 import pytorch_lightning as pl
@@ -59,11 +59,15 @@ class BaseModel(pl.LightningModule):
         self.log(f"{self.direction}/{stage}/loss", loss, prog_bar=True)
 
     def configure_optimizers(self):
-        optimizer = optim.AdamW(self.parameters(), lr=self.lr,
-                                amsgrad=True,
-                                weight_decay=self.config.weight_decay)
+        optimizer = optim.AdamW(
+            self.parameters(),
+            lr=self.lr,
+            amsgrad=True,
+            weight_decay=self.config.weight_decay,
+        )
 
         lr_scheduler = optim.lr_scheduler.MultiStepLR(
-            optimizer, milestones=self.milestones, gamma=0.1)
+            optimizer, milestones=self.milestones, gamma=0.1
+        )
 
         return [optimizer], [lr_scheduler]

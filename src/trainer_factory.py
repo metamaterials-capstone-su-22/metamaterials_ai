@@ -1,11 +1,13 @@
+from datetime import datetime
 from fileinput import filename
+from gc import callbacks
+
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks import ModelCheckpoint
-from pytorch_lightning.loggers import TensorBoardLogger, WandbLogger
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
+from pytorch_lightning.loggers import TensorBoardLogger, WandbLogger
 
 from config import Config
-from datetime import datetime
 
 
 class TrainerFactory:
@@ -52,31 +54,37 @@ class TrainerFactory:
         ]
 
     def create_callbacks(self, direction, refresh_rate):
-        return [
+        callbacks = [
             self.create_checkpoint_callback(direction),
-            TrainerFactory.create_early_stopper_callback(direction),
             pl.callbacks.progress.TQDMProgressBar(refresh_rate=refresh_rate),
         ]
+        if self.config.enable_early_stopper:
+            callbacks.append(TrainerFactory.create_early_stopper_callback(direction))
+
+        return callbacks
 
     def create_checkpoint_callback(self, direction):
         work_folder = self.config.work_folder
         return ModelCheckpoint(
-            filename='epoch={epoch:04d}-step={step}-val_loss={' +
-            str(direction)+'/val/loss:.5f}',
+            filename="epoch={epoch:04d}-step={step}-val_loss={"
+            + str(direction)
+            + "/val/loss:.5f}",
             monitor=f"{direction}/val/loss",
             dirpath=f"{work_folder}/weights/{direction}",
             save_top_k=1,
             mode="min",
             save_last=True,
-            auto_insert_metric_name=False
+            auto_insert_metric_name=False,
         )
 
     @staticmethod
     def create_early_stopper_callback(direction):
-        return EarlyStopping(monitor=f"{direction}/val/loss",
-                             strict=True,
-                             check_on_train_epoch_end=False,
-                             patience=15,
-                             min_delta=.000_1,
-                             verbose=True,
-                             mode="min")
+        return EarlyStopping(
+            monitor=f"{direction}/val/loss",
+            strict=True,
+            check_on_train_epoch_end=False,
+            patience=15,
+            min_delta=0.000_1,
+            verbose=True,
+            mode="min",
+        )

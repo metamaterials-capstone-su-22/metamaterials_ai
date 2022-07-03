@@ -14,11 +14,11 @@ import sklearn
 import torch
 import torch.nn.functional as F
 from scipy.interpolate import interp1d
+from sklearn.model_selection import train_test_split
+from sklearn.utils import shuffle
 from torch.utils.data import DataLoader, TensorDataset
 from tqdm import tqdm
 from tqdm.contrib import tenumerate
-from sklearn.model_selection import train_test_split
-from sklearn.utils import shuffle
 
 LaserParams, Emiss = torch.FloatTensor, torch.FloatTensor
 
@@ -85,7 +85,7 @@ def raw_to_pt(
             data["uids"],
         )
 
-        # XXX check length to avoid bugs.
+        # Check length to avoid bugs.
         if interp_emissivities.shape[-1] == num_wavelens:
             return norm_laser_params, interp_emissivities, uids
 
@@ -212,7 +212,10 @@ for p in Path(input_path).rglob("*.txt"):
 shuffled_data_emiss = shuffle(data_emiss, random_state=2022)
 
 laser_params, emiss, uids = raw_to_pt(
-    use_cache=False, num_wavelens=800, db=shuffled_data_emiss, output_path=shuffled_output_path
+    use_cache=False,
+    num_wavelens=800,
+    db=shuffled_data_emiss,
+    output_path=shuffled_output_path,
 )
 
 # print(len(data_emiss))
@@ -239,4 +242,3 @@ laser_params, emiss, uids = raw_to_pt(
 # )
 
 print("Done!")
-

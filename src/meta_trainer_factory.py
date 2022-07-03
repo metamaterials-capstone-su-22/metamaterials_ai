@@ -6,7 +6,6 @@ from trainer_factory import TrainerFactory
 
 
 class MetaTrainerFactory:
-
     def __init__(self, config) -> None:
         self.config = config
         self.trainer_factory = TrainerFactory(config)

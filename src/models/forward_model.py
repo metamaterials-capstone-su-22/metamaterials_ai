@@ -16,7 +16,7 @@ class ForwardModel(BaseModel):
             arch=config.model_arch,
             direction="forward",
             num_classes=config.num_wavelens,
-            in_channels=14
+            in_channels=14,
         )
         super().__init__(config, direction="forward")
         self.lr = config.forward_lr

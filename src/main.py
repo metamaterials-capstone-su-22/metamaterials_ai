@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import random
 from pathlib import Path
 
 import torch
@@ -12,7 +13,6 @@ from meta_trainer_factory import MetaTrainerFactory
 from models import ForwardModel
 from plotter import Plotter
 from utils import FileUtils
-import random
 
 
 def save_and_plot(
@@ -27,17 +27,14 @@ def save_and_plot(
     wandb.finish()
     # plotter needs the forward model to plot the result.
     if forward_model:
-        Plotter.plot_results(
-            preds, forward_model, backward_trainer.model, config
-        )
+        Plotter.plot_results(preds, forward_model, backward_trainer.model, config)
 
 
 def train_backward(meta_trainer, forward_model):
     print("=" * 80)
     print("Backward Model Step")
     print("=" * 80)
-    backward_trainer = meta_trainer.create_meta_trainer(
-        "backward", forward_model)
+    backward_trainer = meta_trainer.create_meta_trainer("backward", forward_model)
     if not config.load_backward_checkpoint:
         backward_trainer.fit()
         FileUtils.save_best_model(config.work_folder, backward_trainer)
@@ -59,7 +56,7 @@ def main(config: Config) -> None:
     setup()
     meta_trainer = MetaTrainerFactory(config)
     forward_model = None
-    if config.direction in ['direct', 'both']:
+    if config.direction in ["direct", "both"]:
         if config.use_forward:
             forward_trainer = meta_trainer.create_meta_trainer("forward")
             if not config.load_forward_checkpoint:
@@ -71,7 +68,7 @@ def main(config: Config) -> None:
 
     # Close the Forward before backward if you want separate project
     wandb.finish()
-    if config.direction in ['inverse', 'both']:
+    if config.direction in ["inverse", "both"]:
         train_backward(meta_trainer, forward_model)
 
 
