@@ -13,7 +13,7 @@ from .model_config import ModelConfig
 class ForwardModel(BaseModel):
     def __init__(self, config: Config):
         self.model_config = ModelConfig(
-            arch=config.model_arch,
+            arch=config.forward_arch,
             direction="forward",
             num_classes=config.num_wavelens,
             in_channels=14,

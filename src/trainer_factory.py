@@ -17,11 +17,14 @@ class TrainerFactory:
 
     def create_trainer(self, direction):
         config = self.config
-        num_epochs = config.forward_num_epochs
-        refresh_rate = 2
         if direction == "backward":
             num_epochs = config.backward_num_epochs
-            refresh_rate = 10
+            refresh_rate = 5
+            self.model_arch = config.backward_arch
+        else:
+            num_epochs = config.forward_num_epochs
+            refresh_rate = 2
+            self.model_arch = config.forward_arch
         return self.create_pl_trainer(direction, refresh_rate, num_epochs)
 
     def create_pl_trainer(self, direction, refresh_rate, epochs):
@@ -41,7 +44,7 @@ class TrainerFactory:
         work_folder = self.config.work_folder
         return [
             WandbLogger(
-                name=f'{direction.title()[0]}-{self.config.model_arch}-{self.config.substrate}-{datetime.utcnow().strftime("%Y-%m-%d_%H-%M")}',
+                name=f'{direction.title()[0]}-{self.model_arch}-{self.config.substrate}-{datetime.utcnow().strftime("%Y-%m-%d_%H-%M")}',
                 save_dir=f"{work_folder}/wandb_logs/{direction}",
                 offline=False,
                 project=f"Metamaterial AI",
@@ -59,7 +62,8 @@ class TrainerFactory:
             pl.callbacks.progress.TQDMProgressBar(refresh_rate=refresh_rate),
         ]
         if self.config.enable_early_stopper:
-            callbacks.append(TrainerFactory.create_early_stopper_callback(direction))
+            callbacks.append(
+                TrainerFactory.create_early_stopper_callback(direction))
 
         return callbacks
 

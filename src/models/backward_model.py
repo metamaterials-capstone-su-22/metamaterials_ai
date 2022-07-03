@@ -22,7 +22,7 @@ class BackwardModel(BaseModel):
         forward_model: Optional[ForwardModel] = None,
     ):
         self.model_config = ModelConfig(
-            arch=config.model_arch,
+            arch=config.backward_arch,
             direction="backward",
             num_classes=14,
             in_channels=config.num_wavelens,
