@@ -25,7 +25,7 @@ def save_and_plot(
         Path(f"{work_folder}/preds.pt"),
     )
     wandb.finish()
-    # plotter needs the forward model to plot the result.
+    # plotter needs the direct model to plot the result.
     if direct_model:
         Plotter.plot_results(preds, direct_model,
                              inverse_trainer.model, config)

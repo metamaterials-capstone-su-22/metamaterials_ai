@@ -10,7 +10,7 @@ from config import Config
 from utils import rmse
 
 from .base_model import BaseModel
-from .forward_model import DirectModel
+from .direct_model import DirectModel
 from .model_arch_factory import ModelArchFactory
 from .model_config import ModelConfig
 
@@ -19,7 +19,7 @@ class InverseModel(BaseModel):
     def __init__(
         self,
         config: Config,
-        forward_model: Optional[DirectModel] = None,
+        direct_model: Optional[DirectModel] = None,
     ):
         self.model_config = ModelConfig(
             arch=config.inverse_arch,
@@ -33,10 +33,10 @@ class InverseModel(BaseModel):
 
         self.save_hyperparameters(config.__dict__)
 
-        if forward_model is None:
+        if direct_model is None:
             self.direct_model = None
         else:
-            self.direct_model = forward_model
+            self.direct_model = direct_model
             self.direct_model.freeze()
 
     def create_model_arc(self):

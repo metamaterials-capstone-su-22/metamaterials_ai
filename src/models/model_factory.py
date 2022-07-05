@@ -2,8 +2,8 @@ from distutils.file_util import copy_file
 
 from config import Config
 
-from .backward_model import InverseModel
-from .forward_model import DirectModel
+from .inverse_model import InverseModel
+from .direct_model import DirectModel
 
 
 class ModelFactory:
