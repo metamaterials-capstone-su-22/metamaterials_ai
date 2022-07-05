@@ -17,14 +17,14 @@ class TrainerFactory:
 
     def create_trainer(self, direction):
         config = self.config
-        if direction == "backward":
-            num_epochs = config.backward_num_epochs
+        if direction == "inverse":
+            num_epochs = config.inverse_num_epochs
             refresh_rate = 5
-            self.model_arch = config.backward_arch
+            self.model_arch = config.inverse_arch
         else:
-            num_epochs = config.forward_num_epochs
+            num_epochs = config.direct_num_epochs
             refresh_rate = 2
-            self.model_arch = config.forward_arch
+            self.model_arch = config.direct_arch
         return self.create_pl_trainer(direction, refresh_rate, num_epochs)
 
     def create_pl_trainer(self, direction, refresh_rate, epochs):

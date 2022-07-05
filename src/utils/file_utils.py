@@ -24,7 +24,8 @@ class FileUtils:
                 )
                 print("Downloading process completed")
             except Exception as e:
-                print(f"Error: Something went wrong downloading data files. Error {e}.")
+                print(
+                    f"Error: Something went wrong downloading data files. Error {e}.")
                 raise
 
         else:
@@ -43,7 +44,7 @@ class FileUtils:
         paths.append(Path(f"{work_folder}/figs"))
         paths.append(Path(f"{work_folder}/saved_best"))
         paths.append(Path(f"{data_folder}"))
-        for d in ["forward", "backward"]:
+        for d in ["direct", "inverse"]:
             paths.append(Path(f"{work_folder}/wandb_logs/{d}/wandb"))
         FileUtils.create_folders(paths)
 
@@ -55,7 +56,8 @@ class FileUtils:
             except FileExistsError:
                 print(f"Info: '{path}' exist.")
             except Exception as e:
-                print(f"Error: something wrong creating '{path}'. message: {e}.")
+                print(
+                    f"Error: something wrong creating '{path}'. message: {e}.")
                 raise
 
     @staticmethod
@@ -65,7 +67,8 @@ class FileUtils:
         try:
             data = torch.load(data_file)
         except Exception as e:
-            print(f"Trouble in loading data file: {data_file}. Error: {e.message}")
+            print(
+                f"Trouble in loading data file: {data_file}. Error: {e.message}")
 
         # Set the number of wavelengths
         # config.num_wavelens = data["interpolated_emissivity"].shape[-1]

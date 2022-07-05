@@ -1,7 +1,7 @@
 from config import Config
-from models.backward_model import BackwardModel
+from models.backward_model import InverseModel
 from models.base_model import BaseModel
-from models.forward_model import ForwardModel
+from models.forward_model import DirectModel
 from models.model_factory import ModelFactory
 
 CKPT_PATH = "../data/models/model.ckpt"
@@ -9,24 +9,24 @@ MODEL_PATH = "data/mymodels"
 
 config = Config()
 
-model = ModelFactory(config).create_model("forward")
+model = ModelFactory(config).create_model("direct")
 
 model = model.load_from_checkpoint(CKPT_PATH)
 
 ckpt_path = CKPT_PATH
 
 meta_trainer = MetaTrainerFactory(config, gpus=0)
-forward_model = None
-if config.use_forward:
-    forward_trainer = meta_trainer.create_meta_trainer("forward")
-    if not config.load_forward_checkpoint:
-        forward_trainer.fit()
-    forward_trainer.test()
-    forward_model = forward_trainer.model
+driect_model = None
+if config.use_direct:
+    direct_trainer = meta_trainer.create_meta_trainer("direct")
+    if not config.load_direct_checkpoint:
+        direct_trainer.fit()
+    direct_trainer.test()
+    driect_model = direct_trainer.model
 
-# Close the Forward before backward if you want separate project
+# Close the Direct before Inverse if you want separate project
 wandb.finish()
-train_backward(meta_trainer, forward_model)
+train_inverse(meta_trainer, driect_model)
 
 
 prediction = model.trainer.predict(

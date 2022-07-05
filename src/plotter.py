@@ -10,7 +10,7 @@ from config import Config
 
 class Plotter:
     @staticmethod
-    def plot_results(preds, forward_model, backward_model, config: Config):
+    def plot_results(preds, direct_model, inverse_model, config: Config):
         work_folder = config.work_folder
         # graph(residualsflag = True, predsvstrueflag = True, index_str = params_str, target_str = save_str)
         true_emiss = preds[0]["true_emiss"]
@@ -44,14 +44,14 @@ class Plotter:
 
             if i == 0:
                 new_true = true_emiss
-            back = backward_model(new_true)
+            back = inverse_model(new_true)
             # add spacing
 
             # minspeed = 10, maxspeed = 700
 
             # min 1 max 42
 
-            new_pred = forward_model(back)
+            new_pred = direct_model(back)
             pred_array.append(new_pred.detach())
 
         for i in arbitrary_list:
@@ -80,7 +80,8 @@ class Plotter:
 
         extension = torch.tensor(
             [
-                extended_min + (i) / granularity * (extended_max - extended_min)
+                extended_min + (i) / granularity *
+                (extended_max - extended_min)
                 for i in range(granularity)
             ]
         )
@@ -107,14 +108,16 @@ class Plotter:
 
         fig, ax = plt.subplots()
         temp = 1400
-        planck = [float(utils.planck_norm(wavelength, temp)) for wavelength in wavelen]
+        planck = [float(utils.planck_norm(wavelength, temp))
+                  for wavelength in wavelen]
 
         planck_max = max(planck)
         planck = [wave / planck_max for wave in planck]
 
         wavelen_cutoff = float(wavelen[index + granularity])
         # format the predicted params
-        FoMM = utils.planck_emiss_prod(wavelen, pred_emiss, wavelen_cutoff, 1400)
+        FoMM = utils.planck_emiss_prod(
+            wavelen, pred_emiss, wavelen_cutoff, 1400)
 
         ax.plot(
             wavelen,

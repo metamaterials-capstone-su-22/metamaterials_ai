@@ -19,9 +19,9 @@ class DataModule(pl.LightningDataModule):
         self.config = config
         self.direction = direction
         self.batch_size = (
-            config.forward_batch_size
-            if direction == "forward"
-            else config.backward_batch_size
+            config.direct_batch_size
+            if direction == "direct"
+            else config.inverse_batch_size
         )
 
     def setup(self, stage: Optional[str]) -> None:
@@ -29,10 +29,10 @@ class DataModule(pl.LightningDataModule):
             self.config.data_folder, self.config.data_file
         )
         splits = split(len(data.laser_params))
-        if self.direction == "forward":
-            self.forward_split(data, splits)
+        if self.direction == "direct":
+            self.direct_split(data, splits)
         else:
-            self.backward_split(data, splits)
+            self.inverse_split(data, splits)
         self.save_split_data()
 
     def train_dataloader(self) -> DataLoader:
@@ -76,22 +76,22 @@ class DataModule(pl.LightningDataModule):
         torch.save(self.val, f"{work_folder}/{direction}_val_true.pt")
         torch.save(self.test, f"{work_folder}/{direction}_test_true.pt")
 
-    def backward_split(self, data: Data, splits: dict[Stage, range]):
+    def inverse_split(self, data: Data, splits: dict[Stage, range]):
         self.train, self.val, self.test = [
             TensorDataset(
-                data.emiss[splits[s].start : splits[s].stop],
-                data.laser_params[splits[s].start : splits[s].stop],
-                data.uids[splits[s].start : splits[s].stop],
+                data.emiss[splits[s].start: splits[s].stop],
+                data.laser_params[splits[s].start: splits[s].stop],
+                data.uids[splits[s].start: splits[s].stop],
             )
             for s in ("train", "val", "test")
         ]
 
-    def forward_split(self, data: Data, splits: dict[Stage, range]):
+    def direct_split(self, data: Data, splits: dict[Stage, range]):
         self.train, self.val, self.test = [
             TensorDataset(
-                data.laser_params[splits[s].start : splits[s].stop],
-                data.emiss[splits[s].start : splits[s].stop],
-                data.uids[splits[s].start : splits[s].stop],
+                data.laser_params[splits[s].start: splits[s].stop],
+                data.emiss[splits[s].start: splits[s].stop],
+                data.uids[splits[s].start: splits[s].stop],
             )
             for s in ("train", "val", "test")
         ]

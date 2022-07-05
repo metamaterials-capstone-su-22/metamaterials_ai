@@ -10,34 +10,34 @@ from config import Config
 from utils import rmse
 
 from .base_model import BaseModel
-from .forward_model import ForwardModel
+from .forward_model import DirectModel
 from .model_arch_factory import ModelArchFactory
 from .model_config import ModelConfig
 
 
-class BackwardModel(BaseModel):
+class InverseModel(BaseModel):
     def __init__(
         self,
         config: Config,
-        forward_model: Optional[ForwardModel] = None,
+        forward_model: Optional[DirectModel] = None,
     ):
         self.model_config = ModelConfig(
-            arch=config.backward_arch,
-            direction="backward",
+            arch=config.inverse_arch,
+            direction="inverse",
             num_classes=14,
             in_channels=config.num_wavelens,
         )
-        super().__init__(config, direction="backward")
-        self.lr = config.backward_lr
+        super().__init__(config, direction="inverse")
+        self.lr = config.inverse_lr
         self.milestones = [50, 100, 150, 300]
 
         self.save_hyperparameters(config.__dict__)
 
         if forward_model is None:
-            self.forward_model = None
+            self.direct_model = None
         else:
-            self.forward_model = forward_model
-            self.forward_model.freeze()
+            self.direct_model = forward_model
+            self.direct_model.freeze()
 
     def create_model_arc(self):
         return ModelArchFactory.create_model_arch(self.model_config)
@@ -70,8 +70,8 @@ class BackwardModel(BaseModel):
         out["true_emiss"] = y
         x_pred = self(y)
         out["params"] = x_pred
-        if self.forward_model is not None:
-            y_pred = self.forward_model(x_pred)
+        if self.direct_model is not None:
+            y_pred = self.direct_model(x_pred)
             out["pred_emiss"] = y_pred
             y_loss = rmse(y_pred, y)
             out["pred_loss"] = y_loss
@@ -94,8 +94,8 @@ class BackwardModel(BaseModel):
         with torch.no_grad():
             x_loss = rmse(x_pred, x)
             self.log(f"{self.direction}/{stage}/x/loss", x_loss, prog_bar=True)
-        if self.forward_model is not None:
-            y_pred = self.forward_model(x_pred)
+        if self.direct_model is not None:
+            y_pred = self.direct_model(x_pred)
             y_loss = rmse(y_pred, y)
 
             self.log(
@@ -109,7 +109,7 @@ class BackwardModel(BaseModel):
                 self.save_test_result(x, y, y_pred, x_pred)
         # else: #TODO
         # add logic to snag the current best forward model
-        # if the case that we are exclusively training the backwards model
+        # if the case that we are exclusively training the inverse model
 
         self.create_graph_and_log(stage, y_pred, y, loss)
         return loss

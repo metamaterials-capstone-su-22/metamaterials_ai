@@ -11,7 +11,7 @@ class ModelMaker:
     def create_model(model_config: ModelConfig):
         return (
             ModelMaker.create_direct_model(model_config)
-            if model_config.direction == "forward"
+            if model_config.direction == "direct"
             else ModelMaker.create_inverse_model(model_config)
         )
 

@@ -10,16 +10,16 @@ from .model_arch_factory import ModelArchFactory
 from .model_config import ModelConfig
 
 
-class ForwardModel(BaseModel):
+class DirectModel(BaseModel):
     def __init__(self, config: Config):
         self.model_config = ModelConfig(
-            arch=config.forward_arch,
-            direction="forward",
+            arch=config.direct_arch,
+            direction="direct",
             num_classes=config.num_wavelens,
             in_channels=14,
         )
-        super().__init__(config, direction="forward")
-        self.lr = config.forward_lr
+        super().__init__(config, direction="direct")
+        self.lr = config.direct_lr
         self.milestones = [50, 100, 300]
         self.save_hyperparameters(config.__dict__)
 

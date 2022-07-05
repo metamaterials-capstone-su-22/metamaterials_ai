@@ -10,15 +10,15 @@ import wandb
 
 from config import Config
 from meta_trainer_factory import MetaTrainerFactory
-from models import ForwardModel
+from models import DirectModel
 from plotter import Plotter
 from utils import FileUtils
 
 
 def save_and_plot(
-    backward_trainer, forward_model: ForwardModel, work_folder: str, data_folder: str
+    inverse_trainer, direct_model: DirectModel, work_folder: str, data_folder: str
 ):
-    preds: dict = backward_trainer.predict()
+    preds: dict = inverse_trainer.predict()
 
     torch.save(
         preds,
@@ -26,22 +26,24 @@ def save_and_plot(
     )
     wandb.finish()
     # plotter needs the forward model to plot the result.
-    if forward_model:
-        Plotter.plot_results(preds, forward_model, backward_trainer.model, config)
+    if direct_model:
+        Plotter.plot_results(preds, direct_model,
+                             inverse_trainer.model, config)
 
 
-def train_backward(meta_trainer, forward_model):
+def train_inverse(meta_trainer, direct_model):
     print("=" * 80)
-    print("Backward Model Step")
+    print("Inverse Model Step")
     print("=" * 80)
-    backward_trainer = meta_trainer.create_meta_trainer("backward", forward_model)
-    if not config.load_backward_checkpoint:
-        backward_trainer.fit()
-        FileUtils.save_best_model(config.work_folder, backward_trainer)
+    inverse_trainer = meta_trainer.create_meta_trainer(
+        "inverse", direct_model)
+    if not config.load_inverse_checkpoint:
+        inverse_trainer.fit()
+        FileUtils.save_best_model(config.work_folder, inverse_trainer)
 
-    backward_trainer.test()
+    inverse_trainer.test()
     save_and_plot(
-        backward_trainer, forward_model, config.work_folder, config.data_folder
+        inverse_trainer, direct_model, config.work_folder, config.data_folder
     )
 
 
@@ -55,21 +57,21 @@ def setup():
 def main(config: Config) -> None:
     setup()
     meta_trainer = MetaTrainerFactory(config)
-    forward_model = None
+    direct_model = None
     if config.direction in ["direct", "both"]:
-        if config.use_forward:
-            forward_trainer = meta_trainer.create_meta_trainer("forward")
-            if not config.load_forward_checkpoint:
-                forward_trainer.fit()
-                FileUtils.save_best_model(config.work_folder, forward_trainer)
+        if config.use_direct:
+            direct_trainer = meta_trainer.create_meta_trainer("direct")
+            if not config.load_direct_checkpoint:
+                direct_trainer.fit()
+                FileUtils.save_best_model(config.work_folder, direct_trainer)
 
-            forward_trainer.test()
-            forward_model = forward_trainer.model
+            direct_trainer.test()
+            direct_model = direct_trainer.model
 
-    # Close the Forward before backward if you want separate project
+    # Close the Direct before Inverse if you want separate project
     wandb.finish()
     if config.direction in ["inverse", "both"]:
-        train_backward(meta_trainer, forward_model)
+        train_inverse(meta_trainer, direct_model)
 
 
 if __name__ == "__main__":

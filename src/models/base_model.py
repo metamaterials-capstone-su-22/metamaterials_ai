@@ -32,11 +32,11 @@ class BaseModel(pl.LightningModule):
         # Note loging is from legacy code! (PM)
         if stage == "tarin":
             should_create_graph = (
-                self.current_epoch == self.config.forward_num_epochs - 5
+                self.current_epoch == self.config.direct_num_epochs - 5
             )
         elif stage == "val":
             should_create_graph = (
-                self.current_epoch > self.config.forward_num_epochs - 5
+                self.current_epoch > self.config.direct_num_epochs - 5
             )
         else:  # for Test it is always ture
             should_create_graph = True

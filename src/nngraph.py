@@ -190,12 +190,12 @@ def emiss_error_graph(predicted_emissivity, real_emissivity, wavelen_num=300):
 
 
 def training_set_mean_vs_stdev():
-    forward_train_data = torch.load("local_data/stainless_steel.pt")[
+    direct_train_data = torch.load("local_data/stainless_steel.pt")[
         "interpolated_emissivity"
     ]
     average_emiss = [[] for i in range(800)]
     e_total = 0
-    for emiss_list in forward_train_data:
+    for emiss_list in direct_train_data:
         for e_index, emiss in enumerate(emiss_list):
             e_total += 1
             average_emiss[e_index].append(float(emiss))
