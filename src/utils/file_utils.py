@@ -82,7 +82,7 @@ class FileUtils:
     @staticmethod
     def save_best_model(work_folder: str, meta_trainer):
         best_model_path = meta_trainer.model.trainer.checkpoint_callback.best_model_path
-        postfix: str = get_dated_postfix(meta_trainer)
+        postfix: str = get_dated_postfix(meta_trainer.model)
         dst = Path(f"{work_folder}/saved_best/best_{postfix}.ckpt")
 
         shutil.copy(best_model_path, dst)

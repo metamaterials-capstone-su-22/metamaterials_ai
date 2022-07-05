@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 
 class Config(BaseModel):
-    inverse_arch = "cnn"  # options 'MLPMixer', 'resnet1d','ann', 'cnn,
+    inverse_arch = "ann"  # options 'MLPMixer', 'resnet1d','ann', 'cnn,
     inverse_batch_size: int = 2**7  # 2**9 512
     inverse_lr: float = 1e-6  # tune.loguniform(1e-6, 1e-5),
     inverse_num_epochs: int = 2500  # Default 2500

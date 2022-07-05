@@ -7,6 +7,7 @@ from .direct_model import DirectModel
 
 
 class ModelFactory:
+
     def __init__(self, config: Config) -> None:
         self.config = config
 

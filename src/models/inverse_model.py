@@ -21,6 +21,8 @@ class InverseModel(BaseModel):
         config: Config,
         direct_model: Optional[DirectModel] = None,
     ):
+        config = Config.parse_obj(config) if type(config) is dict else config
+
         self.model_config = ModelConfig(
             arch=config.inverse_arch,
             direction="inverse",
@@ -30,7 +32,7 @@ class InverseModel(BaseModel):
         super().__init__(config, direction="inverse")
         self.lr = config.inverse_lr
         self.milestones = [50, 100, 150, 300]
-
+        self.example_input_array = torch.randn(1, 800)
         self.save_hyperparameters(config.__dict__)
 
         if direct_model is None:

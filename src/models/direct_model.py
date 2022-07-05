@@ -12,6 +12,7 @@ from .model_config import ModelConfig
 
 class DirectModel(BaseModel):
     def __init__(self, config: Config):
+        config = Config.parse_obj(config) if type(config) is dict else config
         self.model_config = ModelConfig(
             arch=config.direct_arch,
             direction="direct",
@@ -21,6 +22,7 @@ class DirectModel(BaseModel):
         super().__init__(config, direction="direct")
         self.lr = config.direct_lr
         self.milestones = [50, 100, 300]
+        self.example_input_array = torch.randn(1, 14)
         self.save_hyperparameters(config.__dict__)
 
     def create_model_arc(self):
