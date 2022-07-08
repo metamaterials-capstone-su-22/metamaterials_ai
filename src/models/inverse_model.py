@@ -31,7 +31,7 @@ class InverseModel(BaseModel):
         )
         super().__init__(config, direction="inverse")
         self.lr = config.inverse_lr
-        self.milestones = [50, 100, 150, 300]
+        self.milestones = [25, 50, 130, 140, 150]
         self.example_input_array = torch.randn(1, 800)
         self.save_hyperparameters(config.__dict__)
 
