@@ -71,7 +71,6 @@ def save_onnx(model: BaseModel):
         inference_model = model
     inference_model.to_onnx(
         inference_path, export_params=True)
-    model2 = onnx.load(inference_path)
 
 
 def main(config: Config) -> None:
@@ -93,7 +92,7 @@ def main(config: Config) -> None:
                 #     f"{config.work_folder}/inference_models/best_inference_direct.onnx")
                 # direct_inference_model.to_onnx(
                 #     inference_path, export_params=True)
-                save_onnx(direct_trainer.model)
+                # save_onnx(direct_trainer.model)
             direct_trainer.test()
             direct_model = direct_trainer.model
 

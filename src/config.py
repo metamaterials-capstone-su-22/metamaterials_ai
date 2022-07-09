@@ -8,11 +8,12 @@ class Config(BaseModel):
     inverse_batch_size: int = None  # 2**9 512
     inverse_lr: float = None  # tune.loguniform(1e-6, 1e-5)
     inverse_num_epochs: int = 2500  # Default 2500
+    configs_folder = "configs"
     create_plots = False
     data_file = "stainless-steel-revised-shuffled.pt"  # name of the data file
     data_folder: str = "local_data"  # Path to the data folder
     data_portion: float = 1  # Percentage of data being used in the [.01 - 1]
-    direction: str = "both"  # direct, inverse, both
+    direction: str = "direct"  # direct, inverse, both
     direct_arch = "cnn"  # options 'MLPMixer', 'resnet1d','ann', 'cnn,
     direct_batch_size: int = None  # 2**9 512
     direct_lr: float | None = None  # leave default to None
@@ -38,7 +39,7 @@ class Config(BaseModel):
             self.verify_config()
         parser = ConfigParser()
         parser.read(
-            f'src/configs/{self.direct_arch}.cfg')
+            f'{self.configs_folder}/{self.direct_arch}.cfg')
         configs = parser[self.substrate]
 
         self.direct_lr = self.direct_lr or float(configs['direct_lr']) or 1e-3
