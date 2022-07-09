@@ -28,7 +28,7 @@ class DataModule(pl.LightningDataModule):
         data: Data = FileUtils.read_pt_data(
             self.config.data_folder, self.config.data_file
         )
-        splits = split(len(data.laser_params))
+        splits = split(len(data.laser_params) * self.config.data_portion)
         if self.direction == "direct":
             self.direct_split(data, splits)
         else:
