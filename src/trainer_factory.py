@@ -42,19 +42,20 @@ class TrainerFactory:
 
     def create_loggers(self, direction):
         work_folder = self.config.work_folder
-        return [
-            WandbLogger(
+        loggers = [TensorBoardLogger(
+            save_dir=f"{work_folder}/test_tube_logs/{direction}",
+            name=f"{direction.title()}",
+        )]
+        # Do not log the loaded direct
+        if not direction == 'direct' or not self.config.load_direct_checkpoint:
+            loggers.append(WandbLogger(
                 name=f'{direction.title()[0]}-{self.model_arch}-{self.config.substrate}-{datetime.utcnow().strftime("%Y-%m-%d_%H-%M")}',
                 save_dir=f"{work_folder}/wandb_logs/{direction}",
                 offline=False,
                 project=f"Metamaterial AI",
                 log_model=True,
-            ),
-            TensorBoardLogger(
-                save_dir=f"{work_folder}/test_tube_logs/{direction}",
-                name=f"{direction.title()}",
-            ),
-        ]
+            ))
+        return loggers
 
     def create_callbacks(self, direction, refresh_rate):
         callbacks = [

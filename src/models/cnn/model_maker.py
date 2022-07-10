@@ -39,13 +39,14 @@ class ModelMaker:
 
     @staticmethod
     def create_inverse_model(model_config: ModelConfig):
-        num_blocks: int = 3
+        num_blocks: int = 2
         conv_dim: int = 9
         fc_dim: int = 512
         kernel_size = 5  # TODO: Fix this => model_config.kernel_size
         pool_size = 2
         filter_sizes = 1
-        fc_input = conv_dim * 46  # TODO: fix this
+        fc_input = conv_dim * 96
+
         return nn.Sequential(
             Rearrange("b c -> b 1 c"),
             nn.Conv1d(in_channels=1, out_channels=conv_dim,
@@ -57,7 +58,7 @@ class ModelMaker:
                           kernel_size=kernel_size, pool_size=pool_size),
             nn.Flatten(),
             nn.Sequential(nn.Linear(fc_input, fc_dim), nn.SELU()),
-            AnnBlocksBuilder(num_blocks=10, dim=fc_dim),
+            AnnBlocksBuilder(num_blocks=15, dim=fc_dim),
             nn.Sequential(nn.Linear(fc_dim, 14), nn.SELU()),
         )
 
@@ -86,7 +87,7 @@ class SimpleCnnBlock(nn.Module):
         return x
 
 
-class SimpleBlock(nn.Module):
+class SimpleAnnBlock(nn.Module):
     def __init__(self, dim: int) -> None:
         super().__init__()
 
@@ -115,7 +116,7 @@ class BlocksBuilder(nn.Module):
 class AnnBlocksBuilder(nn.Module):
     def __init__(self, num_blocks: int, dim: int) -> None:
         super().__init__()
-        self.layers = nn.ModuleList([SimpleBlock(dim)
+        self.layers = nn.ModuleList([SimpleAnnBlock(dim)
                                     for _ in range(num_blocks)])
 
     def forward(self, x):
