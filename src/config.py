@@ -1,4 +1,3 @@
-from distutils.command.config import config
 from pydantic import BaseModel
 from configparser import ConfigParser
 
@@ -37,21 +36,29 @@ class Config(BaseModel):
         super().__init__(**data)
         if self.should_verify_configs:
             self.verify_config()
-        parser = ConfigParser()
-        parser.read(
-            f'{self.configs_folder}/{self.direct_arch}.cfg')
-        configs = parser[self.substrate]
 
-        self.direct_lr = self.direct_lr or float(configs['direct_lr']) or 1e-3
+        direct_parser = self.get_parser('direct')
+        inverse_parser = self.get_parser('inverse')
+
+        self.direct_lr = self.direct_lr or float(
+            direct_parser['direct_lr']) or 1e-3
         self.direct_batch_size = self.direct_batch_size or int(
-            configs['direct_batch_size']) or 2**7
+            direct_parser['direct_batch_size']) or 2**7
+
         self.inverse_lr = self.inverse_lr or float(
-            configs['inverse_lr']) or 1e-6
+            inverse_parser['inverse_lr']) or 1e-6
         self.inverse_batch_size = self.inverse_batch_size or int(
-            configs['inverse_batch_size']) or 2**7
+            inverse_parser['inverse_batch_size']) or 2**7
 
         # TODO add arg parser if needed
         # args = ArgParser().args
+
+    def get_parser(self, direction):
+        arch = self.direct_arch if direction == 'direct' else self.inverse_arch
+        inverse_parser = ConfigParser()
+        inverse_parser.read(
+            f'{self.configs_folder}/{arch}.cfg')
+        return inverse_parser[self.substrate]
 
     def verify_config(self):
         """Add constraints to configurations here to be checked"""
