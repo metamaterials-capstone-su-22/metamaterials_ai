@@ -104,4 +104,5 @@ def main(config: Config) -> None:
 
 if __name__ == "__main__":
     config = Config()
+    config.load_config_from_file()
     main(config)

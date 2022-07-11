@@ -9,7 +9,8 @@ class Config(BaseModel):
     inverse_num_epochs: int = 2  # Default 2500
     configs_folder = "configs"
     create_plots = False
-    data_file = "stainless-steel-revised-shuffled.pt"  # name of the data file #inconel-revised-raw-shuffled.pt, stainless-steel-revised-shuffled.pt
+    # name of the data file #inconel-revised-raw-shuffled.pt, stainless-steel-revised-shuffled.pt
+    data_file = "stainless-steel-revised-shuffled.pt"
     data_folder: str = "local_data"  # Path to the data folder
     data_portion: float = 1  # Percentage of data being used in the [.01 - 1]
     direction: str = "both"  # direct, inverse, both
@@ -34,6 +35,11 @@ class Config(BaseModel):
 
     def __init__(self, **data):
         super().__init__(**data)
+
+        # TODO add arg parser if needed
+        # args = ArgParser().args
+
+    def load_config_from_file(self):
         if self.should_verify_configs:
             self.verify_config()
 
@@ -49,9 +55,6 @@ class Config(BaseModel):
             inverse_parser['inverse_lr']) or 1e-6
         self.inverse_batch_size = self.inverse_batch_size or int(
             inverse_parser['inverse_batch_size']) or 2**7
-
-        # TODO add arg parser if needed
-        # args = ArgParser().args
 
     def get_parser(self, direction):
         arch = self.direct_arch if direction == 'direct' else self.inverse_arch
