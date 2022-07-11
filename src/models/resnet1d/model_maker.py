@@ -18,17 +18,17 @@ class ModelMaker:
     @staticmethod
     def create_direct_model(model_config: ModelConfig):
         return nn.Sequential(
-            Rearrange("b c -> b c 1"),
+            Rearrange("b c -> b 1 c"),
             ResNet1D(
-                in_channels=14,
+                in_channels=1,
                 base_filters=1,
-                kernel_size=1,
+                kernel_size=5,
                 stride=2,
                 groups=1,
-                n_block=4,
+                n_block=10,
                 n_classes=model_config.num_classes,
                 downsample_gap=2,
-                increasefilter_gap=4,
+                increasefilter_gap=2,
                 use_bn=True,
                 use_do=True,
                 verbose=False,
@@ -39,17 +39,17 @@ class ModelMaker:
     @staticmethod
     def create_inverse_model(model_config: ModelConfig):
         return nn.Sequential(
-            Rearrange("b c -> b c 1"),
+            Rearrange("b c -> b 1 c"),
             ResNet1D(
-                in_channels=model_config.in_channels,
+                in_channels=1,
                 base_filters=1,
-                kernel_size=1,
+                kernel_size=5,
                 stride=2,
                 groups=1,
-                n_block=1,
-                n_classes=1_000,
+                n_block=12,
+                n_classes=14,
                 downsample_gap=2,
-                increasefilter_gap=4,
+                increasefilter_gap=1,
                 use_bn=True,
                 use_do=True,
                 verbose=False,

@@ -62,13 +62,6 @@ class ModelMaker:
             nn.Sequential(nn.Linear(fc_dim, 14), nn.SELU()),
         )
 
-    @staticmethod
-    def gauss_kernel(n=5, sigma=1):
-        r = range(-int(n/2), int(n/2)+1)
-        kernel = torch.FloatTensor(
-            [1 / (sigma * sqrt(2*pi)) * exp(-float(x)**2/(2*sigma**2)) for x in r])
-        return rearrange(kernel, 'w -> 1 1 w')
-
 
 class SimpleCnnBlock(nn.Module):
     def __init__(self, dim: int, kernel_size: int | tuple = 1, pool_size: int = 1) -> None:
