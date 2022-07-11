@@ -3,10 +3,10 @@ from configparser import ConfigParser
 
 
 class Config(BaseModel):
-    inverse_arch = "cnn"  # options 'MLPMixer', 'resnet1d','ann', 'cnn,
+    inverse_arch = "resnet1d"  # options 'MLPMixer', 'resnet1d','ann', 'cnn,
     inverse_batch_size: int = None  # 2**9 512
     inverse_lr: float = None  # tune.loguniform(1e-6, 1e-5)
-    inverse_num_epochs: int = 2000  # Default 2500
+    inverse_num_epochs: int = 2  # Default 2500
     configs_folder = "configs"
     create_plots = False
     data_file = "stainless-steel-revised-shuffled.pt"  # name of the data file #inconel-revised-raw-shuffled.pt, stainless-steel-revised-shuffled.pt
@@ -16,9 +16,9 @@ class Config(BaseModel):
     direct_arch = "cnn"  # options 'MLPMixer', 'resnet1d','ann', 'cnn,
     direct_batch_size: int = None  # 2**9 512
     direct_lr: float | None = None  # leave default to None
-    direct_num_epochs: int = 1500  # default 1600
+    direct_num_epochs: int = 1600  # default 1600
     enable_early_stopper: bool = True  # when 'True' enables early stopper
-    load_direct_checkpoint: bool = True
+    load_direct_checkpoint: bool = False
     load_inverse_checkpoint: bool = False
     num_gpu: int = 1  # number of GPU
     # TODO: Fix num_wavelens be set at load time
@@ -56,8 +56,13 @@ class Config(BaseModel):
     def get_parser(self, direction):
         arch = self.direct_arch if direction == 'direct' else self.inverse_arch
         inverse_parser = ConfigParser()
-        inverse_parser.read(
-            f'{self.configs_folder}/{arch}.cfg')
+        try:
+            inverse_parser.read(
+                f'{self.configs_folder}/{arch}.cfg')
+        except:
+            print(
+                f'Error in reading config file: {self.configs_folder}/{arch}.cfg')
+            raise
         return inverse_parser[self.substrate]
 
     def verify_config(self):
