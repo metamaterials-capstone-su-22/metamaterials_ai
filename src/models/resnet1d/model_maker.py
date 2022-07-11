@@ -25,7 +25,7 @@ class ModelMaker:
                 kernel_size=5,
                 stride=2,
                 groups=1,
-                n_block=10,
+                n_block=20,
                 n_classes=model_config.num_classes,
                 downsample_gap=2,
                 increasefilter_gap=2,

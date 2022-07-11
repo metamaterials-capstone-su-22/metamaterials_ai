@@ -3,10 +3,10 @@ from configparser import ConfigParser
 
 
 class Config(BaseModel):
-    inverse_arch = "ann"  # options 'MLPMixer', 'resnet1d','ann', 'cnn,
+    inverse_arch = "resnet1d"  # options 'MLPMixer', 'resnet1d','ann', 'cnn,
     inverse_batch_size: int = None  # 2**9 512
     inverse_lr: float = None  # tune.loguniform(1e-6, 1e-5)
-    inverse_num_epochs: int = 2000  # Default 2500
+    inverse_num_epochs: int = 2  # Default 2500
     configs_folder = "configs"
     create_plots = False
     data_file = "stainless-steel-revised-shuffled.pt"  # name of the data file
