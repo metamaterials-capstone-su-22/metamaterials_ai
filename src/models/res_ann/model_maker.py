@@ -2,7 +2,7 @@ from torch import nn
 
 from models.model_config import ModelConfig
 
-from .ann_module import BlocksBuilder
+from .module import BlocksBuilder
 
 
 class ModelMaker:

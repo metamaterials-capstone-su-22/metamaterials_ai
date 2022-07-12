@@ -3,7 +3,7 @@ from configparser import ConfigParser
 
 
 class Config(BaseModel):
-    inverse_arch = "ann"  # options 'MLPMixer', 'resnet1d','ann', 'cnn,
+    inverse_arch = "res-ann"  # options 'MLPMixer', 'resnet1d','ann', 'res-ann', 'cnn,
     inverse_batch_size: int = None  # 2**9 512
     inverse_lr: float = None  # tune.loguniform(1e-6, 1e-5)
     inverse_num_epochs: int = 2000  # Default 2500
@@ -14,7 +14,7 @@ class Config(BaseModel):
     data_folder: str = "local_data"  # Path to the data folder
     data_portion: float = 1  # Percentage of data being used in the [.01 - 1]
     direction: str = "direct"  # direct, inverse, both
-    direct_arch = "ann"  # options 'MLPMixer', 'resnet1d','ann', 'cnn,
+    direct_arch = "res-ann"  # options 'MLPMixer', 'resnet1d','ann', 'cnn,
     direct_batch_size: int = None  # 2**9 512
     direct_lr: float | None = None  # leave default to None
     direct_num_epochs: int = 1600  # default 1600
