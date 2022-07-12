@@ -19,7 +19,7 @@ class TrainerFactory:
         config = self.config
         if direction == "inverse":
             num_epochs = config.inverse_num_epochs
-            refresh_rate = 5
+            refresh_rate = 2
             self.model_arch = config.inverse_arch
         else:
             num_epochs = config.direct_num_epochs
@@ -88,7 +88,7 @@ class TrainerFactory:
             monitor=f"{direction}/val/loss",
             strict=True,
             check_on_train_epoch_end=False,
-            patience=15,
+            patience=10,
             min_delta=0.000_1,
             verbose=True,
             mode="min",
