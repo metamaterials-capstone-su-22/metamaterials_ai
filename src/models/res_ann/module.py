@@ -9,7 +9,7 @@ class SimpleBlock(nn.Module):
         self.dropout = nn.Dropout(0.1)
 
     def forward(self, x):
-        x = self.block(x)
+        x = x + self.block(x)
         return x
 
 

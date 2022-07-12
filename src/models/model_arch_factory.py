@@ -3,6 +3,7 @@ from models.cnn import ModelMaker as cnn
 from models.mlpmixer import ModelMaker as mlp_mixer
 from models.resnet1d import ModelMaker as resnet_1d
 from models.resnet2d import ModelMaker as resnet_2d
+from models.res_ann import ModelMaker as resann
 
 from .model_config import ModelConfig
 
@@ -21,3 +22,5 @@ class ModelArchFactory:
             return ann.create_model(model_config)
         if model_config.arch == "cnn":
             return cnn.create_model(model_config)
+        if model_config.arch == "res-ann":
+            return resann.create_model(model_config)
