@@ -14,13 +14,13 @@ class Config(BaseModel):
     data_file = "stainless-steel-revised-shuffled.pt"
     data_folder: str = "local_data"  # Path to the data folder
     data_portion: float = 1  # Percentage of data being used in the [.01 - 1]
-    direction: str = "both"  # direct, inverse, both
+    direction: str = "direct"  # direct, inverse, both
     direct_arch = "res-ann"  # options 'MLPMixer', 'resnet1d','ann', 'cnn,
     direct_batch_size: int = None  # 2**9 512
     direct_lr: float | None = None  # leave default to None
     direct_num_epochs: int = 1600  # default 1600
     enable_early_stopper: bool = True  # when 'True' enables early stopper
-    load_direct_checkpoint: bool = False
+    load_direct_checkpoint: bool = True
     load_inverse_checkpoint: bool = False
     num_gpu: int = 1  # number of GPU
     # TODO: Fix num_wavelens be set at load time
