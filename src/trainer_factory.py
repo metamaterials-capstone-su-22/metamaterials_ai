@@ -49,7 +49,7 @@ class TrainerFactory:
         # Do not log the loaded direct
         if not direction == 'direct' or not self.config.load_direct_checkpoint:
             loggers.append(WandbLogger(
-                name=f'{direction.title()[0]}-{self.model_arch}-{self.config.substrate}-{datetime.utcnow().strftime("%Y-%m-%d_%H-%M")}',
+                name=f'{direction.title()[0]}-{self.config.data_portion}-{self.model_arch}-{self.config.substrate}-{datetime.utcnow().strftime("%Y-%m-%d_%H-%M")}',
                 save_dir=f"{work_folder}/wandb_logs/{direction}",
                 offline=False,
                 project=f"Metamaterial AI",
