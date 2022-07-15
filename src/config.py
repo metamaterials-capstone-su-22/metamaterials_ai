@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from configparser import ConfigParser
+from math import floor
 
 
 class Config(BaseModel):
@@ -19,7 +20,7 @@ class Config(BaseModel):
     direct_lr: float | None = None  # leave default to None
     direct_num_epochs: int = 1600  # default 1600
     enable_early_stopper: bool = True  # when 'True' enables early stopper
-    load_direct_checkpoint: bool = True
+    load_direct_checkpoint: bool = False
     load_inverse_checkpoint: bool = False
     num_gpu: int = 1  # number of GPU
     # TODO: Fix num_wavelens be set at load time
@@ -29,6 +30,7 @@ class Config(BaseModel):
     use_cache: bool = True
     use_direct: bool = True
     should_verify_configs = True  # when true it does some config check before starting
+    verbose: bool = True  # When True then will have more log data
     weight_decay = 1e-2  # default for AdamW 1e-2
     # Path to the working folder, checkpoint, graphs, ..
     work_folder: str = "local_work"
@@ -55,6 +57,14 @@ class Config(BaseModel):
             inverse_parser['inverse_lr']) or 1e-6
         self.inverse_batch_size = self.inverse_batch_size or int(
             inverse_parser['inverse_batch_size']) or 2**7
+
+        self.adjust_batch_sizes()
+
+    def adjust_batch_sizes(self):
+        self.direct_batch_size = floor(
+            self.data_portion * self.direct_batch_size)
+        self.inverse_batch_size = floor(
+            self.data_portion * self.inverse_batch_size)
 
     def get_parser(self, direction):
         arch = self.direct_arch if direction == 'direct' else self.inverse_arch

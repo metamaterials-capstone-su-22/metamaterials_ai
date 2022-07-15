@@ -11,6 +11,7 @@ from config import Config
 from dto.data import Data
 from utils import FileUtils, split
 from utils.utils import Stage
+from math import floor
 
 
 class DataModule(pl.LightningDataModule):
@@ -28,12 +29,15 @@ class DataModule(pl.LightningDataModule):
         data: Data = FileUtils.read_pt_data(
             self.config.data_folder, self.config.data_file
         )
-        splits = split(len(data.laser_params) * self.config.data_portion)
+        splits = split(floor(len(data.laser_params)
+                       * self.config.data_portion))
         if self.direction == "direct":
             self.direct_split(data, splits)
         else:
             self.inverse_split(data, splits)
         self.save_split_data()
+        if (self.config.verbose):
+            self.log_split_result()
 
     def train_dataloader(self) -> DataLoader:
         return self.create_data_loader("train")
@@ -95,6 +99,11 @@ class DataModule(pl.LightningDataModule):
             )
             for s in ("train", "val", "test")
         ]
+
+    def log_split_result(self):
+        print(f'Train size: {self.train.tensors[0].shape[0]:,}')
+        print(f'Val size: {self.val.tensors[0].shape[0]:,}')
+        print(f'Test size: {self.test.tensors[0].shape[0]:,}')
 
 
 class StepTestDataModule(pl.LightningDataModule):
