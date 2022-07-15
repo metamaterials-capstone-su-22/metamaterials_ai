@@ -12,8 +12,8 @@ class Config(BaseModel):
     # name of the data file #inconel-revised-raw-shuffled.pt, stainless-steel-revised-shuffled.pt
     data_file = "stainless-steel-revised-shuffled.pt"
     data_folder: str = "local_data"  # Path to the data folder
-    data_portion: float = 1  # Percentage of data being used in the [.01 - 1]
-    direction: str = "both"  # direct, inverse, both
+    data_portion: float = .1  # Percentage of data being used in the [.01 - 1]
+    direction: str = "direct"  # direct, inverse, both
     direct_arch = "res-ann"  # options 'MLPMixer', 'resnet1d','ann', 'cnn,
     direct_batch_size: int = None  # 2**9 512
     direct_lr: float | None = None  # leave default to None
@@ -29,6 +29,7 @@ class Config(BaseModel):
     use_cache: bool = True
     use_direct: bool = True
     should_verify_configs = True  # when true it does some config check before starting
+    verbose: bool = True  # When True then will have more log data
     weight_decay = 1e-2  # default for AdamW 1e-2
     # Path to the working folder, checkpoint, graphs, ..
     work_folder: str = "local_work"
