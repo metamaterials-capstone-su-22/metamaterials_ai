@@ -44,7 +44,6 @@ def train_inverse(meta_trainer, direct_model):
         FileUtils.save_best_model(config.work_folder, inverse_trainer)
 
     inverse_trainer.test()
-    save_onnx(inverse_trainer.model)
     save_and_plot(
         inverse_trainer, direct_model, config.work_folder, config.data_folder
     )
