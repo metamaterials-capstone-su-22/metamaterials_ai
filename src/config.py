@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from configparser import ConfigParser
+from math import floor
 
 
 class Config(BaseModel):
@@ -12,14 +13,14 @@ class Config(BaseModel):
     # name of the data file #inconel-revised-raw-shuffled.pt, stainless-steel-revised-shuffled.pt
     data_file = "stainless-steel-revised-shuffled.pt"
     data_folder: str = "local_data"  # Path to the data folder
-    data_portion: float = .1  # Percentage of data being used in the [.01 - 1]
-    direction: str = "direct"  # direct, inverse, both
+    data_portion: float = 1  # Percentage of data being used in the [.01 - 1]
+    direction: str = "both"  # direct, inverse, both
     direct_arch = "res-ann"  # options 'MLPMixer', 'resnet1d','ann', 'cnn,
     direct_batch_size: int = None  # 2**9 512
     direct_lr: float | None = None  # leave default to None
     direct_num_epochs: int = 1600  # default 1600
     enable_early_stopper: bool = True  # when 'True' enables early stopper
-    load_direct_checkpoint: bool = True
+    load_direct_checkpoint: bool = False
     load_inverse_checkpoint: bool = False
     num_gpu: int = 1  # number of GPU
     # TODO: Fix num_wavelens be set at load time
@@ -56,6 +57,14 @@ class Config(BaseModel):
             inverse_parser['inverse_lr']) or 1e-6
         self.inverse_batch_size = self.inverse_batch_size or int(
             inverse_parser['inverse_batch_size']) or 2**7
+
+        self.adjust_batch_sizes()
+
+    def adjust_batch_sizes(self):
+        self.direct_batch_size = floor(
+            self.data_portion * self.direct_batch_size)
+        self.inverse_batch_size = floor(
+            self.data_portion * self.inverse_batch_size)
 
     def get_parser(self, direction):
         arch = self.direct_arch if direction == 'direct' else self.inverse_arch
