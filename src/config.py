@@ -11,9 +11,9 @@ class Config(BaseModel):
     configs_folder = "configs"
     create_plots = False
     # name of the data file #inconel-revised-shuffled.pt, stainless-revised-shuffled.pt
-    data_file = "inconel-revised-shuffled.pt"
+    data_file = "stainless-revised-shuffled.pt"
     data_folder: str = "local_data"  # Path to the data folder
-    data_portion: float = .9  # Percentage of data being used in the [.01 - 1]
+    data_portion: float = 1  # Percentage of data being used in the [.01 - 1]
     direction: str = "direct"  # direct, inverse, both
     direct_arch = "res-ann"  # options 'MLPMixer', 'resnet1d','ann', 'cnn,
     direct_batch_size: int = None  # 2**9 512
@@ -25,7 +25,7 @@ class Config(BaseModel):
     num_gpu: int = 1  # number of GPU
     # TODO: Fix num_wavelens be set at load time
     num_wavelens: int | None = 800  # This will be set @ load time. ex. 800
-    substrate: str = "inconel"  # options "stainless" , "inconel"
+    substrate: str = "stainless"  # options "stainless" , "inconel"
     # use_cache true means to use the .pt file instead of regenerating this
     use_cache: bool = True
     use_direct: bool = True
@@ -62,9 +62,9 @@ class Config(BaseModel):
 
     def adjust_batch_sizes(self):
         self.direct_batch_size = floor(
-            self.data_portion * self.direct_batch_size)
+            self.data_portion**2 * self.direct_batch_size)
         self.inverse_batch_size = floor(
-            self.data_portion * self.inverse_batch_size)
+            self.data_portion**2 * self.inverse_batch_size)
 
     def get_parser(self, direction):
         arch = self.direct_arch if direction == 'direct' else self.inverse_arch
