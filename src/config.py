@@ -13,7 +13,7 @@ class Config(BaseModel):
     # name of the data file #inconel-revised-shuffled.pt, stainless-revised-shuffled.pt
     data_file = "inconel-revised-shuffled.pt"
     data_folder: str = "local_data"  # Path to the data folder
-    data_portion: float = .3  # Percentage of data being used in the [.01 - 1]
+    data_portion: float = .9  # Percentage of data being used in the [.01 - 1]
     direction: str = "direct"  # direct, inverse, both
     direct_arch = "res-ann"  # options 'MLPMixer', 'resnet1d','ann', 'cnn,
     direct_batch_size: int = None  # 2**9 512
