@@ -62,3 +62,6 @@ class BaseModel(pl.LightningModule):
         )
 
         return [optimizer], [lr_scheduler]
+
+    def get_milestones(self, milestones):
+        return [int(x) for x in milestones.split(',')]

@@ -16,6 +16,7 @@ class Config(BaseModel):
     direct_batch_size: int = None  # 2**9 512
     direct_gamma: float = .1  # schedular gamma
     direct_lr: float | None = None  # leave default to None
+    direct_milestones: str = None  # '50,100,150'
     direct_num_epochs: int = 1600  # default 1600
     # Default= None: It should be under'{work_folder}/saved_best'
     direct_saved_ckpt: str = "D-1-res-ann-stainless-2022-07-16_01-56.ckpt"
@@ -23,6 +24,7 @@ class Config(BaseModel):
     inverse_batch_size: int = None  # 2**9 512
     inverse_gamma: float = .3  # schedular gamma
     inverse_lr: float = None  # tune.loguniform(1e-6, 1e-5)
+    inverse_milestones: str = None  # '50,100,150'
     inverse_num_epochs: int = 2000  # Default 2500
     enable_early_stopper: bool = True  # when 'True' enables early stopper
     # Default= None: It should be under'{work_folder}/saved_best'
@@ -61,6 +63,8 @@ class Config(BaseModel):
             self.direct_batch_size or int(
                 direct_parser["direct_batch_size"]) or 2**7
         )
+        self.direct_milestones = self.direct_milestones or inverse_parser[
+            "direct_milestones"] or '25,50,130,140,150'
 
         self.inverse_lr = self.inverse_lr or float(
             inverse_parser["inverse_lr"]) or 1e-6
@@ -69,6 +73,8 @@ class Config(BaseModel):
             or int(inverse_parser["inverse_batch_size"])
             or 2**7
         )
+        self.inverse_milestones = self.inverse_milestones or inverse_parser[
+            "inverse_milestones"] or '25,50,130,140,150'
 
         self.adjust_batch_sizes()
 
