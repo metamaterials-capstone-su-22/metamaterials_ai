@@ -16,8 +16,7 @@ class SimpleBlock(nn.Module):
 class BlocksBuilder(nn.Module):
     def __init__(self, num_blocks: int, dim: int) -> None:
         super().__init__()
-        self.layers = nn.ModuleList([SimpleBlock(dim)
-                                    for _ in range(num_blocks)])
+        self.layers = nn.ModuleList([SimpleBlock(dim) for _ in range(num_blocks)])
 
     def forward(self, x):
         for layer in self.layers:

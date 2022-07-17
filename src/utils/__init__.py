@@ -4,6 +4,7 @@ from .utils import (
     get_dated_postfix,
     get_formatted_utc,
     get_latest_chk_point_path,
+    get_specified_chk_point,
     planck_emiss_prod,
     planck_norm,
     rmse,

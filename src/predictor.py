@@ -1,7 +1,7 @@
 from config import Config
-from models.inverse_model import InverseModel
 from models.base_model import BaseModel
 from models.direct_model import DirectModel
+from models.inverse_model import InverseModel
 from models.model_factory import ModelFactory
 
 CKPT_PATH = "../data/models/model.ckpt"

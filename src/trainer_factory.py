@@ -1,6 +1,4 @@
 from datetime import datetime
-from fileinput import filename
-from gc import callbacks
 
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks import ModelCheckpoint
@@ -42,19 +40,23 @@ class TrainerFactory:
 
     def create_loggers(self, direction):
         work_folder = self.config.work_folder
-        loggers = [TensorBoardLogger(
-            save_dir=f"{work_folder}/test_tube_logs/{direction}",
-            name=f"{direction.title()}",
-        )]
+        loggers = [
+            TensorBoardLogger(
+                save_dir=f"{work_folder}/test_tube_logs/{direction}",
+                name=f"{direction.title()}",
+            )
+        ]
         # Do not log the loaded direct
-        if not direction == 'direct' or not self.config.load_direct_checkpoint:
-            loggers.append(WandbLogger(
-                name=f'{direction.title()[0]}-{self.config.data_portion}-{self.model_arch}-{self.config.substrate}-{datetime.utcnow().strftime("%Y-%m-%d_%H-%M")}',
-                save_dir=f"{work_folder}/wandb_logs/{direction}",
-                offline=False,
-                project=f"Metamaterial AI",
-                log_model=True,
-            ))
+        if not direction == "direct" or not self.config.load_direct_checkpoint:
+            loggers.append(
+                WandbLogger(
+                    name=f'{direction.title()[0]}-{self.config.data_portion}-{self.model_arch}-{self.config.substrate}-{datetime.utcnow().strftime("%Y-%m-%d_%H-%M")}',
+                    save_dir=f"{work_folder}/wandb_logs/{direction}",
+                    offline=False,
+                    project=f"Metamaterial AI",
+                    log_model=True,
+                )
+            )
         return loggers
 
     def create_callbacks(self, direction, refresh_rate):
@@ -63,8 +65,7 @@ class TrainerFactory:
             pl.callbacks.progress.TQDMProgressBar(refresh_rate=refresh_rate),
         ]
         if self.config.enable_early_stopper:
-            callbacks.append(
-                TrainerFactory.create_early_stopper_callback(direction))
+            callbacks.append(TrainerFactory.create_early_stopper_callback(direction))
 
         return callbacks
 

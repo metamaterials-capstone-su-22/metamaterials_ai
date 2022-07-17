@@ -28,9 +28,7 @@ class BaseModel(pl.LightningModule):
                 self.current_epoch == self.config.direct_num_epochs - 5
             )
         elif stage == "val":
-            should_create_graph = (
-                self.current_epoch > self.config.direct_num_epochs - 5
-            )
+            should_create_graph = self.current_epoch > self.config.direct_num_epochs - 5
         else:  # for Test it is always ture
             should_create_graph = True
         return should_create_graph
@@ -60,7 +58,7 @@ class BaseModel(pl.LightningModule):
         )
 
         lr_scheduler = optim.lr_scheduler.MultiStepLR(
-            optimizer, milestones=self.milestones, gamma=0.3
+            optimizer, milestones=self.milestones, gamma=0.1
         )
 
         return [optimizer], [lr_scheduler]

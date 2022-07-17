@@ -2,12 +2,11 @@ from distutils.file_util import copy_file
 
 from config import Config
 
-from .inverse_model import InverseModel
 from .direct_model import DirectModel
+from .inverse_model import InverseModel
 
 
 class ModelFactory:
-
     def __init__(self, config: Config) -> None:
         self.config = config
 

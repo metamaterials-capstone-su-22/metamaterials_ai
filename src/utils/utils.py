@@ -46,8 +46,7 @@ def rmse(pred: Tensor, target: Tensor, epsilon=1e-8):
 def step_tensor():
     """Returns tensor of wavelengths, sorted high to low."""
     # index at 0 because each row has the same info.
-    wavelens = torch.load(
-        Path("local_data/stainless_steel.pt"))["wavelength"][0]
+    wavelens = torch.load(Path("local_data/stainless_steel.pt"))["wavelength"][0]
     out = torch.zeros(len(wavelens), len(wavelens))
     for r, _ in enumerate(out):
         out[r, : r + 1] = 1.0
@@ -124,6 +123,21 @@ def get_latest_chk_point_path(work_folder, direction):
         print(
             f"Error: Could not load the latest check point for *.ckpt files! Check path {path}. Error. {e}"
         )
+        print(
+            f"Note: To start from scratch set the config flag to not load chekcpoint."
+        )
+        raise
+
+
+def get_specified_chk_point(work_folder, chk_file_name):
+    path = Path(f"{work_folder}/saved_best/{chk_file_name}")
+    try:
+        if Path.is_file(path):
+            return str(path)
+        else:
+            raise Exception(f"Missing {path}")
+    except Exception as e:
+        print(f"Error: Could not load model files! Check path {path}. Error. {e}")
         print(
             f"Note: To start from scratch set the config flag to not load chekcpoint."
         )
