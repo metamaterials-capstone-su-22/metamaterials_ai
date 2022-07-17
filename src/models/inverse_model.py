@@ -110,10 +110,6 @@ class InverseModel(BaseModel):
             loss = y_loss
             if stage == "test":
                 self.save_test_result(x, y, y_pred, x_pred)
-        # else: #TODO
-        # add logic to snag the current best forward model
-        # if the case that we are exclusively training the inverse model
-
         self.create_graph_and_log(stage, y_pred, y, loss)
         return loss
 

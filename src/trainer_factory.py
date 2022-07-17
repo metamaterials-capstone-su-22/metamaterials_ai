@@ -1,7 +1,7 @@
 from datetime import datetime
 
 import pytorch_lightning as pl
-from pytorch_lightning.callbacks import ModelCheckpoint
+from pytorch_lightning.callbacks import ModelCheckpoint, LearningRateMonitor
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from pytorch_lightning.loggers import TensorBoardLogger, WandbLogger
 
@@ -62,10 +62,12 @@ class TrainerFactory:
     def create_callbacks(self, direction, refresh_rate):
         callbacks = [
             self.create_checkpoint_callback(direction),
+            LearningRateMonitor(logging_interval='epoch'),
             pl.callbacks.progress.TQDMProgressBar(refresh_rate=refresh_rate),
         ]
         if self.config.enable_early_stopper:
-            callbacks.append(TrainerFactory.create_early_stopper_callback(direction))
+            callbacks.append(
+                TrainerFactory.create_early_stopper_callback(direction))
 
         return callbacks
 
