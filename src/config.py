@@ -10,7 +10,7 @@ class Config(BaseModel):
     # name of the data file #inconel-revised-shuffled.pt, stainless-revised-shuffled.pt
     data_file = "stainless-revised-shuffled.pt"
     data_folder: str = "local_data"  # Path to the data folder
-    data_portion: float = 1  # Percentage of data being used in the (0 - 1]
+    data_portion: float = .3  # Percentage of data being used in the (0 - 1]
     direction: str = "both"  # direct, inverse, both
     direct_arch = "res-ann"  # options 'MLPMixer', 'resnet1d','ann', 'cnn,
     direct_batch_size: int = None  # 2**9 512
@@ -19,7 +19,7 @@ class Config(BaseModel):
     direct_milestones: str = None  # '50,100,150'
     direct_num_epochs: int = 1600  # default 1600
     # Default= None: It should be under'{work_folder}/saved_best'
-    direct_saved_ckpt: str = "D-1-res-ann-stainless-2022-07-16_01-56.ckpt"
+    direct_saved_ckpt: str = "D-0.3-res-ann-stainless-2022-07-16_02-01.ckpt"
     inverse_arch = "res-ann"  # options 'MLPMixer', 'resnet1d','ann', 'res-ann', 'cnn,
     inverse_batch_size: int = None  # 2**9 512
     inverse_gamma: float = .3  # schedular gamma
