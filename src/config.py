@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 
 class Config(BaseModel):
-    auto_batchsize_adjustment = False
+    auto_batch_size_adjustment: bool = False
     configs_folder = "configs"
     create_plots = False
     # name of the data file #inconel-revised-shuffled.pt, stainless-revised-shuffled.pt
@@ -77,7 +77,7 @@ class Config(BaseModel):
         self.inverse_milestones = self.inverse_milestones or inverse_parser[
             "inverse_milestones"] or '25,50,130,140,150'
 
-        if self.auto_batchsize_adjustment():
+        if self.auto_batch_size_adjustment:
             self.adjust_batch_sizes()
 
     def adjust_batch_sizes(self):
