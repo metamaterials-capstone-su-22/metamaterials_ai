@@ -14,12 +14,14 @@ class Config(BaseModel):
     direction: str = "both"  # direct, inverse, both
     direct_arch = "res-ann"  # options 'MLPMixer', 'resnet1d','ann', 'cnn,
     direct_batch_size: int = None  # 2**9 512
+    direct_gamma: float = .1  # schedular gamma
     direct_lr: float | None = None  # leave default to None
     direct_num_epochs: int = 1600  # default 1600
     # Default= None: It should be under'{work_folder}/saved_best'
     direct_saved_ckpt: str = "D-1-res-ann-stainless-2022-07-16_01-56.ckpt"
     inverse_arch = "res-ann"  # options 'MLPMixer', 'resnet1d','ann', 'res-ann', 'cnn,
     inverse_batch_size: int = None  # 2**9 512
+    inverse_gamma: float = .3  # schedular gamma
     inverse_lr: float = None  # tune.loguniform(1e-6, 1e-5)
     inverse_num_epochs: int = 2000  # Default 2500
     enable_early_stopper: bool = True  # when 'True' enables early stopper

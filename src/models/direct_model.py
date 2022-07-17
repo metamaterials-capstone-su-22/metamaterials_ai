@@ -21,6 +21,7 @@ class DirectModel(BaseModel):
         )
         super().__init__(config, direction="direct")
         self.lr = config.direct_lr
+        self.gamma = config.direct_gamma
         self.milestones = [70, 150, 300]
         self.example_input_array = torch.randn(1, 14)
         self.save_hyperparameters(config.__dict__)
