@@ -23,7 +23,7 @@ class Config(BaseModel):
     direct_saved_ckpt: str = "D-1-res-ann-inconel.ckpt"
     inverse_arch = "res-ann"  # options 'MLPMixer', 'resnet1d','ann', 'res-ann', 'cnn,
     inverse_batch_size: int = None  # 2**9 512
-    inverse_gamma: float = .3  # schedular gamma
+    inverse_gamma: float = .1  # schedular gamma
     inverse_lr: float = None  # tune.loguniform(1e-6, 1e-5)
     inverse_milestones: str = None  # '50,100,150'
     inverse_num_epochs: int = 2000  # Default 2500
