@@ -9,9 +9,9 @@ class Config(BaseModel):
     configs_folder = "configs"
     create_plots = False
     # name of the data file #inconel-revised-shuffled.pt, stainless-revised-shuffled.pt
-    data_file = "stainless-revised-shuffled.pt"
+    data_file = "inconel-revised-shuffled.pt"
     data_folder: str = "local_data"  # Path to the data folder
-    data_portion: float = .9  # Percentage of data being used in the (0 - 1]
+    data_portion: float = 1  # Percentage of data being used in the (0 - 1]
     direction: str = "both"  # direct, inverse, both
     direct_arch = "res-ann"  # options 'MLPMixer', 'resnet1d','ann', 'cnn,
     direct_batch_size: int = None  # 2**9 512
@@ -20,7 +20,7 @@ class Config(BaseModel):
     direct_milestones: str = None  # '50,100,150'
     direct_num_epochs: int = 1600  # default 1600
     # Default= None: It should be under'{work_folder}/saved_best'
-    direct_saved_ckpt: str = "D-0.9-res-ann-stainless.ckpt"
+    direct_saved_ckpt: str = "D-1-res-ann-inconel.ckpt"
     inverse_arch = "res-ann"  # options 'MLPMixer', 'resnet1d','ann', 'res-ann', 'cnn,
     inverse_batch_size: int = None  # 2**9 512
     inverse_gamma: float = .3  # schedular gamma
@@ -35,7 +35,7 @@ class Config(BaseModel):
     num_gpu: int = 1  # number of GPU
     # TODO: Fix num_wavelens be set at load time
     num_wavelens: int | None = 800  # This will be set @ load time. ex. 800
-    substrate: str = "stainless"  # options "stainless" , "inconel"
+    substrate: str = "inconel"  # options "stainless" , "inconel"
     # use_cache true means to use the .pt file instead of regenerating this
     use_cache: bool = True
     use_direct: bool = True
