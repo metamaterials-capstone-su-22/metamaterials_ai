@@ -34,14 +34,14 @@ class FileUtils:
             )
 
     @staticmethod
-    def fetch_checkpoint_files(work_folder: str, checkpoint_file: str, direction: str):
+    def fetch_checkpoint_files(work_folder: str, checkpoint_file: str, direction: str, substrate: str):
         """This will fetch all the files in a data folder if
         the specific file does not exit"""
         model_folder = f"{work_folder}/saved_best"
         if not FileUtils.data_exist(model_folder, checkpoint_file):
             try:
                 file_id = getpass(
-                    f"Enter '{direction.capitalize()}' models folder id:")
+                    f"Enter '{substrate} {direction.capitalize()}' models folder id:")
                 print("Downloading model files ...")
                 gdown.download_folder(
                     id=file_id, quiet=True, use_cookies=False, output=model_folder

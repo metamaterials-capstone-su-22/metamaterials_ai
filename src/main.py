@@ -54,10 +54,10 @@ def setup():
     FileUtils.fetch_pt_files(config.data_folder, config.data_file)
     if config.load_direct_checkpoint:
         FileUtils.fetch_checkpoint_files(
-            config.work_folder, config.direct_saved_ckpt, 'direct')
+            config.work_folder, config.direct_saved_ckpt, 'direct', config.substrate)
     if config.load_inverse_checkpoint:
         FileUtils.fetch_checkpoint_files(
-            config.work_folder, config.inverse_saved_ckpt, 'inverse')
+            config.work_folder, config.inverse_saved_ckpt, 'inverse', config.substrate)
 
 
 def save_onnx(model: BaseModel):

@@ -46,8 +46,8 @@ class TrainerFactory:
                 name=f"{direction.title()}",
             )
         ]
-        # Do not log the loaded direct
-        if not direction == "direct" or not self.config.load_direct_checkpoint:
+        # Do not log the loaded model
+        if not self.is_loading_from_checkpoint(direction):
             loggers.append(
                 WandbLogger(
                     name=f'{direction.title()[0]}-{self.config.data_portion}-{self.model_arch}-{self.config.substrate}-{datetime.utcnow().strftime("%Y-%m-%d_%H-%M")}',
@@ -58,6 +58,10 @@ class TrainerFactory:
                 )
             )
         return loggers
+
+    def is_loading_from_checkpoint(self, direction):
+        return (direction == "direct" and self.config.load_direct_checkpoint) or \
+            (direction == "inverse" and self.config.load_inverse_checkpoint)
 
     def create_callbacks(self, direction, refresh_rate):
         callbacks = [
