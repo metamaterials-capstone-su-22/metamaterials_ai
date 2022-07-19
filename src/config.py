@@ -20,7 +20,7 @@ class Config(BaseModel):
     direct_milestones: str = None  # '50,100,150'
     direct_num_epochs: int = 1600  # default 1600
     # Default= None: It should be under'{work_folder}/saved_best'
-    direct_saved_ckpt: str = "D-0.9-res-ann-stainless.ckpt"  # Default None
+    direct_saved_ckpt: str | None = "D-0.9-res-ann-stainless.ckpt"  # Default None
     inverse_arch = "res-ann"  # options 'MLPMixer', 'resnet1d','ann', 'res-ann', 'cnn,
     inverse_batch_size: int = None  # 2**9 512
     inverse_gamma: float = .1  # schedular gamma
@@ -29,7 +29,7 @@ class Config(BaseModel):
     inverse_num_epochs: int = 2000  # Default 2500
     enable_early_stopper: bool = True  # when 'True' enables early stopper
     # Default= None: It should be under'{work_folder}/saved_best'
-    inverse_saved_ckpt: str = 'I-0.9-res-ann-stainless.ckpt'  # Default: None
+    inverse_saved_ckpt: str | None = 'D-0.9-res-ann-stainless.ckpt'  # Default: None
     load_direct_checkpoint: bool = True
     load_inverse_checkpoint: bool = False
     num_gpu: int = 1  # number of GPU
