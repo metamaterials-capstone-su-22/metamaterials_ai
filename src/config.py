@@ -9,7 +9,7 @@ class Config(BaseModel):
     configs_folder = "configs"
     create_plots = False
     # name of the data file #inconel-revised-shuffled.pt, stainless-revised-shuffled.pt
-    data_file = "stainless-revised-shuffled.pt"
+    data_file = "inconel-revised-shuffled.pt"
     data_folder: str = "local_data"  # Path to the data folder
     data_portion: float = .9  # Percentage of data being used in the (0 - 1]
     direction: str = "both"  # direct, inverse, both
@@ -17,25 +17,25 @@ class Config(BaseModel):
     direct_batch_size: int = None  # 2**9 512
     direct_gamma: float = .1  # schedular gamma
     direct_lr: float | None = None  # leave default to None
-    direct_milestones: str = None  # '50,100,150'
+    direct_milestones: str | None = None  # '50,100,150'
     direct_num_epochs: int = 1600  # default 1600
     # Default= None: It should be under'{work_folder}/saved_best'
-    direct_saved_ckpt: str | None = "D-0.9-res-ann-stainless.ckpt"  # Default None
+    direct_saved_ckpt: str | None = "D-0.9-res-ann-inconel.ckpt"  # Default None
     inverse_arch = "res-ann"  # options 'MLPMixer', 'resnet1d','ann', 'res-ann', 'cnn,
     inverse_batch_size: int = None  # 2**9 512
     inverse_gamma: float = .1  # schedular gamma
     inverse_lr: float = None  # tune.loguniform(1e-6, 1e-5)
-    inverse_milestones: str = None  # '50,100,150'
+    inverse_milestones: str | None = None  # '50,100,150'
     inverse_num_epochs: int = 2000  # Default 2500
     enable_early_stopper: bool = True  # when 'True' enables early stopper
     # Default= None: It should be under'{work_folder}/saved_best'
-    inverse_saved_ckpt: str | None = 'D-0.9-res-ann-stainless.ckpt'  # Default: None
+    inverse_saved_ckpt: str | None = 'I-0.9-res-ann-inconel.ckpt'  # Default: None
     load_direct_checkpoint: bool = True
-    load_inverse_checkpoint: bool = False
+    load_inverse_checkpoint: bool = True
     num_gpu: int = 1  # number of GPU
     # TODO: Fix num_wavelens be set at load time
     num_wavelens: int | None = 800  # This will be set @ load time. ex. 800
-    substrate: str = "stainless"  # options "stainless" , "inconel"
+    substrate: str = "inconel"  # options "stainless" , "inconel"
     # use_cache true means to use the .pt file instead of regenerating this
     use_cache: bool = True
     use_direct: bool = True
