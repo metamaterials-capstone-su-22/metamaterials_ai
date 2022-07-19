@@ -147,6 +147,7 @@ def raw_to_pt(
         params = [
             entry["laser_scanning_speed_x_dir_mm_per_s"],
             entry["laser_scanning_line_spacing_y_dir_micron"],
+            entry["laser_power_W"],
             # wattages are converted to one hot indexes
             *F.one_hot(
                 torch.tensor(wattage_idxs[round(entry["laser_power_W"], 1)]),
@@ -196,14 +197,21 @@ def raw_to_pt(
 
     return norm_laser_params, interp_emissivities, uids
 
-
+# substrate = 'inconel'
+substrate = 'inconel'
 print("Process started")
-input_path = "../../data/raw/inconel-revised-raw"
-output_path = "../../data/pt/inconel-revised-raw.pt"
-output_path_train = "../../data/pt/inconel-revised-raw_train.pt"
-output_path_val = "../../data/pt/inconel-revised-raw_val.pt"
-output_path_test = "../../data/pt/inconel-revised-raw_test.pt"
-shuffled_output_path = "../../data/pt/inconel-revised-raw-shuffled.pt"
+input_path = f"../../data/raw/{substrate}-revised-raw"
+# output_path = f"../../data/pt/{substrate}-revised-raw.pt"
+# output_path_train = f"../../data/pt/{substrate}-revised-raw_train.pt"
+# output_path_val = f"../../data/pt/{substrate}-revised-raw_val.pt"
+# output_path_test = f"../../data/pt/{substrate}-revised-raw_test.pt"
+
+shuffled_output_path = f"../../data/pt/{substrate}-revised-raw-shuffled-2.pt"
+output_path = f"../../data/pt/{substrate}-revised-raw-2.pt"
+output_path_train = f"../../data/pt/{substrate}-revised-raw_train-2.pt"
+output_path_val = f"../../data/pt/{substrate}-revised-raw_val-2.pt"
+output_path_test = f"../../data/pt/{substrate}-revised-raw_test-2.pt"
+shuffled_output_path = f"../../data/pt/{substrate}-revised-raw-shuffled-2.pt"
 
 
 data_emiss = []
