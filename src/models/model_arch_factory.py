@@ -12,7 +12,7 @@ class ModelArchFactory:
     """This class generate models based on requested architecture"""
 
     def create_model_arch(model_config: ModelConfig):
-        if model_config.arch == "MLPMixer":
+        if model_config.arch == "mlpmixer":
             return mlp_mixer.create_model(model_config)
         if model_config.arch == "resnet1d":
             return resnet_1d.create_model(model_config)
