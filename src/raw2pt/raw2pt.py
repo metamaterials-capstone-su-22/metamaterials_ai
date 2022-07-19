@@ -178,7 +178,9 @@ def raw_to_pt(
 
     # Save unnormalized data for convenience later.
 
-    norm_laser_params = (laser_params - laser_params.min(0).values) / (laser_params.max(0).values - laser_params.min(0).values)
+    norm_laser_params = (laser_params - laser_params.min(0).values) / (
+        laser_params.max(0).values - laser_params.min(0).values
+    )
     torch.save(
         {
             "wavelength": wavelength,

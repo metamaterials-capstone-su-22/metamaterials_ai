@@ -1,0 +1,62 @@
+<svg host="65bd71144e" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="122px" height="280px" viewBox="-0.5 -0.5 122 280" content="&lt;mxfile&gt;&lt;diagram id=&quot;efzIysJ49YV8V7vXVOXe&quot; name=&quot;Page-1&quot;&gt;5VjLbuMgFP2aLBvZxnHaZZs+ZtFKlaJRlyNqExsV+2Ywec3XDxjwI9hpGmWi0YwXiX24GDjn3AvJCM3y7RPHy+wFEsJGgZdsR+h+FASTSSA/FbDTAEJTDaScJhryG2BOfxEDegZd0YSUnUABwARddsEYioLEooNhzmHTDVsA6466xClxgHmMmYu+0URkGr2eeA3+jdA0syP7nmnJsQ02QJnhBDYtCD2M0IwDCH2Xb2eEKe4sL7rf40BrZHhcY7Yyc73D8UfKYVWkZkSxs8tgEH8Q1dMfoTs7dU4K0Znimpb03Xb5ZPhrZ3hnUDWVpBrVk6NuMirIfIlj1bqRZpFYJnJmJsXwO2H1CpIZMOCyqYBCxt8toBAWGgXosbokXgoOH6TVgtDNTdWyoIy18Ki6JJ7DGus1er1U1LwSLsi2ZQLDwxOBnAi+kyGm9crSZyx+Zc2xaQxzExosa5llagOxMWlav7thXt4Y8vuF8B0dXjAtHC2GNB/SF0U9+kZMGC2qjLPkRj9XysSSTLSorjYUper7TS878J7xjnD7Jjm8fpkOOmAg/3MDOVYIg+toNnGtUOMuJ/5Xta/Tfbf33NLeD3q0R2eQ3trnUA6SRJYz82hyqcXZcFphLm5V+Wy6VdgjVbOpUocUiY2IGS5LGmvQhPRKUmfnIPUlrHhs5h4aTK3hoBicMCzouluy+5g1XV+BVha2IkZdEZG/J45ceUqE6bWnTz2NoyQL3XR1JGvpo4xI5Wb0rIrjK5RUUChk2zsIAbkMwIymCogljzKvBstok5rNS29NXwHLWiu7xwUH1au3MuWDBJdZXeRly1ItI9+m6jgwplBOx1RuzuUYJ4mbi7XjzpGL4aQjYxC6uYj+UCqG4Zd0vUDuII1p63Zr+vny6Wh60Of0uAZsF/c9Xy0YbOJMFqRxVZZ+BAP7w5DdTmD3dCNe0IfREUQf3hJOPYf9DRtGZH8htEx//k3kaC36av3pR6j5w/P3f/jgNL3gwSkK/ucssdtAO0uiS2WJfGx+8uoDVPO/AXr4DQ==&lt;/diagram&gt;&lt;/mxfile&gt;">
+    <defs/>
+    <g>
+        <rect x="0" y="61" width="120" height="30" rx="4.5" ry="4.5" fill="#4286c5" stroke="#4286c5" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 118px; height: 1px; padding-top: 76px; margin-left: 1px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                <font color="#ffffff">
+                                    Weight Layer
+                                </font>
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="60" y="80" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    Weight Layer
+                </text>
+            </switch>
+        </g>
+        <path d="M 60 231 L 60 264.63" fill="none" stroke="#3399ff" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 60 269.88 L 56.5 262.88 L 60 264.63 L 63.5 262.88 Z" fill="#3399ff" stroke="#3399ff" stroke-miterlimit="10" pointer-events="all"/>
+        <ellipse cx="60" cy="216" rx="15" ry="15" fill="#ffffff" stroke="#3399ff" stroke-width="2" pointer-events="all"/>
+        <path d="M 60 207 L 60 225 M 51 216 L 69 216" fill="#ffffff" stroke="#3399ff" stroke-width="2" stroke-miterlimit="10" pointer-events="all"/>
+        <path d="M 60 31 L 60 54.63" fill="none" stroke="#3399ff" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 60 59.88 L 56.5 52.88 L 60 54.63 L 63.5 52.88 Z" fill="#3399ff" stroke="#3399ff" stroke-miterlimit="10" pointer-events="all"/>
+        <ellipse cx="60" cy="16" rx="15" ry="15" fill="#ffffff" stroke="#3399ff" stroke-width="2" pointer-events="all"/>
+        <path d="M 60 161 L 60 194.63" fill="none" stroke="#3399ff" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 60 199.88 L 56.5 192.88 L 60 194.63 L 63.5 192.88 Z" fill="#3399ff" stroke="#3399ff" stroke-miterlimit="10" pointer-events="all"/>
+        <rect x="0" y="131" width="120" height="30" rx="4.5" ry="4.5" fill="#4286c5" stroke="#4286c5" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 118px; height: 1px; padding-top: 146px; margin-left: 1px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                <font color="#ffffff">
+                                    SELU
+                                </font>
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="60" y="150" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    SELU
+                </text>
+            </switch>
+        </g>
+        <path d="M 60 91 L 60 124.63" fill="none" stroke="#3399ff" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 60 129.88 L 56.5 122.88 L 60 124.63 L 63.5 122.88 Z" fill="#3399ff" stroke="#3399ff" stroke-miterlimit="10" pointer-events="all"/>
+    </g>
+    <switch>
+        <g requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"/>
+        <a transform="translate(0,-5)" xlink:href="https://www.diagrams.net/doc/faq/svg-export-text-problems" target="_blank">
+            <text text-anchor="middle" font-size="10px" x="50%" y="100%">
+                Viewer does not support full SVG 1.1
+            </text>
+        </a>
+    </switch>
+</svg>

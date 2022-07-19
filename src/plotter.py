@@ -80,8 +80,7 @@ class Plotter:
 
         extension = torch.tensor(
             [
-                extended_min + (i) / granularity *
-                (extended_max - extended_min)
+                extended_min + (i) / granularity * (extended_max - extended_min)
                 for i in range(granularity)
             ]
         )
@@ -108,16 +107,14 @@ class Plotter:
 
         fig, ax = plt.subplots()
         temp = 1400
-        planck = [float(utils.planck_norm(wavelength, temp))
-                  for wavelength in wavelen]
+        planck = [float(utils.planck_norm(wavelength, temp)) for wavelength in wavelen]
 
         planck_max = max(planck)
         planck = [wave / planck_max for wave in planck]
 
         wavelen_cutoff = float(wavelen[index + granularity])
         # format the predicted params
-        FoMM = utils.planck_emiss_prod(
-            wavelen, pred_emiss, wavelen_cutoff, 1400)
+        FoMM = utils.planck_emiss_prod(wavelen, pred_emiss, wavelen_cutoff, 1400)
 
         ax.plot(
             wavelen,

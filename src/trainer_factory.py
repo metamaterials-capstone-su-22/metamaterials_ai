@@ -1,9 +1,7 @@
 from datetime import datetime
-from fileinput import filename
-from gc import callbacks
 
 import pytorch_lightning as pl
-from pytorch_lightning.callbacks import ModelCheckpoint
+from pytorch_lightning.callbacks import ModelCheckpoint, LearningRateMonitor
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from pytorch_lightning.loggers import TensorBoardLogger, WandbLogger
 
@@ -19,7 +17,7 @@ class TrainerFactory:
         config = self.config
         if direction == "inverse":
             num_epochs = config.inverse_num_epochs
-            refresh_rate = 5
+            refresh_rate = 2
             self.model_arch = config.inverse_arch
         else:
             num_epochs = config.direct_num_epochs
@@ -42,24 +40,33 @@ class TrainerFactory:
 
     def create_loggers(self, direction):
         work_folder = self.config.work_folder
-        loggers = [TensorBoardLogger(
-            save_dir=f"{work_folder}/test_tube_logs/{direction}",
-            name=f"{direction.title()}",
-        )]
-        # Do not log the loaded direct
-        if not direction == 'direct' or not self.config.load_direct_checkpoint:
-            loggers.append(WandbLogger(
-                name=f'{direction.title()[0]}-{self.model_arch}-{self.config.substrate}-{datetime.utcnow().strftime("%Y-%m-%d_%H-%M")}',
-                save_dir=f"{work_folder}/wandb_logs/{direction}",
-                offline=False,
-                project=f"Metamaterial AI",
-                log_model=True,
-            ))
+        loggers = [
+            TensorBoardLogger(
+                save_dir=f"{work_folder}/test_tube_logs/{direction}",
+                name=f"{direction.title()}",
+            )
+        ]
+        # Do not log the loaded model
+        if not self.is_loading_from_checkpoint(direction):
+            loggers.append(
+                WandbLogger(
+                    name=f'{direction.title()[0]}-{self.config.data_portion}-{self.model_arch}-{self.config.substrate}-{datetime.utcnow().strftime("%Y-%m-%d_%H-%M")}',
+                    save_dir=f"{work_folder}/wandb_logs/{direction}",
+                    offline=False,
+                    project=f"Metamaterial AI",
+                    log_model=True,
+                )
+            )
         return loggers
+
+    def is_loading_from_checkpoint(self, direction):
+        return (direction == "direct" and self.config.load_direct_checkpoint) or \
+            (direction == "inverse" and self.config.load_inverse_checkpoint)
 
     def create_callbacks(self, direction, refresh_rate):
         callbacks = [
             self.create_checkpoint_callback(direction),
+            LearningRateMonitor(logging_interval='epoch'),
             pl.callbacks.progress.TQDMProgressBar(refresh_rate=refresh_rate),
         ]
         if self.config.enable_early_stopper:
@@ -88,7 +95,7 @@ class TrainerFactory:
             monitor=f"{direction}/val/loss",
             strict=True,
             check_on_train_epoch_end=False,
-            patience=15,
+            patience=10,
             min_delta=0.000_1,
             verbose=True,
             mode="min",

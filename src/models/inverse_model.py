@@ -31,7 +31,8 @@ class InverseModel(BaseModel):
         )
         super().__init__(config, direction="inverse")
         self.lr = config.inverse_lr
-        self.milestones = [25, 50, 130, 140, 150]
+        self.gamma = config.inverse_gamma
+        self.milestones = self.get_milestones(config.inverse_milestones)
         self.example_input_array = torch.randn(1, 800)
         self.save_hyperparameters(config.__dict__)
 
@@ -109,10 +110,6 @@ class InverseModel(BaseModel):
             loss = y_loss
             if stage == "test":
                 self.save_test_result(x, y, y_pred, x_pred)
-        # else: #TODO
-        # add logic to snag the current best forward model
-        # if the case that we are exclusively training the inverse model
-
         self.create_graph_and_log(stage, y_pred, y, loss)
         return loss
 

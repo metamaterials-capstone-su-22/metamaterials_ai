@@ -1,8 +1,8 @@
+from einops import rearrange
 from einops.layers.torch import Rearrange
 from torch import nn, torch
 
 from models.model_config import ModelConfig
-from einops import rearrange
 
 # from .module import BlocksBuilder
 
@@ -49,13 +49,16 @@ class ModelMaker:
 
         return nn.Sequential(
             Rearrange("b c -> b 1 c"),
-            nn.Conv1d(in_channels=1, out_channels=conv_dim,
-                      kernel_size=kernel_size),
+            nn.Conv1d(in_channels=1, out_channels=conv_dim, kernel_size=kernel_size),
             nn.MaxPool1d(kernel_size=pool_size),
             nn.BatchNorm1d(conv_dim),
             nn.SELU(),
-            BlocksBuilder(num_blocks=num_blocks, dim=conv_dim,
-                          kernel_size=kernel_size, pool_size=pool_size),
+            BlocksBuilder(
+                num_blocks=num_blocks,
+                dim=conv_dim,
+                kernel_size=kernel_size,
+                pool_size=pool_size,
+            ),
             nn.Flatten(),
             nn.Sequential(nn.Linear(fc_input, fc_dim), nn.SELU()),
             AnnBlocksBuilder(num_blocks=15, dim=fc_dim),
@@ -64,11 +67,12 @@ class ModelMaker:
 
 
 class SimpleCnnBlock(nn.Module):
-    def __init__(self, dim: int, kernel_size: int | tuple = 1, pool_size: int = 1) -> None:
+    def __init__(
+        self, dim: int, kernel_size: int | tuple = 1, pool_size: int = 1
+    ) -> None:
         super().__init__()
         self.block = nn.Sequential(
-            nn.Conv1d(in_channels=dim, out_channels=dim,
-                      kernel_size=kernel_size),
+            nn.Conv1d(in_channels=dim, out_channels=dim, kernel_size=kernel_size),
             nn.MaxPool1d(kernel_size=pool_size),
             nn.BatchNorm1d(dim),
             nn.SELU(),
@@ -94,11 +98,20 @@ class SimpleAnnBlock(nn.Module):
 
 
 class BlocksBuilder(nn.Module):
-    def __init__(self, num_blocks: int, dim: int, kernel_size: int | tuple = 1, pool_size: int = 1) -> None:
+    def __init__(
+        self,
+        num_blocks: int,
+        dim: int,
+        kernel_size: int | tuple = 1,
+        pool_size: int = 1,
+    ) -> None:
         super().__init__()
-        self.convs = nn.ModuleList([SimpleCnnBlock(dim, kernel_size=kernel_size,
-                                                   pool_size=pool_size)
-                                    for _ in range(num_blocks)])
+        self.convs = nn.ModuleList(
+            [
+                SimpleCnnBlock(dim, kernel_size=kernel_size, pool_size=pool_size)
+                for _ in range(num_blocks)
+            ]
+        )
 
     def forward(self, x):
         for layer in self.convs:
@@ -109,8 +122,7 @@ class BlocksBuilder(nn.Module):
 class AnnBlocksBuilder(nn.Module):
     def __init__(self, num_blocks: int, dim: int) -> None:
         super().__init__()
-        self.layers = nn.ModuleList([SimpleAnnBlock(dim)
-                                    for _ in range(num_blocks)])
+        self.layers = nn.ModuleList([SimpleAnnBlock(dim) for _ in range(num_blocks)])
 
     def forward(self, x):
         for layer in self.layers:
