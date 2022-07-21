@@ -13,10 +13,10 @@ from utils import rmse
 import os
 
 config = Config()
-I_INC_CKPT_PATH = '../local_work/saved_best/I-0.9-res-ann-inconel.ckpt' #../data/models/model.ckpt"
-I_SS_CKPT_PATH = '../local_work/saved_best/I-0.9-res-ann-stainless.ckpt' #../data/models/model.ckpt"
-D_INC_CKPT_PATH = '../local_work/saved_best/D-0.9-res-ann-inconel.ckpt' #../data/models/model.ckpt"
-D_SS_CKPT_PATH = '../local_work/saved_best/D-0.9-res-ann-stainless.ckpt' #../data/models/model.ckpt"
+I_INC_CKPT_PATH = '../local_work/saved_best/I-1-res-ann-inconel.ckpt' #../data/models/model.ckpt"
+I_SS_CKPT_PATH = '../local_work/saved_best/I-1-res-ann-stainless.ckpt' #../data/models/model.ckpt"
+D_INC_CKPT_PATH = '../local_work/saved_best/D-1-res-ann-inconel.ckpt' #../data/models/model.ckpt"
+D_SS_CKPT_PATH = '../local_work/saved_best/D-1-res-ann-stainless.ckpt' #../data/models/model.ckpt"
 INC_DATA_PATH = '../local_data/inconel-revised-shuffled.pt'
 SS_DATA_PATH = '../local_data/stainless-steel-revised-shuffled.pt'
 
