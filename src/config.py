@@ -29,8 +29,8 @@ class Config(BaseModel):
     inverse_num_epochs: int = 2000  # Default 2500
     enable_early_stopper: bool = True  # when 'True' enables early stopper
     # Default= None: It should be under'{work_folder}/saved_best'
-    inverse_saved_ckpt: str | None  # 'I-0.9-res-ann-inconel.ckpt'  # Default: None
-    load_direct_checkpoint: bool = False
+    inverse_saved_ckpt: str = 'I-0.9-res-ann-stainless.ckpt'  # Default: None
+    load_direct_checkpoint: bool = True
     load_inverse_checkpoint: bool = False
     num_gpu: int = 1  # number of GPU
     # TODO: Fix num_wavelens be set at load time
