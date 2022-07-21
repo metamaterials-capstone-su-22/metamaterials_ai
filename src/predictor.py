@@ -23,13 +23,13 @@ SS_DATA_PATH = '../local_data/stainless-steel-revised-shuffled.pt'
 # MODEL_PATH = "data/mymodels"
 
 class Predictor:
-    def __init__(self, desired, include_inconel = True, include_stainless = True) -> None:
+    def __init__(self, desired, include_inconel = True, include_stainless = True, round_laser_params = True) -> None:
         self.desired = desired
         self.include_inconel = include_inconel
         self.include_stainless = include_stainless
         inc_params = torch.load(Path(INC_DATA_PATH))["laser_params"]
         steel_params = torch.load(Path(SS_DATA_PATH))["laser_params"]
-
+        self.round_laser_params = round_laser_params
         self.ss_max_speed, self.ss_max_spacing = steel_params.max(0)[0][0].item(), steel_params.max(0)[0][1].item()
         self.ss_min_speed, self.ss_min_spacing = steel_params.min(0)[0][0].item(), steel_params.min(0)[0][1].item()
         self.inc_max_speed, self.inc_max_spacing = inc_params.max(0)[0][0].item(), inc_params.max(0)[0][1].item()
