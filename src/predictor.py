@@ -13,10 +13,12 @@ from utils import rmse
 import os
 
 config = Config()
-I_INC_CKPT_PATH = '../local_work/saved_best/I-0.9-res-ann-inconel.ckpt' #../data/models/model.ckpt"
-I_SS_CKPT_PATH = '../local_work/saved_best/I-0.9-res-ann-stainless.ckpt' #../data/models/model.ckpt"
-D_INC_CKPT_PATH = '../local_work/saved_best/D-0.9-res-ann-inconel.ckpt' #../data/models/model.ckpt"
-D_SS_CKPT_PATH = '../local_work/saved_best/D-0.9-res-ann-stainless.ckpt' #../data/models/model.ckpt"
+I_INC_CKPT_PATH = '../local_work/saved_best/I-1-res-ann-inconel.ckpt' #../data/models/model.ckpt"
+I_SS_CKPT_PATH = '../local_work/saved_best/I-1-res-ann-stainless.ckpt' #../data/models/model.ckpt"
+D_INC_CKPT_PATH = '../local_work/saved_best/D-1-res-ann-inconel.ckpt' #../data/models/model.ckpt"
+D_SS_CKPT_PATH = '../local_work/saved_best/D-1-res-ann-stainless.ckpt' #../data/models/model.ckpt"
+INC_DATA_PATH = '../local_data/inconel-revised-shuffled.pt'
+SS_DATA_PATH = '../local_data/stainless-steel-revised-shuffled.pt'
 
 # MODEL_PATH = "data/mymodels"
 
@@ -25,10 +27,13 @@ class Predictor:
         self.desired = desired
         self.include_inconel = include_inconel
         self.include_stainless = include_stainless
-        self.max_speed = 700.0
-        self.min_speed = 10.0
-        self.max_spacing = 42.0
-        self.min_spacing = 1.0
+        inc_params = torch.load(Path(INC_DATA_PATH))["laser_params"]
+        steel_params = torch.load(Path(SS_DATA_PATH))["laser_params"]
+
+        self.ss_max_speed, self.ss_max_spacing = steel_params.max(0)[0][0].item(), steel_params.max(0)[0][1].item()
+        self.ss_min_speed, self.ss_min_spacing = steel_params.min(0)[0][0].item(), steel_params.min(0)[0][1].item()
+        self.inc_max_speed, self.inc_max_spacing = inc_params.max(0)[0][0].item(), inc_params.max(0)[0][1].item()
+        self.inc_min_speed, self.inc_min_spacing = inc_params.min(0)[0][0].item(), inc_params.min(0)[0][1].item()
     
     def denormalize_decode_result(y_hat, max_speed, max_spacing, min_speed, min_spacing):
         """input: 1,14 tensor
@@ -106,23 +111,16 @@ class Predictor:
         substrates = ['inconel', 'stainless']
         best_params = []
         best_rmse = 0
-        if include_inconel and include_stainless:
-            if rmse(direct_inc_emiss_y_hat, desired_emiss) < rmse(direct_ss_emiss_y_hat, desired_emiss):
-                best_substrate = substrates[0]
-                best_params = self.denormalize_decode_result(direct_inc_emiss_y_hat, self.max_speed, self.max_spacing, self.min_speed, self.min_spacing)
-                best_rmse = rmse(direct_inc_emiss_y_hat, desired_emiss).item()
-            else:
-                best_substrate = substrates[1]
-                best_params = self.denormalize_decode_result(direct_ss_emiss_y_hat, self.max_speed, self.max_spacing, self.min_speed, self.min_spacing)
-                best_rmse = rmse(direct_ss_emiss_y_hat, desired_emiss).item()
-        elif include_inconel:
+        if not include_inconel and not include_stainless:
+            raise Exception(f'Neither inconel or stainless was selected!!')
+        if (include_inconel and include_stainless and rmse(direct_inc_emiss_y_hat, desired_emiss) < rmse(direct_ss_emiss_y_hat, desired_emiss)) or (include_inconel and not include_stainless):
             best_substrate = substrates[0]
-            best_params = self.denormalize_decode_result(direct_inc_emiss_y_hat, self.max_speed, self.max_spacing, self.min_speed, self.min_spacing)
+            best_params = self.denormalize_decode_result(direct_inc_emiss_y_hat, self.inc_max_speed, self.inc_max_spacing, self.inc_min_speed, self.inc_min_spacing)
             best_rmse = rmse(direct_inc_emiss_y_hat, desired_emiss).item()
         else:
             best_substrate = substrates[1]
-            best_params = self.denormalize_decode_result(direct_ss_emiss_y_hat, self.max_speed, self.max_spacing, self.min_speed, self.min_spacing)
+            best_params = self.denormalize_decode_result(direct_ss_emiss_y_hat, self.ss_max_speed, self.ss_max_spacing, self.ss_min_speed, self.ss_min_spacing)
             best_rmse = rmse(direct_ss_emiss_y_hat, desired_emiss).item()
-
+        
         best_params = [torch.round(best_params[0], decimals = 1).item(), torch.round(best_params[1], decimals = 1).item(), torch.round(best_params[2], decimals = 1).item()]
         return best_substrate, best_params, best_rmse
