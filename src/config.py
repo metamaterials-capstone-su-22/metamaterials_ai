@@ -13,7 +13,7 @@ class Config(BaseModel):
     data_folder: str = "local_data"  # Path to the data folder
     data_portion: float = 1  # Percentage of data being used in the (0 - 1]
     direction: str = "direct"  # direct, inverse, both
-    direct_arch = "res-ann"  # options 'ann', 'res-ann', 'cnn, 'mlpmixer'
+    direct_arch = "mlpmixer"  # options 'ann', 'res-ann', 'cnn, 'mlpmixer'
     direct_batch_size: int = None  # 2**9 512
     direct_gamma: float = .1  # schedular gamma
     direct_lr: float | None = None  # leave default to None
@@ -22,7 +22,7 @@ class Config(BaseModel):
     # Default= None: It should be under'{work_folder}/saved_best'
     # = "D-0.9-res-ann-inconel.ckpt"  # Default None
     direct_saved_ckpt: str | None  # = 'D-1-cnn-stainless.ckpt'
-    inverse_arch = "res-ann"   # options 'ann', 'res-ann', 'cnn, 'mlpmixer'
+    inverse_arch = "mlpmixer"   # options 'ann', 'res-ann', 'cnn, 'mlpmixer'
     inverse_batch_size: int = None  # 2**9 512
     inverse_gamma: float = .1  # schedular gamma
     inverse_lr: float = None  # tune.loguniform(1e-6, 1e-5)
