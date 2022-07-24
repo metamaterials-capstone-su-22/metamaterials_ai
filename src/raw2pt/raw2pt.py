@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import os
-os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
+# os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 import re
 from pathlib import Path
 from typing import List, Optional, Tuple
