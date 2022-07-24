@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+# os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 import re
 from pathlib import Path
 from typing import List, Optional, Tuple
@@ -200,6 +201,7 @@ def raw_to_pt(
 # substrate = 'inconel'
 substrate = 'inconel'
 print("Process started")
+<<<<<<< HEAD
 input_path = f"../../data/raw/{substrate}-revised-raw"
 # output_path = f"../../data/pt/{substrate}-revised-raw.pt"
 # output_path_train = f"../../data/pt/{substrate}-revised-raw_train.pt"
@@ -212,6 +214,17 @@ output_path_train = f"../../data/pt/{substrate}-revised-raw_train-2.pt"
 output_path_val = f"../../data/pt/{substrate}-revised-raw_val-2.pt"
 output_path_test = f"../../data/pt/{substrate}-revised-raw_test-2.pt"
 shuffled_output_path = f"../../data/pt/{substrate}-revised-raw-shuffled-2.pt"
+=======
+input_path = "../../data/raw/inconel"
+# output_path = "../../data/pt/inconel-revised-raw.pt"
+# output_path_train = "../../data/pt/inconel-revised-raw_train.pt"
+# output_path_val = "../../data/pt/inconel-revised-raw_val.pt"
+# output_path_test = "../../data/pt/inconel-revised-raw_test.pt"
+shuffled_output_path = "../../data/pt/inconel-shuffled.pt"
+
+# input_path = "../../data/raw/stainless-steel"
+# shuffled_output_path = "../../data/pt/stainless-steel-shuffled.pt"
+>>>>>>> 14dacfc043824af4093b514c7a041613e23475c5
 
 
 data_emiss = []
