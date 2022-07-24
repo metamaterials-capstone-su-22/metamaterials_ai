@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 import re
 from pathlib import Path
 from typing import List, Optional, Tuple
@@ -198,12 +199,15 @@ def raw_to_pt(
 
 
 print("Process started")
-input_path = "../../data/raw/inconel-revised-raw"
-output_path = "../../data/pt/inconel-revised-raw.pt"
-output_path_train = "../../data/pt/inconel-revised-raw_train.pt"
-output_path_val = "../../data/pt/inconel-revised-raw_val.pt"
-output_path_test = "../../data/pt/inconel-revised-raw_test.pt"
-shuffled_output_path = "../../data/pt/inconel-revised-raw-shuffled.pt"
+input_path = "../../data/raw/inconel"
+# output_path = "../../data/pt/inconel-revised-raw.pt"
+# output_path_train = "../../data/pt/inconel-revised-raw_train.pt"
+# output_path_val = "../../data/pt/inconel-revised-raw_val.pt"
+# output_path_test = "../../data/pt/inconel-revised-raw_test.pt"
+shuffled_output_path = "../../data/pt/inconel-shuffled.pt"
+
+# input_path = "../../data/raw/stainless-steel"
+# shuffled_output_path = "../../data/pt/stainless-steel-shuffled.pt"
 
 
 data_emiss = []
