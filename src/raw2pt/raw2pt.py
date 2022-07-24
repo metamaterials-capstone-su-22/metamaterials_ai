@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+# os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 import re
 from pathlib import Path
 from typing import List, Optional, Tuple
@@ -147,11 +148,12 @@ def raw_to_pt(
         params = [
             entry["laser_scanning_speed_x_dir_mm_per_s"],
             entry["laser_scanning_line_spacing_y_dir_micron"],
+            entry["laser_power_W"],
             # wattages are converted to one hot indexes
-            *F.one_hot(
-                torch.tensor(wattage_idxs[round(entry["laser_power_W"], 1)]),
-                num_classes=len(wattage_idxs),
-            ),
+            # *F.one_hot(
+            #     torch.tensor(wattage_idxs[round(entry["laser_power_W"], 1)]),
+            #     num_classes=len(wattage_idxs),
+            # ),
         ]
 
         uids.append(uid)
@@ -196,14 +198,15 @@ def raw_to_pt(
 
     return norm_laser_params, interp_emissivities, uids
 
-
 print("Process started")
-input_path = "../../data/raw/inconel-revised-raw"
-output_path = "../../data/pt/inconel-revised-raw.pt"
-output_path_train = "../../data/pt/inconel-revised-raw_train.pt"
-output_path_val = "../../data/pt/inconel-revised-raw_val.pt"
-output_path_test = "../../data/pt/inconel-revised-raw_test.pt"
-shuffled_output_path = "../../data/pt/inconel-revised-raw-shuffled.pt"
+# input_path = "../../data/raw/inconel"
+# shuffled_output_path = "../../data/pt/inconel-onehot.pt"
+# shuffled_output_path = "../../data/pt/inconel-cont.pt"
+
+
+input_path = "../../data/raw/stainless-steel"
+# shuffled_output_path = "../../data/pt/steel-onehot.pt"
+shuffled_output_path = "../../data/pt/steel-cont.pt"
 
 
 data_emiss = []
