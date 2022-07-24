@@ -150,10 +150,10 @@ def raw_to_pt(
             entry["laser_scanning_line_spacing_y_dir_micron"],
             entry["laser_power_W"],
             # wattages are converted to one hot indexes
-            *F.one_hot(
-                torch.tensor(wattage_idxs[round(entry["laser_power_W"], 1)]),
-                num_classes=len(wattage_idxs),
-            ),
+            # *F.one_hot(
+            #     torch.tensor(wattage_idxs[round(entry["laser_power_W"], 1)]),
+            #     num_classes=len(wattage_idxs),
+            # ),
         ]
 
         uids.append(uid)
@@ -198,33 +198,15 @@ def raw_to_pt(
 
     return norm_laser_params, interp_emissivities, uids
 
-# substrate = 'inconel'
-substrate = 'inconel'
 print("Process started")
-<<<<<<< HEAD
-input_path = f"../../data/raw/{substrate}-revised-raw"
-# output_path = f"../../data/pt/{substrate}-revised-raw.pt"
-# output_path_train = f"../../data/pt/{substrate}-revised-raw_train.pt"
-# output_path_val = f"../../data/pt/{substrate}-revised-raw_val.pt"
-# output_path_test = f"../../data/pt/{substrate}-revised-raw_test.pt"
+# input_path = "../../data/raw/inconel"
+# shuffled_output_path = "../../data/pt/inconel-onehot.pt"
+# shuffled_output_path = "../../data/pt/inconel-cont.pt"
 
-shuffled_output_path = f"../../data/pt/{substrate}-revised-raw-shuffled-2.pt"
-output_path = f"../../data/pt/{substrate}-revised-raw-2.pt"
-output_path_train = f"../../data/pt/{substrate}-revised-raw_train-2.pt"
-output_path_val = f"../../data/pt/{substrate}-revised-raw_val-2.pt"
-output_path_test = f"../../data/pt/{substrate}-revised-raw_test-2.pt"
-shuffled_output_path = f"../../data/pt/{substrate}-revised-raw-shuffled-2.pt"
-=======
-input_path = "../../data/raw/inconel"
-# output_path = "../../data/pt/inconel-revised-raw.pt"
-# output_path_train = "../../data/pt/inconel-revised-raw_train.pt"
-# output_path_val = "../../data/pt/inconel-revised-raw_val.pt"
-# output_path_test = "../../data/pt/inconel-revised-raw_test.pt"
-shuffled_output_path = "../../data/pt/inconel-shuffled.pt"
 
-# input_path = "../../data/raw/stainless-steel"
-# shuffled_output_path = "../../data/pt/stainless-steel-shuffled.pt"
->>>>>>> 14dacfc043824af4093b514c7a041613e23475c5
+input_path = "../../data/raw/stainless-steel"
+# shuffled_output_path = "../../data/pt/steel-onehot.pt"
+shuffled_output_path = "../../data/pt/steel-cont.pt"
 
 
 data_emiss = []
