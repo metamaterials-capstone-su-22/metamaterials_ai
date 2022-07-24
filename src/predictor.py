@@ -23,7 +23,8 @@ SS_DATA_PATH = '../local_data/stainless-steel-revised-shuffled.pt'
 # MODEL_PATH = "data/mymodels"
 
 class Predictor:
-    def __init__(self, desired, include_inconel = True, include_stainless = True, round_laser_params = True) -> None:
+    def __init__(self, desired, include_inconel = True, include_stainless = True, round_laser_params = False) -> None:
+        # may have to reshape desired to 1,800 tensor
         self.desired = desired
         self.include_inconel = include_inconel
         self.include_stainless = include_stainless
@@ -35,17 +36,27 @@ class Predictor:
         self.inc_max_speed, self.inc_max_spacing = inc_params.max(0)[0][0].item(), inc_params.max(0)[0][1].item()
         self.inc_min_speed, self.inc_min_spacing = inc_params.min(0)[0][0].item(), inc_params.min(0)[0][1].item()
     
-    def denormalize_decode_result(y_hat, max_speed, max_spacing, min_speed, min_spacing):
+    def denormalize_decode_result(self, y_hat, max_speed, max_spacing, min_speed, min_spacing):
         """input: 1,14 tensor
             output: 1,3 tensor with wattage no longer one hot encoded"""
         watts = [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3]
 
         watt_arg = torch.argmax(y_hat[0][2:])
         y_final = torch.empty(3, dtype=torch.float32)
-        y_final[0] = max_speed * y_hat[0][0] # TODO call the scale
-        y_final[1] = max_spacing * y_hat[0][1] # TODO call the scale
+        y_final[0] = y_hat[0][0] * max_speed #(max_speed - min_speed) * (y_hat[0][0] + min_speed) # TODO call the scale
+        y_final[1] = y_hat[0][1] * max_spacing#(max_spacing - min_spacing) * (y_hat[0][1] + min_spacing) # TODO call the scale
         y_final[2]= watts[watt_arg]
+        if self.round_laser_params:
+            y_final[0] = torch.round(y_final[0], decimals = -1)
+            y_final[1] = torch.round(y_final[1], decimals = 0)
+        y_final = y_final.reshape(1,3)
         return y_final
+    
+    def denorm_result(self, y_hat, max_speed, max_spacing, min_speed, min_spacing):
+        y_hat[0][0] = torch.round(y_hat[0][0] * max_speed, decimals = -1) #(max_speed - min_speed) * (y_hat[0][0] + min_speed) # TODO call the scale
+        y_hat[0][1] = torch.round(y_hat[0][1] * max_spacing, decimals = 0)
+        return y_hat
+
 
     def run_inverse(self, input):
         x = input
@@ -71,9 +82,28 @@ class Predictor:
         #return ss and inc laser parameter preds
         return y_hat_ss, y_hat_inc
 
-    def run_direct(self, y_hat_ss, y_hat_inc):
-     
+    def find_in_data(self, y_hat, substrate = 'stainless'):
+        if substrate == 'stainless':
+            params = torch.load(Path(SS_DATA_PATH))["laser_params"]
+        else:
+            params = torch.load(Path(INC_DATA_PATH))["laser_params"]
+        
+        found_index = -1
+        for comb in params:
+            i += 1
+            if torch.all(torch.eq(comb, y_hat)):
+                found_index = i
 
+        return y_hat, found_index
+
+    
+
+    def run_direct(self, y_hat_ss, y_hat_inc, laser_constraint  = False):
+        if laser_constraint:
+            y_hat_ss, ss_index = self.find_in_data(y_hat_ss)
+            y_hat_inc, inc_index = self.find_in_data(y_hat_inc)
+            if ss_index:
+                return y_hat_ss, y_hat_inc
         #run direct inc model
         direct_inc_filepath = Path(D_INC_CKPT_PATH) #CHANGEME
         if not Path.is_file(direct_inc_filepath):
@@ -105,6 +135,10 @@ class Predictor:
         y_final[0] = ((max_speed - min_speed) * y_hat[0][0]) + min_speed # TODO call the scale
         y_final[1] = ((max_spacing-min_spacing) * y_hat[0][1]) + min_spacing # TODO call the scale
         y_final[2]= watts[watt_arg]
+        if self.round_laser_params:
+            y_final[0] = torch.round(y_final[0], decimals = -1)
+            y_final[1] = torch.round(y_final[1], decimals = 1)
+            y_final[2] = torch.round(y_final[2], decimals = 1)
         return y_final
 
     def best_predictor(self, include_inconel, include_stainless, direct_ss_emiss_y_hat, direct_inc_emiss_y_hat, desired_emiss):
