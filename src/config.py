@@ -8,8 +8,8 @@ class Config(BaseModel):
     auto_batch_size_adjustment: bool = False
     configs_folder = "configs"
     create_plots = False
-    # name of the data file #inconel-revised-shuffled.pt, stainless-revised-shuffled.pt
-    data_file = "stainless-revised-shuffled.pt"
+    # name of the data file #inconel-shuffled.pt, stainless-steel-shuffled.pt
+    data_file = "stainless-steel-shuffled.pt"
     data_folder: str = "local_data"  # Path to the data folder
     data_portion: float = 1  # Percentage of data being used in the (0 - 1]
     direction: str = "direct"  # direct, inverse, both
