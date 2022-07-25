@@ -52,10 +52,10 @@ def setup():
     random.seed(100)
     FileUtils.setup_folder_structure(config.work_folder, config.data_folder)
     FileUtils.fetch_pt_files(config.data_folder, config.data_file)
-    if config.load_direct_checkpoint:
+    if config.load_direct_checkpoint and config.direct_saved_ckpt:
         FileUtils.fetch_checkpoint_files(
             config.work_folder, config.direct_saved_ckpt, 'direct', config.substrate)
-    if config.load_inverse_checkpoint:
+    if config.load_inverse_checkpoint and config.inverse_saved_ckpt:
         FileUtils.fetch_checkpoint_files(
             config.work_folder, config.inverse_saved_ckpt, 'inverse', config.substrate)
 
