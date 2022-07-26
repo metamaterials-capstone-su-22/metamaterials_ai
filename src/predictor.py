@@ -17,8 +17,8 @@ I_INC_CKPT_PATH = '../local_work/saved_best/I-1-res-ann-inconel.ckpt' #../data/m
 I_SS_CKPT_PATH = '../local_work/saved_best/I-1-res-ann-stainless.ckpt' #../data/models/model.ckpt"
 D_INC_CKPT_PATH = '../local_work/saved_best/D-1-res-ann-inconel.ckpt' #../data/models/model.ckpt"
 D_SS_CKPT_PATH = '../local_work/saved_best/D-1-res-ann-stainless.ckpt' #../data/models/model.ckpt"
-INC_DATA_PATH = '../local_data/inconel-revised-shuffled.pt'
-SS_DATA_PATH = '../local_data/stainless-steel-revised-shuffled.pt'
+INC_DATA_PATH = '../local_data/inconel-onehot.pt'
+SS_DATA_PATH = '../local_data/steel-onehot.pt'
 
 # MODEL_PATH = "data/mymodels"
 
@@ -57,7 +57,6 @@ class Predictor:
         y_hat[0][1] = torch.round(y_hat[0][1] * max_spacing, decimals = 0)
         return y_hat
 
-
     def run_inverse(self, input):
         x = input
         #run INC Inverse        
@@ -87,7 +86,7 @@ class Predictor:
             params = torch.load(Path(SS_DATA_PATH))["laser_params"]
         else:
             params = torch.load(Path(INC_DATA_PATH))["laser_params"]
-        
+        i = 0
         found_index = -1
         for comb in params:
             i += 1
@@ -96,14 +95,13 @@ class Predictor:
 
         return y_hat, found_index
 
-    
 
     def run_direct(self, y_hat_ss, y_hat_inc, laser_constraint  = False):
-        if laser_constraint:
-            y_hat_ss, ss_index = self.find_in_data(y_hat_ss)
-            y_hat_inc, inc_index = self.find_in_data(y_hat_inc)
-            if ss_index:
-                return y_hat_ss, y_hat_inc
+        # if laser_constraint:
+        #     y_hat_ss, ss_index = self.find_in_data(y_hat_ss)
+        #     y_hat_inc, inc_index = self.find_in_data(y_hat_inc)
+        #     if ss_index:
+        #         return y_hat_ss, y_hat_inc
         #run direct inc model
         direct_inc_filepath = Path(D_INC_CKPT_PATH) #CHANGEME
         if not Path.is_file(direct_inc_filepath):
@@ -158,3 +156,6 @@ class Predictor:
         
         best_params = [torch.round(best_params[0], decimals = 1).item(), torch.round(best_params[1], decimals = 1).item(), torch.round(best_params[2], decimals = 1).item()]
         return best_substrate, best_params, best_rmse
+    def rmse_metrics(rmse_scores):
+        
+        return mean(rmse_scores), stdev(rmse_scores)

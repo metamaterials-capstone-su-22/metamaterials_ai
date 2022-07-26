@@ -190,7 +190,7 @@ def emiss_error_graph(predicted_emissivity, real_emissivity, wavelen_num=300):
 
 
 def training_set_mean_vs_stdev():
-    direct_train_data = torch.load("local_data/stainless_steel.pt")[
+    direct_train_data = torch.load("local_data/steel-onehot.pt")[
         "interpolated_emissivity"
     ]
     average_emiss = [[] for i in range(800)]
@@ -224,7 +224,7 @@ def val_set_RMSE(pred_target="local_work/preds.pt"):
         real_emissivity = all_preds["true_emiss"]
         predicted_emissivity = all_preds["pred_emiss"]
 
-        real = torch.load("local_data/stainless_steel.pt")
+        real = torch.load("local_data/steel-onehot.pt")
         wavelength = real["interpolated_wavelength"]
 
         for p in range(400):
@@ -267,7 +267,7 @@ def graph(residualsflag, predsvstrueflag, target_str, wavelen_num=800, index_str
     for i in range(len(tpreds)):
         preds = tpreds[i]
 
-        real = torch.load("local_data/stainless_steel.pt")
+        real = torch.load("local_data/steel-onehot.pt")
         real_laser = real["normalized_laser_params"]
         real_emissivity = preds["true_emiss"]
 
@@ -450,7 +450,7 @@ def save_params(target_str, wavelen_num=800):
     for i in range(5):
 
         preds = pred_full[i]
-        real = torch.load("local_data/stainless_steel.pt")
+        real = torch.load("local_data/steel-onehot.pt")
         real_laser = real["normalized_laser_params"]
 
         # laser indexed [vae out of 50][wavelength out of wavelen_num][params, 14]
