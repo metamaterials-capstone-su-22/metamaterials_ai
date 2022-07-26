@@ -83,7 +83,7 @@ class Config(BaseModel):
     backward_lr: float = 1e-6  # tune.loguniform(1e-6, 1e-5),
     backward_num_epochs: int = 2  # 2500
     create_plots = False
-    data_file = "stainless_steel.pt" # name of the data file 
+    data_file = "steel-onehot.pt" # name of the data file 
     data_folder: str = "local_data"  # Path to the data folder
     forward_batch_size: int = 1000  # 2**9
     forward_lr: float = 1e-6  # tune.loguniform(1e-7, 1e-4),
