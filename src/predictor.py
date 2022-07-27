@@ -15,7 +15,7 @@ import os
 config = Config()
 I_INC_CKPT_PATH = '../local_work/saved_best/I-1-res-ann-inconel.ckpt' #../data/models/model.ckpt"
 I_SS_CKPT_PATH = '../local_work/saved_best/I-1-res-ann-stainless.ckpt' #../data/models/model.ckpt"
-D_INC_CKPT_PATH = '../local_work/saved_best/D-1-res-ann-inconel.ckpt' #../data/models/model.ckpt"
+D_INC_CKPT_PATH = '../local_work/saved_best/D-1-res-ann-inconel-2022-07-15_23-44.ckpt' #../data/models/model.ckpt"
 D_SS_CKPT_PATH = '../local_work/saved_best/D-1-res-ann-stainless.ckpt' #../data/models/model.ckpt"
 INC_DATA_PATH = '../local_data/inconel-onehot.pt'
 SS_DATA_PATH = '../local_data/steel-onehot.pt'
@@ -49,7 +49,7 @@ class Predictor:
         self.inc_max_speed, self.inc_max_spacing = inc_params.max(0)[0][0].item(), inc_params.max(0)[0][1].item()
         self.inc_min_speed, self.inc_min_spacing = inc_params.min(0)[0][0].item(), inc_params.min(0)[0][1].item()
     
-    def denormalize_and_decode(self, y_hat, substrate, change_dimension=False):
+    def denormalize_and_decode(self, y_hat, substrate, change_dimension=False, normalize = False, round_laser_params = True):
         """input: y_hat.shape[0], 14 tensor
             output: y_hat.shape[0], 3 tensor with wattage no longer one hot encoded
 
@@ -69,23 +69,46 @@ class Predictor:
 
         watts = [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3]
         watt_arg = torch.argmax(y_hat[:,2:], axis = 1)
+
         dim = 14
         if change_dimension:
             dim = 3
-        y_final = torch.empty((y_hat.shape[0], dim), dtype=torch.float32)
 
-        y_final[:,0] = y_hat[:,0] * (max_speed - min_speed) + min_speed
-        y_final[:,1] = y_hat[:,1]  * (max_spacing - min_spacing) + min_spacing
+        y_final = torch.empty((y_hat.shape[0], dim), dtype=torch.float32)
+        if normalize:
+            y_final[:,0] = (y_hat[:,0] - min_speed) / (max_speed - min_speed)
+            y_final[:,1] = (y_hat[:,1] - min_spacing)  /  (max_spacing - min_spacing)
+        else:
+            y_final[:,0] = y_hat[:,0] * (max_speed - min_speed) + min_speed
+            y_final[:,1] = y_hat[:,1]  * (max_spacing - min_spacing) + min_spacing
+
         if change_dimension:
             y_final[:,2] = torch.tensor([watts[i.item()] for i in watt_arg])
         else:
             y_final[:,2:] = y_hat[:,2:]
 
-        if self.round_laser_params:
+        if round_laser_params:
             y_final[:,0] = torch.round(y_final[:,0], decimals = -1)
             y_final[:,1] = torch.round(y_final[:,1], decimals = 0)
             
         return y_final
+    def clean_and_send_to_lab(self, y_hat):
+        """just reverse one hot encoding and get sorted unique parameters"""
+
+        watts = [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3]
+        watt_arg = torch.argmax(y_hat[:,2:], axis = 1)
+        y_final = torch.empty((y_hat.shape[0], 3), dtype=torch.float32)
+        y_final[:,0] = y_hat[:,0]
+        y_final[:,1] = y_hat[:,1]
+        y_final[:,2] = torch.tensor([watts[i.item()] for i in watt_arg])
+
+        unique_data = sorted([list(x) for x in set(tuple(x) for x in y_final.tolist())], key = lambda x: (x[2], x[0], x[1]))
+
+        stainless_send = []
+        for i in unique_data:
+            stainless_send.append([i[0], i[1], np.round(i[2], decimals = 1)])
+        
+        return stainless_send, len(stainless_send), len(y_final)
 
     def run_model(self, input, substrate, direction):
         #select correct path
@@ -113,22 +136,75 @@ class Predictor:
 
         return y_hat
 
-    def find_in_data(self, y_hat, substrate = 'steel'):
+    def get_data(self, filepath, type):
+        stain_data = torch.load(
+                        Path(filepath))#["laser_params"] #stainless-steel-revised-shuffled inconel-revised-raw-shuffled
+        wave_data = stain_data["interpolated_wavelength"]
+        emiss_data = stain_data["interpolated_emissivity"]
+        laser_params = stain_data["laser_params"]
+        uids = stain_data["uids"]
+        if type == 'test':
+            wave_test = wave_data[round(len(wave_data) * .9):]  
+            emiss_test = emiss_data[round(len(wave_data) * .9):]
+            laser_params = laser_params[round(len(wave_data) * .9):]
+            uids = uids[round(len(wave_data) * .9):]
+        elif type == 'trainval':
+            wave_test = wave_data[:round(len(wave_data) * .9)]  
+            emiss_test = emiss_data[:round(len(wave_data) * .9)]
+            laser_params = laser_params[:round(len(wave_data) * .9)]
+            uids = uids[:round(len(wave_data) * .9)]
+        else: 
+            wave_test = wave_data
+            emiss_test = emiss_data
+            laser_params = laser_params
+        
+        return wave_test, emiss_test, laser_params, uids
+
+
+    def find_in_data(self, y_hat, substrate):
         not_in_data = []
-        ss_in_data_same_params = []
-        ss_in_data_diff_params = []
+        same_params_uids = []
+        pred_in_data = {"laser_params": [], "emissivity": [], "uids": []}
+        test_in_data = {"laser_params": [], "emissivity": [], "uids": []}
+
         if substrate == 'steel':
-            params = self.steel_params
+            wave, emiss, laser_params, uids = self.get_data(SS_DATA_PATH, "full")
+            wave_test, emiss_test, laser_params_test, uids_test = self.get_data(SS_DATA_PATH, "test")
         else:
-            params = self.inc_params
-        indexes = []
+            wave, emiss, laser_params, uids = self.get_data(INC_DATA_PATH, "full")
+            wave_test, emiss_test, laser_params_test, uids_test = self.get_data(INC_DATA_PATH, "test")
+
+        #[]#torch.tensor(type = "torch.float32")
         for i in range(len(y_hat)):
-            val = torch.all(params == y_hat[i], axis=1).nonzero().flatten()
+            val = torch.all(laser_params == y_hat[i], axis=1).nonzero().flatten()
             if len(val) == 0:
-                    indexes.append(-1)
+                not_in_data.append(y_hat[i])
             else:
-                    indexes.append(val.numpy().item()) 
-        return indexes, not_in_data
+                #if the predicted parameters = the original parameters
+                same_params = torch.all(torch.eq(y_hat[i], laser_params_test[i])).item()
+                if same_params:
+                        same_params_uids.append(uids[val])
+                #if the predicted != original parameters, add to two separate dictionaries
+                else:
+                    pred_in_data["laser_params"].append(laser_params[val].flatten())
+                    pred_in_data["emissivity"].append(emiss[val].flatten())
+                    pred_in_data["uids"].append(uids[val].flatten())
+                    test_in_data["laser_params"].append(laser_params_test[i].flatten())
+                    test_in_data["emissivity"].append(emiss_test[i].flatten())
+                    test_in_data["uids"].append(uids_test[i].flatten())
+        #list of tensors --> tensors
+        if len(not_in_data) != 0:
+            not_in_data = torch.stack(not_in_data)
+        if len(test_in_data) != 0:
+            test_in_data["laser_params"] = torch.stack(test_in_data["laser_params"])
+            test_in_data["emissivity"] = torch.stack(test_in_data["emissivity"])
+            test_in_data["uids"] = torch.stack(test_in_data["uids"])
+        pred_in_data["laser_params"] = torch.stack(pred_in_data["laser_params"])
+        pred_in_data["emissivity"] = torch.stack(pred_in_data["emissivity"])
+        pred_in_data["uids"] = torch.stack(pred_in_data["uids"])
+
+                
+        return not_in_data, same_params_uids, pred_in_data, test_in_data
 
 
     def run_direct(self, y_hat_ss, y_hat_inc, laser_constraint  = False):
@@ -173,8 +249,18 @@ class Predictor:
         best_params = [torch.round(best_params[0], decimals = 1).item(), torch.round(best_params[1], decimals = 1).item(), torch.round(best_params[2], decimals = 1).item()]
         return best_substrate, best_params, best_rmse
     
-    def rmse_metrics(y_hat, y_pred):
+    def SAD(self, preds, test, substrate):
+        """take in laser parameters and calculate sum of absolute difference."""
+        pred_params = self.denormalize_and_decode(preds["laser_params"], substrate = substrate, change_dimension=True, normalize = True, round_laser_params = False)
+        original_params = self.denormalize_and_decode(test["laser_params"], substrate = substrate, change_dimension=True, normalize = True, round_laser_params = False)
+
+        difference = torch.abs(torch.sub(pred_params, original_params))
+        sad_values = torch.sum(difference, dim = 1)
+        return pred_params, original_params, sad_values.reshape(sad_values.shape[0], 1)
+
+
+    @staticmethod
+    def rmse_metrics(y_hat, y_pred, decimals = 5):
 
         rmse_scores = [rmse(y_hat[i], y_pred[i]) for i in range(len(y_hat))]
-
-        return np.mean(rmse_scores), np.stdev(rmse_scores)
+        return np.round(np.mean(rmse_scores), decimals = decimals), np.round(np.std(rmse_scores), decimals = decimals)
