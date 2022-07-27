@@ -49,7 +49,7 @@ class Predictor:
         self.inc_max_speed, self.inc_max_spacing = inc_params.max(0)[0][0].item(), inc_params.max(0)[0][1].item()
         self.inc_min_speed, self.inc_min_spacing = inc_params.min(0)[0][0].item(), inc_params.min(0)[0][1].item()
     
-    def denormalize_and_decode(self, y_hat, substrate, change_dimension=False, normalize = False, round_laser_params = True):
+    def denormalize_and_decode(self, y_hat, substrate, change_dimension=False, normalize = "denormalize", round_laser_params = True):
         """input: y_hat.shape[0], 14 tensor
             output: y_hat.shape[0], 3 tensor with wattage no longer one hot encoded
 
@@ -75,12 +75,15 @@ class Predictor:
             dim = 3
 
         y_final = torch.empty((y_hat.shape[0], dim), dtype=torch.float32)
-        if normalize:
+        if normalize == 'normalize':
             y_final[:,0] = (y_hat[:,0] - min_speed) / (max_speed - min_speed)
             y_final[:,1] = (y_hat[:,1] - min_spacing)  /  (max_spacing - min_spacing)
-        else:
+        elif normalize == 'denormalize':
             y_final[:,0] = y_hat[:,0] * (max_speed - min_speed) + min_speed
             y_final[:,1] = y_hat[:,1]  * (max_spacing - min_spacing) + min_spacing
+        else:
+            y_final[:,0] = y_hat[:,0]
+            y_final[:,1] = y_hat[:,1]
 
         if change_dimension:
             y_final[:,2] = torch.tensor([watts[i.item()] for i in watt_arg])
@@ -251,12 +254,19 @@ class Predictor:
     
     def SAD(self, preds, test, substrate):
         """take in laser parameters and calculate sum of absolute difference."""
-        pred_params = self.denormalize_and_decode(preds["laser_params"], substrate = substrate, change_dimension=True, normalize = True, round_laser_params = False)
-        original_params = self.denormalize_and_decode(test["laser_params"], substrate = substrate, change_dimension=True, normalize = True, round_laser_params = False)
+        #normalize parameters to calculate SAD
+        pred_params = self.denormalize_and_decode(preds["laser_params"], substrate = substrate, change_dimension=True, normalize = "normalize", round_laser_params = False)
+        original_params = self.denormalize_and_decode(test["laser_params"], substrate = substrate, change_dimension=True, normalize = "normalize", round_laser_params = False)
 
+        #non normalized laser parameters for output
+        pred = self.denormalize_and_decode(preds["laser_params"], substrate = substrate, change_dimension=True, normalize = "None", round_laser_params = True)
+        original = self.denormalize_and_decode(test["laser_params"], substrate = substrate, change_dimension=True, normalize = "None", round_laser_params = True)
+        #calculate SAD
         difference = torch.abs(torch.sub(pred_params, original_params))
         sad_values = torch.sum(difference, dim = 1)
-        return pred_params, original_params, sad_values.reshape(sad_values.shape[0], 1)
+        rmse_val = torch.tensor([rmse(preds["emissivity"][i], test["emissivity"][i]) for i in range(len(preds["emissivity"]))])
+
+        return pred, original, sad_values.reshape(sad_values.shape[0], 1), rmse_val.reshape(rmse_val.shape[0], 1)
 
 
     @staticmethod
