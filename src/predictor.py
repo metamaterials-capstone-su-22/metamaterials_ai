@@ -95,6 +95,8 @@ class Predictor:
             y_final[:,1] = torch.round(y_final[:,1], decimals = 0)
             
         return y_final
+
+
     def clean_and_send_to_lab(self, y_hat):
         """just reverse one hot encoding and get sorted unique parameters"""
 
@@ -112,6 +114,7 @@ class Predictor:
             stainless_send.append([i[0], i[1], np.round(i[2], decimals = 1)])
         
         return stainless_send, len(stainless_send), len(y_final)
+
 
     def run_model(self, input, substrate, direction):
         #select correct path
@@ -138,6 +141,7 @@ class Predictor:
             y_hat = model(input)
 
         return y_hat
+
 
     def get_data(self, filepath, type):
         stain_data = torch.load(
@@ -206,7 +210,6 @@ class Predictor:
         pred_in_data["emissivity"] = torch.stack(pred_in_data["emissivity"])
         pred_in_data["uids"] = torch.stack(pred_in_data["uids"])
 
-                
         return not_in_data, same_params_uids, pred_in_data, test_in_data
 
 
@@ -252,6 +255,7 @@ class Predictor:
         best_params = [torch.round(best_params[0], decimals = 1).item(), torch.round(best_params[1], decimals = 1).item(), torch.round(best_params[2], decimals = 1).item()]
         return best_substrate, best_params, best_rmse
     
+
     def SAD(self, preds, test, substrate):
         """take in laser parameters and calculate sum of absolute difference."""
         #normalize parameters to calculate SAD
@@ -266,7 +270,7 @@ class Predictor:
         sad_values = torch.sum(difference, dim = 1)
         rmse_val = torch.tensor([rmse(preds["emissivity"][i], test["emissivity"][i]) for i in range(len(preds["emissivity"]))])
 
-        return pred, original, sad_values.reshape(sad_values.shape[0], 1), rmse_val.reshape(rmse_val.shape[0], 1)
+        return pred, original, sad_values.reshape(sad_values.shape[0], 1), rmse_val.reshape(rmse_val.shape[0], 1), preds["uids"], test["uids"]
 
 
     @staticmethod
