@@ -21,7 +21,7 @@ class Config(BaseModel):
     direct_num_epochs: int = 1600  # default 1600
     # Default= None: It should be under'{work_folder}/saved_best'
     # = "D-0.9-res-ann-inconel.ckpt"  # Default None
-    direct_saved_ckpt: str | None  # = 'D-1-res-ann-stainless.ckpt'
+    direct_saved_ckpt: str | None = 'D-1-res-ann-stainless.ckpt'
     inverse_arch = "res-ann"   # options 'ann', 'res-ann', 'cnn, 'mlpmixer'
     inverse_batch_size: int = None  # 2**9 512
     inverse_gamma: float = .1  # schedular gamma
@@ -31,9 +31,9 @@ class Config(BaseModel):
     enable_early_stopper: bool = True  # when 'True' enables early stopper
     # Default= None: It should be under'{work_folder}/saved_best'
     # str | None =  # Default: None
-    inverse_saved_ckpt: str | None  # = 'I-1-cnn-stainless.ckpt'
+    inverse_saved_ckpt: str | None = 'I-1-res-ann-stainless.ckpt'
     load_direct_checkpoint: bool = True
-    load_inverse_checkpoint: bool = False
+    load_inverse_checkpoint: bool = True
     num_gpu: int = 1  # number of GPU
     # TODO: Fix num_wavelens be set at load time
     num_wavelens: int | None = 800  # This will be set @ load time. ex. 800
