@@ -46,7 +46,7 @@ def rmse(pred: Tensor, target: Tensor, epsilon=1e-8):
 def step_tensor():
     """Returns tensor of wavelengths, sorted high to low."""
     # index at 0 because each row has the same info.
-    wavelens = torch.load(Path("local_data/stainless_steel.pt"))["wavelength"][0]
+    wavelens = torch.load(Path("local_data/steel-onehot.pt"))["wavelength"][0]
     out = torch.zeros(len(wavelens), len(wavelens))
     for r, _ in enumerate(out):
         out[r, : r + 1] = 1.0
