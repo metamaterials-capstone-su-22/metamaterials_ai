@@ -154,6 +154,10 @@ class Predictor:
         return y_hat
 
     def get_data(self, filepath, type):
+        """
+        filepath: string to data, steel or inconel
+        type: 'test', 'trainval', 'train', 'val', else = full data set
+        """
         stain_data = torch.load(
             Path(filepath))  # ["laser_params"] #stainless-steel-revised-shuffled inconel-revised-raw-shuffled
         wave_data = stain_data["interpolated_wavelength"]
@@ -170,6 +174,16 @@ class Predictor:
             emiss_test = emiss_data[:round(len(wave_data) * .9)]
             laser_params = laser_params[:round(len(wave_data) * .9)]
             uids = uids[:round(len(wave_data) * .9)]
+        elif type == 'train':
+            wave_test = wave_data[:round(len(wave_data) * .8)]
+            emiss_test = emiss_data[:round(len(wave_data) * .8)]
+            laser_params = laser_params[:round(len(wave_data) * .8)]
+            uids = uids[:round(len(wave_data) * .8)]
+        elif type == 'val':
+            wave_test = wave_data[round(len(wave_data) * .8) : round(len(wave_data) * .9)]
+            emiss_test = emiss_data[round(len(wave_data) * .8) : round(len(wave_data) * .9)]
+            laser_params = laser_params[round(len(wave_data) * .8) : round(len(wave_data) * .9)]
+            uids = uids[round(len(wave_data) * .8) : round(len(wave_data) * .9)]
         else:
             wave_test = wave_data
             emiss_test = emiss_data
@@ -265,18 +279,17 @@ class Predictor:
             raise Exception(f'Neither inconel or stainless was selected!!')
         if (include_inconel and include_stainless and rmse(direct_inc_emiss_y_hat, desired_emiss) < rmse(direct_ss_emiss_y_hat, desired_emiss)) or (include_inconel and not include_stainless):
             best_substrate = substrates[0]
-            best_params = self.denormalize_decode_result(
-                direct_inc_emiss_y_hat, self.inc_max_speed, self.inc_max_spacing, self.inc_min_speed, self.inc_min_spacing)
+            # best_params = self.denormalize_and_decode(
+            #     direct_inc_emiss_y_hat, "inconel",True,"denormalize",True )
             best_rmse = rmse(direct_inc_emiss_y_hat, desired_emiss).item()
         else:
             best_substrate = substrates[1]
-            best_params = self.denormalize_decode_result(
-                direct_ss_emiss_y_hat, self.ss_max_speed, self.ss_max_spacing, self.ss_min_speed, self.ss_min_spacing)
+            # best_params = self.denormalize_and_decode(
+            #     direct_ss_emiss_y_hat, "inconel",True,"denormalize",True )
             best_rmse = rmse(direct_ss_emiss_y_hat, desired_emiss).item()
-
-        best_params = [torch.round(best_params[0], decimals=1).item(), torch.round(
-            best_params[1], decimals=1).item(), torch.round(best_params[2], decimals=1).item()]
-        return best_substrate, best_params, best_rmse
+        # best_params = [torch.round(best_params[0], decimals=-1).item(), torch.round(
+        #     best_params[1], decimals=0).item(), torch.round(best_params[2], decimals=1).item()]
+        return best_substrate, best_rmse#best_params, best_rmse
 
     def SAD(self, preds, test, substrate):
         """take in laser parameters and calculate sum of absolute difference."""
