@@ -9,10 +9,10 @@ class Config(BaseModel):
     configs_folder = "configs"
     create_plots = False
     # name of the data file #inconel-shuffled.pt, steel-shuffled.pt
-    data_file = "stainless-onehot.pt"
+    data_file = "inconel-onehot.pt"
     data_folder: str = "local_data"  # Path to the data folder
-    data_portion: float = .7  # Percentage of data being used in the (0 - 1]
-    direction: str = "both"  # direct, inverse, both
+    data_portion: float = 1  # Percentage of data being used in the (0 - 1]
+    direction: str = "direct"  # direct, inverse, both
     direct_arch = "res-ann"  # options 'ann', 'res-ann', 'cnn, 'mlpmixer'
     direct_batch_size: int = None  # 2**9 512
     direct_gamma: float = .1  # schedular gamma
@@ -21,7 +21,7 @@ class Config(BaseModel):
     direct_num_epochs: int = 1600  # default 1600
     # Default= None: It should be under'{work_folder}/saved_best'
     # = "D-0.9-res-ann-inconel.ckpt"  # Default None
-    direct_saved_ckpt: str | None = 'D-0.7-res-ann-stainless.ckpt'
+    direct_saved_ckpt: str | None  # = 'D-0.7-res-ann-stainless.ckpt'
     inverse_arch = "res-ann"   # options 'ann', 'res-ann', 'cnn, 'mlpmixer'
     inverse_batch_size: int = None  # 2**9 512
     inverse_gamma: float = .1  # schedular gamma
@@ -32,12 +32,12 @@ class Config(BaseModel):
     # Default= None: It should be under'{work_folder}/saved_best'
     # str | None =  # Default: None
     inverse_saved_ckpt: str | None  # = 'I-1-cnn-stainless.ckpt'
-    load_direct_checkpoint: bool = True
+    load_direct_checkpoint: bool = False
     load_inverse_checkpoint: bool = False
     num_gpu: int = 1  # number of GPU
     # TODO: Fix num_wavelens be set at load time
     num_wavelens: int | None = 800  # This will be set @ load time. ex. 800
-    substrate: str = "stainless"  # options "stainless" , "inconel"
+    substrate: str = "inconel"  # options "stainless" , "inconel"
     # use_cache true means to use the .pt file instead of regenerating this
     use_cache: bool = True
     use_direct: bool = True
