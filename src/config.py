@@ -31,9 +31,9 @@ class Config(BaseModel):
     enable_early_stopper: bool = True  # when 'True' enables early stopper
     # Default= None: It should be under'{work_folder}/saved_best'
     # str | None =  # Default: None
-    inverse_saved_ckpt: str | None  # = 'I-1-cnn-stainless.ckpt'
+    inverse_saved_ckpt: str | None = 'I-1-res-ann-inconel.ckpt'
     load_direct_checkpoint: bool = True
-    load_inverse_checkpoint: bool = False
+    load_inverse_checkpoint: bool = True
     num_gpu: int = 1  # number of GPU
     # TODO: Fix num_wavelens be set at load time
     num_wavelens: int | None = 800  # This will be set @ load time. ex. 800
