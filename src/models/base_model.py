@@ -66,4 +66,4 @@ class BaseModel(pl.LightningModule):
     def get_milestones(self, milestones):
         if milestones == None:
             return []
-        return [int(x) for x in milestones.split(',')]
+        return [int(x) for x in milestones.split(",")]

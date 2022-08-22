@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+
 # os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 import re
 from pathlib import Path
@@ -197,6 +198,7 @@ def raw_to_pt(
     )
 
     return norm_laser_params, interp_emissivities, uids
+
 
 print("Process started")
 # input_path = "../../data/raw/inconel"

@@ -29,8 +29,7 @@ def save_and_plot(
     wandb.finish()
     # plotter needs the direct model to plot the result.
     if direct_model:
-        Plotter.plot_results(preds, direct_model,
-                             inverse_trainer.model, config)
+        Plotter.plot_results(preds, direct_model, inverse_trainer.model, config)
 
 
 def train_inverse(meta_trainer, direct_model):
@@ -54,10 +53,12 @@ def setup():
     FileUtils.fetch_pt_files(config.data_folder, config.data_file)
     if config.load_direct_checkpoint and config.direct_saved_ckpt:
         FileUtils.fetch_checkpoint_files(
-            config.work_folder, config.direct_saved_ckpt, 'direct', config.substrate)
+            config.work_folder, config.direct_saved_ckpt, "direct", config.substrate
+        )
     if config.load_inverse_checkpoint and config.inverse_saved_ckpt:
         FileUtils.fetch_checkpoint_files(
-            config.work_folder, config.inverse_saved_ckpt, 'inverse', config.substrate)
+            config.work_folder, config.inverse_saved_ckpt, "inverse", config.substrate
+        )
 
 
 def save_onnx(model: BaseModel):

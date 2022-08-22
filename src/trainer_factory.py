@@ -1,7 +1,7 @@
 from datetime import datetime
 
 import pytorch_lightning as pl
-from pytorch_lightning.callbacks import ModelCheckpoint, LearningRateMonitor
+from pytorch_lightning.callbacks import LearningRateMonitor, ModelCheckpoint
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from pytorch_lightning.loggers import TensorBoardLogger, WandbLogger
 
@@ -60,18 +60,18 @@ class TrainerFactory:
         return loggers
 
     def is_loading_from_checkpoint(self, direction):
-        return (direction == "direct" and self.config.load_direct_checkpoint) or \
-            (direction == "inverse" and self.config.load_inverse_checkpoint)
+        return (direction == "direct" and self.config.load_direct_checkpoint) or (
+            direction == "inverse" and self.config.load_inverse_checkpoint
+        )
 
     def create_callbacks(self, direction, refresh_rate):
         callbacks = [
             self.create_checkpoint_callback(direction),
-            LearningRateMonitor(logging_interval='epoch'),
+            LearningRateMonitor(logging_interval="epoch"),
             pl.callbacks.progress.TQDMProgressBar(refresh_rate=refresh_rate),
         ]
         if self.config.enable_early_stopper:
-            callbacks.append(
-                TrainerFactory.create_early_stopper_callback(direction))
+            callbacks.append(TrainerFactory.create_early_stopper_callback(direction))
 
         return callbacks
 

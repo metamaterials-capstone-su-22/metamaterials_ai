@@ -24,8 +24,7 @@ class FileUtils:
                 )
                 print("Downloading process completed")
             except Exception as e:
-                print(
-                    f"Error: Something went wrong downloading data files. Error {e}.")
+                print(f"Error: Something went wrong downloading data files. Error {e}.")
                 raise
 
         else:
@@ -34,22 +33,24 @@ class FileUtils:
             )
 
     @staticmethod
-    def fetch_checkpoint_files(work_folder: str, checkpoint_file: str, direction: str, substrate: str):
+    def fetch_checkpoint_files(
+        work_folder: str, checkpoint_file: str, direction: str, substrate: str
+    ):
         """This will fetch all the files in a data folder if
         the specific file does not exit"""
         model_folder = f"{work_folder}/saved_best"
         if not FileUtils.data_exist(model_folder, checkpoint_file):
             try:
                 file_id = getpass(
-                    f"Enter '{substrate} {direction.capitalize()}' models folder id:")
+                    f"Enter '{substrate} {direction.capitalize()}' models folder id:"
+                )
                 print("Downloading model files ...")
                 gdown.download_folder(
                     id=file_id, quiet=True, use_cookies=False, output=model_folder
                 )
                 print("Downloading process completed")
             except Exception as e:
-                print(
-                    f"Error: Something went wrong downloading data files. Error {e}.")
+                print(f"Error: Something went wrong downloading data files. Error {e}.")
                 raise
 
         else:
@@ -80,8 +81,7 @@ class FileUtils:
             except FileExistsError:
                 print(f"Info: '{path}' exist.")
             except Exception as e:
-                print(
-                    f"Error: something wrong creating '{path}'. message: {e}.")
+                print(f"Error: something wrong creating '{path}'. message: {e}.")
                 raise
 
     @staticmethod
@@ -91,8 +91,7 @@ class FileUtils:
         try:
             data = torch.load(data_file)
         except Exception as e:
-            print(
-                f"Trouble in loading data file: {data_file}. Error: {e.message}")
+            print(f"Trouble in loading data file: {data_file}. Error: {e.message}")
 
         # Set the number of wavelengths
         # config.num_wavelens = data["interpolated_emissivity"].shape[-1]
